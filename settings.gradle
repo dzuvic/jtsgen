@@ -1,0 +1,6 @@
+rootProject.name = 'jtsgen-parent'
+include 'annotations'
+include 'processor'
+include 'processor-test'
+include 'samples'
+

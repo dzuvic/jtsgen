@@ -1,0 +1,11 @@
+{
+  "name": "MyModule",
+  "version": "1.0.0",
+  "description": "unknown",
+  "main": "",
+  "author": "unknown",
+  "license": "unknown",
+  "typings": "my-module.d.ts",
+  "dependencies": {},
+  "scripts": {}
+}

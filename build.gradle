@@ -1,0 +1,51 @@
+group 'dz.jtsgen'
+version '1.0-SNAPSHOT'
+
+
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+  apply plugin: 'java'
+  sourceCompatibility = 1.8
+  targetCompatibility = 1.8
+  tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+  }
+}
+
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.4.1'
+}
+
+def pomConfig = {
+    name project.name
+    description project.project_description
+    url project.project_url
+    inceptionYear '2016'
+
+    scm { url project.project_scm }
+
+    licenses {
+        license([:]) {
+            name 'GNU GENERAL PUBLIC LICENSE, Version 3'
+            url 'https://www.gnu.org/licenses/gpl-3.0.txt'
+            distribution 'repo'
+        }
+    }
+
+    developers {
+        developer {
+            id 'dzuvic'
+            name 'Dragan Zuvic'
+//            url 'http://www.javadude.nl/'
+            email 'zuvic@w11k.de'
+            roles { role 'Developer' }
+        }
+    }
+}

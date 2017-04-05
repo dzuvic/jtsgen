@@ -1,0 +1,23 @@
+import org.gradle.internal.jvm.Jvm
+
+//group 'dz.jtsgen'
+
+apply plugin: 'java'
+apply plugin: 'maven'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile project(':annotations')
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile "com.google.testing.compile:compile-testing:0.10"
+    testCompile "org.mockito:mockito-core:2.7.21"
+    testCompile "commons-io:commons-io:2.5"
+    compileOnly "com.google.auto.service:auto-service:1.0-rc2"
+    compileOnly  files(Jvm.current().toolsJar)
+    runtime files(Jvm.current().toolsJar)
+}
