@@ -1,21 +1,41 @@
-group 'dz.jtsgen'
-version '1.0-SNAPSHOT'
-
-
-
 buildscript {
     repositories {
-        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+   		classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1+"
+   	}
+}
+
+task printProps {
+    doLast {
+        println project.hasProperty('bintray.user') ? project.property('bintray.user') : "none"
     }
 }
 
+apply plugin: "com.jfrog.bintray"
+
+bintray {
+    user = project.hasProperty('bintray.user') ? project.property('bintray.user') : System.getenv('BINTRAY_USER')
+   	key = project.hasProperty('bintray.apikey') ? project.property('bintray.apikey') : System.getenv('BINTRAY_API_KEY')
+}
+
+allprojects {
+    version="0.0.1"
+    group="org.github.jtsgen"
+    
+}
+
 subprojects {
-  apply plugin: 'java'
-  sourceCompatibility = 1.8
-  targetCompatibility = 1.8
-  tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
-  }
+    apply plugin: 'java'
+    repositories {
+        jcenter()
+    }
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
 }
 
 

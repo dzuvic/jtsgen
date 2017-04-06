@@ -1,15 +1,21 @@
-//group 'dz.jtsgen'
-//version '1.0-SNAPSHOT'
-
 apply plugin: 'java'
 apply plugin: 'maven'
-
-sourceCompatibility = 1.8
-
-repositories {
-    mavenCentral()
-}
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+publishing {
+	publications {
+		JtsgenPublishAnnotation(MavenPublication) {
+			from components.java
+            artifactId 'jtsgen-annotations'
+		}
+	}
+}
+
+task blubb() {
+	println(version)
 }

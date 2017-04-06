@@ -1,15 +1,10 @@
 import org.gradle.internal.jvm.Jvm
 
-//group 'dz.jtsgen'
-
 apply plugin: 'java'
 apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
 
-sourceCompatibility = 1.8
-
-repositories {
-    mavenCentral()
-}
 
 dependencies {
     compile project(':annotations')
@@ -20,4 +15,13 @@ dependencies {
     compileOnly "com.google.auto.service:auto-service:1.0-rc2"
     compileOnly  files(Jvm.current().toolsJar)
     runtime files(Jvm.current().toolsJar)
+}
+
+publishing {
+	publications {
+		JtsgenPublishAnnotation(MavenPublication) {
+			from components.java
+            artifactId 'jtsgen-processor'
+		}
+	}
 }
