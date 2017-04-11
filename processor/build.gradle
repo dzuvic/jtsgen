@@ -1,13 +1,14 @@
 import org.gradle.internal.jvm.Jvm
 
 apply plugin: 'java'
+apply plugin: 'java-library'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 
 
 dependencies {
-    compile project(':annotations')
+    api project(':annotations')
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile "com.google.testing.compile:compile-testing:0.10"
     testCompile "org.mockito:mockito-core:2.7.21"
@@ -17,11 +18,47 @@ dependencies {
     runtime files(Jvm.current().toolsJar)
 }
 
+task sourceJar(type: Jar) {
+  from sourceSets.main.allJava
+  classifier "sources"
+}
+
+def pomConfig = {
+    url 'https://github.com/dzuvic/jtsgen'
+    inceptionYear '2016'
+    scm { url "https://github.com/dzuvic/jtsgen.git" }
+    licenses {
+        license {
+            name "GNU GENERAL PUBLIC LICENSE, Version 3"
+            url 'https://www.gnu.org/licenses/gpl-3.0.txt'
+            distribution 'repo'
+        }
+    }
+    developers {
+        developer {
+            id 'dzuvic'
+            name 'Dragan Zuvic'
+            url 'https://github.com/dzuvic'
+            email 'zuvic@w11k.de'
+            roles { role 'Developer' }
+        }
+    }
+}
+
+
 publishing {
 	publications {
-		JtsgenPublishAnnotation(MavenPublication) {
+		JtsgenMavenPublish(MavenPublication) {
 			from components.java
+            artifact sourceJar
             artifactId 'jtsgen-processor'
+            pom.withXml {
+            			                def root = asNode()
+            			                root.appendNode('description', description)
+            			                root.appendNode('name', project.name)
+            			                root.children().last() + pomConfig
+            			            }
 		}
+
 	}
 }

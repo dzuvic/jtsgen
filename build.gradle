@@ -7,17 +7,25 @@ buildscript {
    	}
 }
 
-task printProps {
-    doLast {
-        println project.hasProperty('bintray.user') ? project.property('bintray.user') : "none"
-    }
-}
-
 apply plugin: "com.jfrog.bintray"
 
 bintray {
     user = project.hasProperty('bintray.user') ? project.property('bintray.user') : System.getenv('BINTRAY_USER')
    	key = project.hasProperty('bintray.apikey') ? project.property('bintray.apikey') : System.getenv('BINTRAY_API_KEY')
+    publications = ['JtsgenMavenPublish']
+    pkg {
+        repo = 'maven'
+        name = 'jtsgen'
+        userOrg = 'bintray_user'
+        licenses = ['GNU GENERAL PUBLIC LICENSE, Version 3']
+        vcsUrl = 'https://github.com/dzuvic/jtsgen.git'
+        version {
+                name = "$version"
+                desc = 'Java to TypeScript Type Emitter'
+                released  = new Date()
+                vcsTag = '$version'
+            }
+    }
 }
 
 allprojects {
@@ -28,11 +36,13 @@ allprojects {
 
 subprojects {
     apply plugin: 'java'
+    
     repositories {
         jcenter()
     }
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
+    
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
     }
@@ -43,29 +53,3 @@ task wrapper(type: Wrapper) {
     gradleVersion = '3.4.1'
 }
 
-def pomConfig = {
-    name project.name
-    description project.project_description
-    url project.project_url
-    inceptionYear '2016'
-
-    scm { url project.project_scm }
-
-    licenses {
-        license([:]) {
-            name 'GNU GENERAL PUBLIC LICENSE, Version 3'
-            url 'https://www.gnu.org/licenses/gpl-3.0.txt'
-            distribution 'repo'
-        }
-    }
-
-    developers {
-        developer {
-            id 'dzuvic'
-            name 'Dragan Zuvic'
-//            url 'http://www.javadude.nl/'
-            email 'zuvic@w11k.de'
-            roles { role 'Developer' }
-        }
-    }
-}
