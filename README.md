@@ -13,7 +13,7 @@ or a submit pull request.
 Currently the following features are supported:
 
 * Emitting types for `@TypeScript` annotated Java classes and interfaces
-* Package name as typescript name space
+* Java package as typescript name space
 * converting getter/setter to TypeScript types
 * common top level package as module name
 * `readonly` if no setter is found
@@ -25,11 +25,26 @@ Currently the following features are supported:
 Currently you should not use it. This project is still in development
 so no usable artifacts are published, yet.
 
-Either take a look at the tests or the included sample project regarding
-feedback getting this project to a usable state.
+The generated sources are currently currently inside the java source
+output folder.
 
-The output is currently inside the java source output folder in the
-package (=directory) jtsgen.
+### Using in gradle projects
+
+Adding the following snippet to your gradle (sub-) project, the annotation
+processor should run at automatically at compile time:
+
+````
+repositories {
+    maven {
+        url "http://dl.bintray.com/dzuvic/jtsgen"
+    }
+}
+
+dependencies {
+    compileOnly "jtsgen:jtsgen-annotations:0.0.1"
+    compileOnly "jtsgen:jtsgen-processor:0.0.1"
+}
+````
 
 ### Processing Options
 
@@ -41,12 +56,15 @@ The processor currently support the following Options:
 
 ## License And Legal Notes
 
-Currently `jtsgen` is GPLv3 licensed. The license text is included in the
- file `LICENSE`. Because `jtsgen` as a sort of a compiler plugin you
-shouldn't redistribute the compiler in your projects. Just like when
-using OpenJDK, the generated code is *not* affected by it's license,
-so it should be safe using it in most cases. Everything in this
-chapter is not a legal advice in any form.
+The following licenses apply `jtsgen`:
+
+The annotations are Apache 2.0 licensed. The rest of `jtsgen`,
+especially the processor , is GPLv3 licensed. The license texts are
+included in the file `LICENSE`. Because `jtsgen` as a sort of a compiler
+plugin you shouldn't redistribute the compiler in your projects. It's
+just like using OpenJDK: the generated code is *not* affected by
+it's license, so it should be safe using it in most cases. Everything in
+this chapter is not a legal advice in any form.
 
 This project has to include the following legal notes:
 
