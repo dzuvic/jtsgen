@@ -7,31 +7,12 @@ buildscript {
    	}
 }
 
-apply plugin: "com.jfrog.bintray"
 
-bintray {
-    user = project.hasProperty('bintray.user') ? project.property('bintray.user') : System.getenv('BINTRAY_USER')
-   	key = project.hasProperty('bintray.apikey') ? project.property('bintray.apikey') : System.getenv('BINTRAY_API_KEY')
-    publications = ['JtsgenMavenPublish']
-    pkg {
-        repo = 'maven'
-        name = 'jtsgen'
-        userOrg = 'bintray_user'
-        licenses = ['GNU GENERAL PUBLIC LICENSE, Version 3']
-        vcsUrl = 'https://github.com/dzuvic/jtsgen.git'
-        version {
-                name = "$version"
-                desc = 'Java to TypeScript Type Emitter'
-                released  = new Date()
-                vcsTag = '$version'
-            }
-    }
-}
+description = 'Java to TypeScript Type Emitter Parent Project'
 
 allprojects {
     version="0.0.1"
-    group="org.github.jtsgen"
-    
+    group="jtsgen"
 }
 
 subprojects {

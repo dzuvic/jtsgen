@@ -1,3 +1,23 @@
+/*
+ * Copyright (c) 2017 Dragan Zuvic
+ *
+ * This file is part of jtsgen.
+ *
+ * jtsgen is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * jtsgen is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with jtsgen.  If not, see http://www.gnu.org/licenses/
+ *
+ */
+
 import org.gradle.internal.jvm.Jvm
 
 apply plugin: 'java'
@@ -5,6 +25,8 @@ apply plugin: 'java-library'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
+
+description="The jtsgen annotation processor"
 
 
 dependencies {
@@ -46,9 +68,31 @@ def pomConfig = {
 }
 
 
+bintray {
+    user = project.hasProperty('bintray.user') ? project.property('bintray.user') : System.getenv('BINTRAY_USER')
+   	key = project.hasProperty('bintray.apikey') ? project.property('bintray.apikey') : System.getenv('BINTRAY_API_KEY')
+    publications = ['release']
+    dryRun = false
+    override = false
+    pkg {
+        repo = 'jtsgen'
+        name = project.name
+        licenses = ['GPL-3.0']
+        vcsUrl = 'https://github.com/dzuvic/jtsgen.git'
+        issueTrackerUrl = 'https://github.com/dzuvic/jtsgen/issues'
+        desc = project.description
+        version {
+                name = project.version
+                released  = new Date()
+                vcsTag = project.version
+            }
+    }
+}
+
+
 publishing {
 	publications {
-		JtsgenMavenPublish(MavenPublication) {
+		release(MavenPublication) {
 			from components.java
             artifact sourceJar
             artifactId 'jtsgen-processor'
