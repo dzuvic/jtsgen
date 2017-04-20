@@ -38,26 +38,33 @@ import static dz.jtsgen.processor.helper.ExecutableElementHelper.isGetterOrSette
 
 /**
  * processes the Elements of an java interface or class.
+ *
  * <p>
  * because of beans this Visitor is stateful: return type is void.
  */
-class TSElementVisitor extends SimpleElementVisitor8<Void, TSAVisitorParam> {
+class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, TSAVisitorParam> {
 
-    private static Logger LOG = Logger.getLogger(TSElementVisitor.class.getName());
+    private static Logger LOG = Logger.getLogger(JavaTypeElementExtractingVisitor.class.getName());
 
     private final TSMemberVisitor tsMemberVisitor;
-
-    private final MirrotTypeToTSConverterVisitor mirrotTypeToTSKonverterVisitor;
 
     private final Map<String, TSMember> members = new HashMap<>();
 
     // list of members to sort out setters only
     private final Set<String> extractableMembers = new HashSet<>();
 
+    // the current Java Type
+    private final TypeElement element;
 
-    public TSElementVisitor() {
+    // the environment
+    private TSAVisitorParam tsaVisitorParam;
+
+
+    JavaTypeElementExtractingVisitor(TypeElement element, TSAVisitorParam visitorParam) {
+        assert element != null  && visitorParam != null;
+        this.element=element;
+        this.tsaVisitorParam=visitorParam;
         this.tsMemberVisitor = new TSMemberVisitor();
-        this.mirrotTypeToTSKonverterVisitor = new MirrotTypeToTSConverterVisitor();
     }
 
     @Override
@@ -80,12 +87,12 @@ class TSElementVisitor extends SimpleElementVisitor8<Void, TSAVisitorParam> {
         if (isGetterOrSetter(e)) {
             LOG.finest(() -> "is getter or setter: " + e.getSimpleName());
             final String name = nameFromMethod(e.getSimpleName().toString());
-            final String tsType =  convertTypeMirrorToTsType(e.getReturnType(), tsaVisitorParam);
+            final String tsTypeOfExecutable =  convertTypeMirrorToTsType(e, tsaVisitorParam);
             if (members.containsKey(name)) {
                 // can't be read only anymore
-                members.put(name, new TSMember(name, tsType, false));
+                members.put(name, new TSMember(name, isGetter(e) ? tsTypeOfExecutable: members.get(name).getType(), false));
             } else {
-                members.put(name, new TSMember(name, tsType, isGetter(e)));
+                members.put(name, new TSMember(name, tsTypeOfExecutable, isGetter(e)));
             }
             if (isGetter(e)) extractableMembers.add(name);
         }
@@ -98,9 +105,9 @@ class TSElementVisitor extends SimpleElementVisitor8<Void, TSAVisitorParam> {
         return Character.toLowerCase(nameWithoutGetSet.charAt(0)) + nameWithoutGetSet.substring(1);
     }
 
-    private String convertTypeMirrorToTsType(TypeMirror typeMirror, TSAVisitorParam tsaVisitorParam) {
-        return typeMirror.accept(this.mirrotTypeToTSKonverterVisitor, tsaVisitorParam);
-
+    private String convertTypeMirrorToTsType(ExecutableElement theElement, TSAVisitorParam tsaVisitorParam) {
+        TypeMirror typeMirror = theElement.getReturnType();
+        return typeMirror.accept(new MirrotTypeToTSConverterVisitor(theElement), tsaVisitorParam);
     }
 
     List<TSMember> getMembers() {

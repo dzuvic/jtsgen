@@ -22,6 +22,7 @@ package dz.jtsgen.processor.jtp;
 
 import dz.jtsgen.processor.visitors.TSAVisitorParam;
 
+import javax.lang.model.element.Element;
 import javax.lang.model.type.*;
 import javax.lang.model.util.AbstractTypeVisitor8;
 import javax.tools.Diagnostic;
@@ -36,6 +37,12 @@ public class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<String,
 
     private final Map<String,String> declaredTypeConversions = createDefaultDeclaredTypeConversion();
 
+    private final Element currentElement;
+
+    MirrotTypeToTSConverterVisitor(Element currentElement) {
+        this.currentElement = currentElement;
+    }
+
     private Map<String, String> createDefaultDeclaredTypeConversion() {
         Map<String,String> result = new HashMap<>();
         result.put("java.lang.String","string");
@@ -49,7 +56,7 @@ public class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<String,
 
     @Override
     public String visitIntersection(IntersectionType t, TSAVisitorParam tsaVisitorParam) {
-        tsaVisitorParam.getpEnv().getMessager().printMessage(Diagnostic.Kind.ERROR,"intersection type not supported");
+        tsaVisitorParam.getpEnv().getMessager().printMessage(Diagnostic.Kind.ERROR,"intersection type not supported", currentElement);
         return null;
     }
 
@@ -74,19 +81,19 @@ public class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<String,
     public String visitDeclared(DeclaredType t, TSAVisitorParam tsaVisitorParam) {
         String nameOfType=t.toString();
         if (this.declaredTypeConversions.containsKey(nameOfType)) return this.declaredTypeConversions.get(nameOfType);
-        tsaVisitorParam.getpEnv().getMessager().printMessage(Diagnostic.Kind.WARNING,"declared type not known or found " + nameOfType);
+        tsaVisitorParam.getpEnv().getMessager().printMessage(Diagnostic.Kind.WARNING,"declared type not known or found " + nameOfType, currentElement);
         return "any";
     }
 
     @Override
     public String visitError(ErrorType t, TSAVisitorParam tsaVisitorParam) {
-        tsaVisitorParam.getpEnv().getMessager().printMessage(Diagnostic.Kind.ERROR,"error type not supported");
+        tsaVisitorParam.getpEnv().getMessager().printMessage(Diagnostic.Kind.ERROR,"error type not supported", currentElement);
         return null;
     }
 
     @Override
     public String visitTypeVariable(TypeVariable t, TSAVisitorParam tsaVisitorParam) {
-        tsaVisitorParam.getpEnv().getMessager().printMessage(Diagnostic.Kind.WARNING,"arrays partially supported");
+        tsaVisitorParam.getpEnv().getMessager().printMessage(Diagnostic.Kind.WARNING,"arrays partially supported", currentElement);
         //        TypeVariable innerT = (ArrayType.class.cast(t)).getComponentType();
         String innerType = "any"; //this.visit(innerT,tsaVisitorParam)
         return "Array<"+ innerType+">";
@@ -100,19 +107,18 @@ public class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<String,
 
     @Override
     public String visitExecutable(ExecutableType t, TSAVisitorParam tsaVisitorParam) {
-        tsaVisitorParam.getpEnv().getMessager().printMessage(Diagnostic.Kind.ERROR,"executable type not supported");
+        tsaVisitorParam.getpEnv().getMessager().printMessage(Diagnostic.Kind.ERROR,"executable type not supported", currentElement);
         return null;
     }
 
     @Override
     public String visitNoType(NoType t, TSAVisitorParam tsaVisitorParam) {
-        tsaVisitorParam.getpEnv().getMessager().printMessage(Diagnostic.Kind.ERROR,"no type not supported");
-        return null;
+        return "Void";
     }
 
     @Override
     public String visitUnion(UnionType t, TSAVisitorParam tsaVisitorParam) {
-        tsaVisitorParam.getpEnv().getMessager().printMessage(Diagnostic.Kind.ERROR,"union type not supported");
+        tsaVisitorParam.getpEnv().getMessager().printMessage(Diagnostic.Kind.ERROR,"union type not supported", currentElement);
         return null;
     }
 }

@@ -11,7 +11,7 @@ buildscript {
 description = 'Java to TypeScript Type Emitter Parent Project'
 
 allprojects {
-    version="0.0.1"
+    version="0.0.2-SNAPSHOT"
     group="jtsgen"
 }
 

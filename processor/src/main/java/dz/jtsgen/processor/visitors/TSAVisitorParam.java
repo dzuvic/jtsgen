@@ -53,4 +53,5 @@ public class TSAVisitorParam {
     public TypeScriptModel getTsModel() {
         return tsModel;
     }
+
 }

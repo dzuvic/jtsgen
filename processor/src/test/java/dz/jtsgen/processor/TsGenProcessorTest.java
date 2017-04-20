@@ -44,11 +44,12 @@ import static org.junit.Assert.assertTrue;
 @RunWith(JUnit4.class)
 public class TsGenProcessorTest {
 
-    public static final String JTSGEN_MYMODULE = "jtsgen.mymodule";
-    public static final String PACKAGE_JSON = "package.json";
-    public static final String MY_MODULE_D_TS = "my-module.d.ts";
-    public static final String JTSGEN_UNKNOWN = "jtsgen.unknown";
-    public static final String JTS_DEV = "JtsDev";
+    private static final String JTSGEN_MYMODULE = "jtsgen.mymodule";
+    static final String PACKAGE_JSON = "package.json";
+    private static final String JTSGEN_UNKNOWN = "jtsgen.unknown";
+    private static final String MY_MODULE_D_TS = "my-module.d.ts";
+    static final String JTS_DEV = "jtsgen.jtsdev";
+    static final String JTS_DEV_D_TS = "jts-dev.d.ts";
 
     @Test
      public void check_simple_interface_No_Logging() {
@@ -63,32 +64,6 @@ public class TsGenProcessorTest {
 
         // check that any logging is disabled is disabled
         assertEquals(Logger.getLogger(TsGenProcessor.class.getPackage().getName()).getLevel(), Level.OFF);
-    }
-
-    @Test
-    @Ignore // This test is only for development. No one wants excessive DEBUG output
-     public void check_simple_interface_with_debug() throws IOException {
-        final JavaFileObject INTERFACE_TEST = JavaFileObjects.forResource("InterFaceTest.java");
-        TsGenProcessor processor = new TsGenProcessor();
-        Object[] dummyOptions = {"-AjtsgenLogLevel=FINEST"};
-        JavaFileObject[] files = {INTERFACE_TEST};
-        Compilation c = javac()
-                .withProcessors(processor)
-                .withOptions(dummyOptions)
-                .compile(files);
-
-        // check debug is disabled
-        assertEquals(Logger.getLogger(TsGenProcessor.class.getPackage().getName()).getLevel(), Level.FINEST);
-        
-        assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, JTS_DEV, PACKAGE_JSON).isPresent());
-        assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, JTS_DEV,"jts-dev.d.ts").isPresent());
-
-        JavaFileObject testee = c.generatedFile(StandardLocation.SOURCE_OUTPUT, JTS_DEV, PACKAGE_JSON).get();
-        System.out.println(testee.getCharContent(false));
-
-        JavaFileObject testee2 = c.generatedFile(StandardLocation.SOURCE_OUTPUT, JTS_DEV,"jts-dev.d.ts").get();
-        System.out.println("");
-        System.out.println(testee2.getCharContent(false));
     }
 
     @Test
@@ -137,6 +112,17 @@ public class TsGenProcessorTest {
         // module name is unknown
         assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, JTSGEN_UNKNOWN, PACKAGE_JSON).isPresent());
         assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, JTSGEN_UNKNOWN,"unknown.d.ts").isPresent());
+    }
+
+    @Test
+    public void test_simple_class() throws IOException {
+        JavaFileObject[] files = {JavaFileObjects.forResource("java/MemberTestObject.java")};
+        Compilation c = javac()
+                .withProcessors(new TsGenProcessor())
+                .compile(files);
+
+        assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, JTS_DEV, PACKAGE_JSON).isPresent());
+        assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, JTS_DEV, JTS_DEV_D_TS).isPresent());
     }
 
 }

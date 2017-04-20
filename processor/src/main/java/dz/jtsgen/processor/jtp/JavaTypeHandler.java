@@ -49,9 +49,9 @@ public class JavaTypeHandler {
     }
 
     private Collection<? extends TSMember> findMembers(TypeElement e, TSAVisitorParam aParam) {
-        TSElementVisitor tsElementVisitor = new TSElementVisitor();
+        JavaTypeElementExtractingVisitor visitor = new JavaTypeElementExtractingVisitor(e, aParam);
         e.getEnclosedElements().stream()
-                .forEach((x) -> tsElementVisitor.visit(x, aParam));
-        return tsElementVisitor.getMembers();
+                .forEach((x) -> visitor.visit(x, aParam));
+        return visitor.getMembers();
     }
 }
