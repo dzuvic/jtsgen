@@ -37,11 +37,11 @@ public class ExecutableElementHelper {
     }
 
     public static boolean isGetter(Element x) {
-        return isGetter(x!=null && x.getSimpleName() != null ? x.getSimpleName().toString() : null);
+        return isGetter(x != null && x.getSimpleName() != null ? x.getSimpleName().toString() : null);
     }
 
     public static boolean isSetter(Element x) {
-        return isSetter(x!= null  && x.getSimpleName() != null ? x.getSimpleName().toString() : null);
+        return isSetter(x != null && x.getSimpleName() != null ? x.getSimpleName().toString() : null);
     }
 
     /* ---- */
@@ -50,11 +50,18 @@ public class ExecutableElementHelper {
     }
 
     private static boolean isSetter(String name) {
-        return name != null && name.length()>3 && name.startsWith("set");
+        return name != null && name.length() > 3 && name.startsWith("set");
     }
 
     public static boolean isGetter(String name) {
-        return name != null && name.length()>3 && name.startsWith("get");
+        return name != null && name.length() > 3 && name.startsWith("get");
+    }
+
+
+    public static String nameFromMethod(String s) {
+        assert isGetterOrSetter(s);
+        String nameWithoutGetSet = s.startsWith("get") ? s.replaceFirst("get", "") : s.replaceFirst("set", "");
+        return Character.toLowerCase(nameWithoutGetSet.charAt(0)) + nameWithoutGetSet.substring(1);
     }
 
 }

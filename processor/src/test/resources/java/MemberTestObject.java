@@ -24,20 +24,22 @@ import dz.jtsgen.annotations.TypeScript;
 
 @TypeScript
 public class MemberTestObject {
-    private int x=0;
-    protected int y=0;
-    public int z=0;
+    
+    private int member_private=0;
+    protected int member_protected=0;
+    int member_package_protected=0;
+    public int member_public=0;
 
-    private int x_with_getter=0;
-    private int x_with_setter=0;
+    private int x_with_getter_only=0;
+    private int x_with_setter_only=0;
     private int x_with_getter_setter=0;
 
-    public int getX_with_getter() {
-        return x_with_getter;
+    public int getX_with_getter_only() {
+        return x_with_getter_only;
     }
 
-    public void setX_with_setter(int x_with_setter) {
-        this.x_with_setter = x_with_setter;
+    public void setX_with_setter_only(int x_with_setter_only) {
+        this.x_with_setter_only = x_with_setter_only;
     }
 
     public int getX_with_getter_setter() {
@@ -46,5 +48,11 @@ public class MemberTestObject {
 
     public void setX_with_getter_setter(int x_with_getter_setter) {
         this.x_with_getter_setter = x_with_getter_setter;
+    }
+
+    private int y_with_getter_private=0;
+
+    private int getY_with_getter_private() {
+        return y_with_getter_private;
     }
 }

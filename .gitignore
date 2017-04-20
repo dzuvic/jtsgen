@@ -14,5 +14,3 @@ build/
 *.jar
 hs_err_pid*
 
-# used during development only
-/processor/src/test/java/dz/jtsgen/processor/MagicTest.java

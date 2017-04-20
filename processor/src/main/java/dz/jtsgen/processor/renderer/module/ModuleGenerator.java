@@ -21,21 +21,21 @@
 package dz.jtsgen.processor.renderer.module;
 
 import dz.jtsgen.processor.renderer.helper.ModuleResourceHelper;
+import dz.jtsgen.processor.renderer.helper.PrintWriterWithLogging;
 import dz.jtsgen.processor.renderer.model.TypeScriptRenderModel;
 import dz.jtsgen.processor.renderer.module.tsd.TSDGenerator;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.tools.Diagnostic;
 import javax.tools.FileObject;
-import javax.tools.StandardLocation;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
-*  exports a  module
-*  
+ * exports a  module
+ * <p>
  * Created by zuvic on 16.02.17.
  */
 public class ModuleGenerator {
@@ -63,13 +63,12 @@ public class ModuleGenerator {
     }
 
 
-
     private void writePackageJson(TSModule module) throws IOException {
         String packageJson = PackageJsonGenerator.packageJsonFor(module, model);
-        FileObject package_json_file_object = ModuleResourceHelper.createResource(env, module,"package.json");
+        FileObject package_json_file_object = ModuleResourceHelper.createResource(env, module, "package.json");
 
-        try (PrintWriter out = new PrintWriter(package_json_file_object.openWriter())) {
-                out.println(packageJson);
+        try (PrintWriter out = new PrintWriterWithLogging(package_json_file_object.openWriter(), "package.json")) {
+            out.println(packageJson);
         }
     }
 

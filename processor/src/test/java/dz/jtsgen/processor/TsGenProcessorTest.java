@@ -22,8 +22,8 @@ package dz.jtsgen.processor;
 
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
+import dz.jtsgen.processor.helper.OutputHelper;
 import dz.jtsgen.processor.helper.ReferenceHelper;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -32,8 +32,10 @@ import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardLocation;
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import static com.google.testing.compile.Compiler.javac;
 import static org.junit.Assert.assertEquals;
@@ -48,15 +50,14 @@ public class TsGenProcessorTest {
     static final String PACKAGE_JSON = "package.json";
     private static final String JTSGEN_UNKNOWN = "jtsgen.unknown";
     private static final String MY_MODULE_D_TS = "my-module.d.ts";
-    static final String JTS_DEV = "jtsgen.jtsdev";
-    static final String JTS_DEV_D_TS = "jts-dev.d.ts";
+    private static final String JTS_DEV = "jtsgen.jtsdev";
+    private static final String JTS_DEV_D_TS = "jts-dev.d.ts";
 
     @Test
      public void check_simple_interface_No_Logging() {
-        final JavaFileObject INTERFACE_TEST = JavaFileObjects.forResource("java/InterFaceTest.java");
+        JavaFileObject[] files = {JavaFileObjects.forResource("java/InterFaceTest.java")};
         TsGenProcessor processor = new TsGenProcessor();
         Object[] dummyOptions = {"-Agone=nowhere", "-AjtsgenLogLevel=DUMMY"};
-        JavaFileObject[] files = {INTERFACE_TEST};
         Compilation c = javac()
                 .withProcessors(processor)
                 .withOptions(dummyOptions)
@@ -68,8 +69,7 @@ public class TsGenProcessorTest {
 
     @Test
      public void test_simple_interface_1() throws IOException {
-        final JavaFileObject INTERFACE_TEST = JavaFileObjects.forResource("java/InterFaceTest.java");
-        JavaFileObject[] files = {INTERFACE_TEST};
+        JavaFileObject[] files = {JavaFileObjects.forResource("java/InterFaceTest.java")};
         Compilation c = javac()
                 .withProcessors(new TsGenProcessor())
                 .withOptions(new Object[]{"-AjtsgenModuleName=MyModule"})
@@ -96,11 +96,9 @@ public class TsGenProcessorTest {
 
     @Test
      public void test_simple_interface_no_package() throws IOException {
-        final JavaFileObject INTERFACE_TEST = JavaFileObjects.forResource("java/InterFaceTestNoPackage.java");
-        TsGenProcessor processor = new TsGenProcessor();
-        JavaFileObject[] files = {INTERFACE_TEST};
+        JavaFileObject[] files = {JavaFileObjects.forResource("java/InterFaceTestNoPackage.java")};
         Compilation c = javac()
-                .withProcessors(processor)
+                .withProcessors(new TsGenProcessor())
                 .withOptions(new Object[]{}) // "-AjtsgenLogLevel=FINEST"
                 .compile(files);
 
@@ -119,10 +117,22 @@ public class TsGenProcessorTest {
         JavaFileObject[] files = {JavaFileObjects.forResource("java/MemberTestObject.java")};
         Compilation c = javac()
                 .withProcessors(new TsGenProcessor())
+//                .withOptions(new Object[]{"-AjtsgenLogLevel=FINEST"})
                 .compile(files);
 
         assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, JTS_DEV, PACKAGE_JSON).isPresent());
         assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, JTS_DEV, JTS_DEV_D_TS).isPresent());
+
+        assertEquals(c.diagnostics().asList().stream().filter(x -> x.getKind().equals(Diagnostic.Kind.WARNING)).count(), 0);
+        assertEquals(c.diagnostics().asList().stream().filter(x -> x.getKind().equals(Diagnostic.Kind.ERROR)).count(), 0);
+
+        assertEquals("must be readonly",1, OutputHelper.findSourceLine(c , JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+readonly\\s+x_with_getter_only:\\s+number")).size());
+        assertEquals("the setter/getter is not readonly",1, OutputHelper.findSourceLine(c , JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+x_with_getter_setter:\\s+number")).size());
+        assertEquals("the setter must not be included",0, OutputHelper.findSourceLine(c , JTS_DEV, JTS_DEV_D_TS, Pattern.compile("x_with_setter_only:\\s+number")).size());
+        assertEquals("don't include the non public members",0, OutputHelper.findSourceLine(c , JTS_DEV, JTS_DEV_D_TS, Pattern.compile("member_private:\\s+number")).size());
+        assertEquals("don't include the non public members",0, OutputHelper.findSourceLine(c , JTS_DEV, JTS_DEV_D_TS, Pattern.compile("member_protected:\\s+number")).size());
+        assertEquals("don't include the non public members",0, OutputHelper.findSourceLine(c , JTS_DEV, JTS_DEV_D_TS, Pattern.compile("member_package_protected:\\s+number")).size());
+        assertEquals("the public member must be included", 1, OutputHelper.findSourceLine(c , JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+member_public:\\s+number;")).size());
     }
 
 }

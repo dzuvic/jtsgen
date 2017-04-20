@@ -26,6 +26,8 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Name;
 
+import static dz.jtsgen.processor.helper.ExecutableElementHelper.nameFromMethod;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -49,10 +51,15 @@ public class ExecutableElementHelperTest {
         when(nameMock.toString()).thenReturn(simpleName);
         when(mock.getSimpleName()).thenReturn(nameMock);
         return mock;
-   }
+    }
 
     @Test
-    public void isGetter() throws Exception {
+    public void extract_methodName_fromGetterSetter() throws Exception {
+        assertEquals("x", nameFromMethod("setX"));
+        assertEquals("x", nameFromMethod("getX"));
+        assertEquals("x_b", nameFromMethod("getX_b"));
+        assertEquals("x_b", nameFromMethod("setX_b"));
+        assertEquals("x_with_getter_setter", nameFromMethod("setX_with_getter_setter"));
     }
 
 }

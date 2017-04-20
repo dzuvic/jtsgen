@@ -24,6 +24,7 @@ import dz.jtsgen.processor.model.TSMember;
 import dz.jtsgen.processor.visitors.TSAVisitorParam;
 
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
@@ -33,12 +34,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import static dz.jtsgen.processor.helper.ExecutableElementHelper.isGetter;
-import static dz.jtsgen.processor.helper.ExecutableElementHelper.isGetterOrSetter;
+import static dz.jtsgen.processor.helper.ExecutableElementHelper.*;
 
 /**
  * processes the Elements of an java interface or class.
- *
+ * <p>
  * <p>
  * because of beans this Visitor is stateful: return type is void.
  */
@@ -61,15 +61,15 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, TSAVi
 
 
     JavaTypeElementExtractingVisitor(TypeElement element, TSAVisitorParam visitorParam) {
-        assert element != null  && visitorParam != null;
-        this.element=element;
-        this.tsaVisitorParam=visitorParam;
+        assert element != null && visitorParam != null;
+        this.element = element;
+        this.tsaVisitorParam = visitorParam;
         this.tsMemberVisitor = new TSMemberVisitor();
     }
 
     @Override
     public Void visitType(TypeElement e, TSAVisitorParam tsaVisitorParam) {
-        LOG.log(Level.FINEST, () -> String.format("TSEV visiting type %s", e.toString()));
+        LOG.log(Level.FINEST, () -> String.format("JTExV visiting type %s", e.toString()));
         TSMember member = tsMemberVisitor.visit(e.asType(), tsaVisitorParam);
         this.members.put(member.getName(), member);
         return null;
@@ -77,36 +77,44 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, TSAVi
 
     @Override
     public Void visitVariable(VariableElement e, TSAVisitorParam tsaVisitorParam) {
-        LOG.log(Level.FINEST, () -> String.format("TSEV visiting variable %s", e.toString()));
+        final boolean isPublic = e.getModifiers().contains(Modifier.PUBLIC);
+        final String name = e.getSimpleName().toString();
+        LOG.log(Level.FINEST, () -> String.format("JTExV visiting variable %s", name));
+        if (isPublic && !members.containsKey(name)) {
+            final String tsTypeOfExecutable = convertTypeMirrorOfMemberToTsType(e, tsaVisitorParam);
+            members.put(name, new TSMember(name, tsTypeOfExecutable, false));
+            extractableMembers.add(name);
+        }
         return null;
     }
 
     @Override
     public Void visitExecutable(ExecutableElement e, TSAVisitorParam tsaVisitorParam) {
-        LOG.fine( () -> String.format("TSEV visiting executable %s", e.toString()));
+        LOG.fine(() -> String.format("JTExV visiting executable %s", e.toString()));
         if (isGetterOrSetter(e)) {
-            LOG.finest(() -> "is getter or setter: " + e.getSimpleName());
             final String name = nameFromMethod(e.getSimpleName().toString());
-            final String tsTypeOfExecutable =  convertTypeMirrorToTsType(e, tsaVisitorParam);
+            final String tsTypeOfExecutable = convertTypeMirrorToTsType(e, tsaVisitorParam);
+            final boolean isPublic = e.getModifiers().contains(Modifier.PUBLIC);
+            LOG.finest(() -> "is getter or setter: " + (isPublic ? "public " : " ") + e.getSimpleName() + " -> " + name + ":" + tsTypeOfExecutable);
             if (members.containsKey(name)) {
                 // can't be read only anymore
-                members.put(name, new TSMember(name, isGetter(e) ? tsTypeOfExecutable: members.get(name).getType(), false));
+                members.put(name, new TSMember(name, isGetter(e) ? tsTypeOfExecutable : members.get(name).getType(), false));
             } else {
                 members.put(name, new TSMember(name, tsTypeOfExecutable, isGetter(e)));
             }
-            if (isGetter(e)) extractableMembers.add(name);
+            if (isGetter(e) && isPublic) extractableMembers.add(name);
         }
         return null;
     }
 
-    private String nameFromMethod(String s) {
-        assert isGetterOrSetter(s);
-        String nameWithoutGetSet = s.contains("get")?s.replaceFirst("get",""):s.replaceFirst("set","");
-        return Character.toLowerCase(nameWithoutGetSet.charAt(0)) + nameWithoutGetSet.substring(1);
-    }
 
     private String convertTypeMirrorToTsType(ExecutableElement theElement, TSAVisitorParam tsaVisitorParam) {
         TypeMirror typeMirror = theElement.getReturnType();
+        return typeMirror.accept(new MirrotTypeToTSConverterVisitor(theElement), tsaVisitorParam);
+    }
+
+    private String convertTypeMirrorOfMemberToTsType(VariableElement theElement, TSAVisitorParam tsaVisitorParam) {
+        TypeMirror typeMirror = theElement.asType();
         return typeMirror.accept(new MirrotTypeToTSConverterVisitor(theElement), tsaVisitorParam);
     }
 
