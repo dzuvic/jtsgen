@@ -12,15 +12,14 @@ public class TypeScriptModel {
         return new TypeScriptModel();
     }
 
-    private final List<TSType> tsTypes;
+    private final List<TSType> tsTypes=new ArrayList<>();
 
     private TypeScriptModel() {
-        this.tsTypes = new ArrayList<>();
     }
 
     //copy constructor for renderer
     protected TypeScriptModel(TypeScriptModel ts) {
-        this.tsTypes=ts.getTsTypes();
+        this.tsTypes.addAll(ts.getTsTypes());
     }
 
     public void addTSTypes(final List<TSType> visitorResult) {
@@ -28,9 +27,9 @@ public class TypeScriptModel {
 
         Collection<TSType> removeThem = tsTypes.stream()
                 .filter(
-                        (x) -> tsTypes.stream().anyMatch(
-                                y -> x.getName().equals(y.getName()) && x.getNamespace().equals(y.getNamespace())
-                        )
+                        (x) -> visitorResult.stream().anyMatch(
+                                (y) -> x.getName().equals(y.getName()) && x.getNamespace().equals(y.getNamespace())
+                       )
                 )
                 .collect(Collectors.toList());
 

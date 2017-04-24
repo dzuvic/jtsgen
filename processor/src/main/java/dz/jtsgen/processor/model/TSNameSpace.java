@@ -33,7 +33,7 @@ public class TSNameSpace {
     private final Map<String,TSNameSpace> children;
 
 
-    public TSNameSpace(String name, List<TSType> types, Map<String, TSNameSpace> children) {
+    private TSNameSpace(String name, List<TSType> types, Map<String, TSNameSpace> children) {
         this.name = name;
         this.types = types;
         this.children = children;
@@ -43,13 +43,9 @@ public class TSNameSpace {
         this("", new ArrayList<>(), new HashMap<>());
     }
 
-    public TSNameSpace(String name) {
+    private TSNameSpace(String name) {
         this(name, new ArrayList<>(), new HashMap<>());
     }
-
-//    public TSNameSpace(String name, List <TSType>types) {
-//        this(name, types, new HashMap<>());
-//    }
 
     public TSNameSpace findOrCreate(String namespace) {
         assert namespace!=null;
@@ -61,13 +57,13 @@ public class TSNameSpace {
 
         final TSNameSpace child;
         if (this.children.containsKey(car)) {
-            child = this.children.get(namespace);
+            child = this.children.get(car);
         }
         else {
             child=new TSNameSpace(car);
             this.children.put(car,child);
         }
-        return cdr.isPresent() ? child.findOrCreate(cdr.get()) : child;
+        return cdr.map(child::findOrCreate).orElse(child);
     }
 
     public void addType(TSType type) {

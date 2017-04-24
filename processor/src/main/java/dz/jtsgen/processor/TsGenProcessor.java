@@ -32,12 +32,14 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static dz.jtsgen.processor.model.TypeScriptModel.newModel;
+import static java.util.Collections.singletonList;
 import static java.util.logging.Level.INFO;
+import static java.util.stream.Collectors.joining;
 
 /**
  * The main processor for generating the ambient typescript types.
@@ -52,43 +54,45 @@ import static java.util.logging.Level.INFO;
 })
 public class TsGenProcessor extends AbstractProcessorWithLogging {
 
+    // Order of annotations to process
+    private static final List<Class<?>> PROCESSING_ORDER = singletonList(TypeScript.class);
+
     private static Logger LOG = Logger.getLogger(TsGenProcessor.class.getName());
 
-    private TypeScriptModel typeScriptModel = newModel();
+    final private TypeScriptModel typeScriptModel = newModel();
 
     public void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
     }
 
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        LOG.log(INFO, () -> String.format("Processing Annotations %s (isOver=%b)", annotations, roundEnv.processingOver()));
-
-
-        if (roundEnv.processingOver() && !roundEnv.errorRaised()) {
-            try {
+        try {
+            LOG.log(INFO, () -> String.format("P: Processing Annotations %s (isOver=%b)", annotations, roundEnv.processingOver()));
+            if (roundEnv.processingOver() && !roundEnv.errorRaised()) {
                 LOG.log(Level.INFO, () -> "P: processing over");
                 new TSRenderer(processingEnv, typeScriptModel).writeFiles();
-            } catch (Exception e) {
-                internalError(e);
-                throw e;
-            }
-        } else if (roundEnv.processingOver() && roundEnv.errorRaised()) {
-            LOG.log(Level.INFO, () -> "P: processing over. error raised. nothing to do");
-        } else {
-            try {
-                for (TypeElement annotation : annotations) {
-                    if (annotation.getSimpleName().contentEquals(TypeScript.class.getSimpleName())) {
-                        Set<? extends Element> annotatedElements = roundEnv.getElementsAnnotatedWith(TypeScript.class);
-                        final TSAVisitor typeScriptAnnotationVisitor = new TSAVisitor(typeScriptModel, this.processingEnv);
-                        for (Element e : annotatedElements) {
-                            typeScriptModel.addTSTypes(typeScriptAnnotationVisitor.visit(e, new TSAVisitorParam(annotation, this.processingEnv, typeScriptModel)));
+            } else if (roundEnv.processingOver() && roundEnv.errorRaised()) {
+                LOG.log(Level.INFO, () -> "P: processing over. error raised. nothing to do");
+            } else {
+                LOG.fine(() -> String.format("P: Annotations %s", annotations.stream().map(TypeElement::getSimpleName).collect(joining())));
+                PROCESSING_ORDER.forEach(
+                        (x) -> {
+                            final Optional<? extends TypeElement> annotation = annotations.stream().filter((y) -> y.getSimpleName().contentEquals(x.getSimpleName())).findFirst();
+                            if (annotation.isPresent()) {
+                                LOG.fine( () -> String.format("P: Annotations %s", annotation.get().getSimpleName()));
+                                Set<? extends Element> annotatedElements = roundEnv.getElementsAnnotatedWith(TypeScript.class);
+                                final TSAVisitor typeScriptAnnotationVisitor = new TSAVisitor(typeScriptModel, this.processingEnv);
+                                for (Element e : annotatedElements) {
+                                    typeScriptModel.addTSTypes(typeScriptAnnotationVisitor.visit(e, new TSAVisitorParam(annotation.get(), this.processingEnv, typeScriptModel)));
+                                }
+                            }
                         }
-                    }
-                }
-            } catch (Exception e) {
-                internalError(e);
-                throw e;
+                );
             }
+        } catch (Exception e) {
+            this.processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "internal error in jtsgen " + e);
+            System.out.println("internal error in jtsgen");
+            e.printStackTrace();
         }
 
         return true;
@@ -98,10 +102,5 @@ public class TsGenProcessor extends AbstractProcessorWithLogging {
         return SourceVersion.latestSupported();
     }
 
-    private void internalError(Exception e) {
-        this.processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,"internal error in jtsgen " + e);
-        System.out.println("internal error in jtsgen");
-        e.printStackTrace();
-    }
 
 }

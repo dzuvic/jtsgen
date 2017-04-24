@@ -38,6 +38,7 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import static com.google.testing.compile.Compiler.javac;
+import static dz.jtsgen.processor.helper.StringConstForTest.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -72,13 +73,13 @@ public class TsGenProcessorTest {
         // check debug is disabled
         assertEquals(Logger.getLogger(TsGenProcessor.class.getPackage().getName()).getLevel(), Level.OFF);
 
-        assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, StringConstForTest.JTSGEN_MYMODULE, StringConstForTest.PACKAGE_JSON).isPresent());
+        assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, StringConstForTest.JTSGEN_MYMODULE, PACKAGE_JSON).isPresent());
         assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, StringConstForTest.JTSGEN_MYMODULE, StringConstForTest.MY_MODULE_D_TS).isPresent());
 
         JavaFileObject testee2 = c.generatedFile(StandardLocation.SOURCE_OUTPUT, StringConstForTest.JTSGEN_MYMODULE, StringConstForTest.MY_MODULE_D_TS).get();
 
         ReferenceHelper.assertEquals(
-                c.generatedFile(StandardLocation.SOURCE_OUTPUT, StringConstForTest.JTSGEN_MYMODULE, StringConstForTest.PACKAGE_JSON).get()
+                c.generatedFile(StandardLocation.SOURCE_OUTPUT, StringConstForTest.JTSGEN_MYMODULE, PACKAGE_JSON).get()
                 , "simple_interface_1.package.json");
 
         ReferenceHelper.assertEquals(
@@ -100,8 +101,47 @@ public class TsGenProcessorTest {
         assertEquals(c.diagnostics().asList().stream().filter(x -> x.getKind().equals(Diagnostic.Kind.WARNING)).count(), 1);
 
         // module name is unknown
-        assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, StringConstForTest.JTSGEN_UNKNOWN, StringConstForTest.PACKAGE_JSON).isPresent());
-        assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, StringConstForTest.JTSGEN_UNKNOWN, "unknown.d.ts").isPresent());
+        assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, JTSGEN_UNKNOWN, PACKAGE_JSON).isPresent());
+        assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, JTSGEN_UNKNOWN, "unknown.d.ts").isPresent());
+    }
+
+    @Test
+    public void test_two_simple_interface_with_one_ignored() throws IOException {
+        JavaFileObject[] files = {
+                JavaFileObjects.forResource("java/InterFaceTest.java"),
+                JavaFileObjects.forResource("java/InterFaceTestIgnored.java")};
+        
+        Compilation c = javac()
+                .withProcessors(new TsGenProcessor())
+//                .withOptions(new Object[]{"-AjtsgenLogLevel=FINEST"})
+                .compile(files);
+
+        assertEquals(0, c.errors().size());
+
+        // using default packages issues a warning
+        assertEquals(c.diagnostics().asList().stream().filter(x -> x.getKind().equals(Diagnostic.Kind.WARNING)).count(), 0);
+
+        // module name is unknown
+        assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, JTS_DEV, PACKAGE_JSON).isPresent());
+        assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, JTS_DEV, JTS_DEV_D_TS).isPresent());
+    }
+
+    @Test
+    public void two_types() throws IOException {
+        JavaFileObject[] files = {
+                JavaFileObjects.forResource("java/InterFaceTest.java"),
+                JavaFileObjects.forResource("java/MemberTestObject.java")
+        };
+        Compilation c = javac()
+                .withProcessors(new TsGenProcessor())
+                .compile(files);
+
+        assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, JTS_DEV, PACKAGE_JSON).isPresent());
+        assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, JTS_DEV, JTS_DEV_D_TS).isPresent());
+
+        assertEquals("must have Type MemberTestObject", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+MemberTestObject\\s*\\{")).size());
+        assertEquals("must have Type InterFaceTest", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTest\\s+\\{")).size());
+
     }
 
     @Test
@@ -109,22 +149,21 @@ public class TsGenProcessorTest {
         JavaFileObject[] files = {JavaFileObjects.forResource("java/MemberTestObject.java")};
         Compilation c = javac()
                 .withProcessors(new TsGenProcessor())
-//                .withOptions(new Object[]{"-AjtsgenLogLevel=FINEST"})
                 .compile(files);
 
-        assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, StringConstForTest.JTS_DEV, StringConstForTest.PACKAGE_JSON).isPresent());
-        assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, StringConstForTest.JTS_DEV, StringConstForTest.JTS_DEV_D_TS).isPresent());
+        assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, JTS_DEV, PACKAGE_JSON).isPresent());
+        assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, JTS_DEV, JTS_DEV_D_TS).isPresent());
 
         assertEquals(c.diagnostics().asList().stream().filter(x -> x.getKind().equals(Diagnostic.Kind.WARNING)).count(), 0);
         assertEquals(c.diagnostics().asList().stream().filter(x -> x.getKind().equals(Diagnostic.Kind.ERROR)).count(), 0);
 
-        assertEquals("must be readonly", 1, OutputHelper.findSourceLine(c, StringConstForTest.JTS_DEV, StringConstForTest.JTS_DEV_D_TS, Pattern.compile("^\\s+readonly\\s+x_with_getter_only:\\s+number")).size());
-        assertEquals("the setter/getter is not readonly", 1, OutputHelper.findSourceLine(c, StringConstForTest.JTS_DEV, StringConstForTest.JTS_DEV_D_TS, Pattern.compile("^\\s+x_with_getter_setter:\\s+number")).size());
-        assertEquals("the setter must not be included", 0, OutputHelper.findSourceLine(c, StringConstForTest.JTS_DEV, StringConstForTest.JTS_DEV_D_TS, Pattern.compile("x_with_setter_only:\\s+number")).size());
-        assertEquals("don't include the non public members", 0, OutputHelper.findSourceLine(c, StringConstForTest.JTS_DEV, StringConstForTest.JTS_DEV_D_TS, Pattern.compile("member_private:\\s+number")).size());
-        assertEquals("don't include the non public members", 0, OutputHelper.findSourceLine(c, StringConstForTest.JTS_DEV, StringConstForTest.JTS_DEV_D_TS, Pattern.compile("member_protected:\\s+number")).size());
-        assertEquals("don't include the non public members", 0, OutputHelper.findSourceLine(c, StringConstForTest.JTS_DEV, StringConstForTest.JTS_DEV_D_TS, Pattern.compile("member_package_protected:\\s+number")).size());
-        assertEquals("the public member must be included", 1, OutputHelper.findSourceLine(c, StringConstForTest.JTS_DEV, StringConstForTest.JTS_DEV_D_TS, Pattern.compile("^\\s+member_public:\\s+number;")).size());
+        assertEquals("must be readonly", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+readonly\\s+x_with_getter_only:\\s+number")).size());
+        assertEquals("the setter/getter is not readonly", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+x_with_getter_setter:\\s+number")).size());
+        assertEquals("the setter must not be included", 0, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("x_with_setter_only:\\s+number")).size());
+        assertEquals("don't include the non public members", 0, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("member_private:\\s+number")).size());
+        assertEquals("don't include the non public members", 0, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("member_protected:\\s+number")).size());
+        assertEquals("don't include the non public members", 0, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("member_package_protected:\\s+number")).size());
+        assertEquals("the public member must be included", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+member_public:\\s+number;")).size());
     }
 
 }
