@@ -21,6 +21,7 @@
 package dz.jtsgen.processor;
 
 import com.google.auto.service.AutoService;
+import dz.jtsgen.annotations.TSIgnore;
 import dz.jtsgen.annotations.TypeScript;
 import dz.jtsgen.processor.model.TypeScriptModel;
 import dz.jtsgen.processor.renderer.TSRenderer;
@@ -35,6 +36,7 @@ import javax.tools.Diagnostic;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import static dz.jtsgen.processor.model.TypeScriptModel.newModel;
 import static java.util.Collections.singletonList;
@@ -80,7 +82,11 @@ public class TsGenProcessor extends AbstractProcessorWithLogging {
                             final Optional<? extends TypeElement> annotation = annotations.stream().filter((y) -> y.getSimpleName().contentEquals(x.getSimpleName())).findFirst();
                             if (annotation.isPresent()) {
                                 LOG.fine( () -> String.format("P: Annotations %s", annotation.get().getSimpleName()));
-                                Set<? extends Element> annotatedElements = roundEnv.getElementsAnnotatedWith(TypeScript.class);
+                                Set<? extends Element> annotatedElements = roundEnv.getElementsAnnotatedWith(TypeScript.class).stream().filter(
+                                        (ignoring) -> ignoring.getAnnotationMirrors().stream().noneMatch( (y)->{
+                                            return TSIgnore.class.getSimpleName().equals(y.getAnnotationType().asElement().getSimpleName().toString());
+                                        })
+                                ).collect(Collectors.toSet());
                                 final TSAVisitor typeScriptAnnotationVisitor = new TSAVisitor(typeScriptModel, this.processingEnv);
                                 for (Element e : annotatedElements) {
                                     typeScriptModel.addTSTypes(typeScriptAnnotationVisitor.visit(e, new TSAVisitorParam(annotation.get(), this.processingEnv, typeScriptModel)));
@@ -91,7 +97,7 @@ public class TsGenProcessor extends AbstractProcessorWithLogging {
             }
         } catch (Exception e) {
             this.processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "internal error in jtsgen " + e);
-            System.out.println("internal error in jtsgen");
+            System.err.println("FATAL error in jtsgen. Please file an issue with the following stack trace @ https://github.com/dzuvic/jtsgen/issues");
             e.printStackTrace();
         }
 

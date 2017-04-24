@@ -20,13 +20,11 @@
 
 package dz.jtsgen.processor.jtp;
 
+import dz.jtsgen.annotations.TSIgnore;
 import dz.jtsgen.processor.model.TSMember;
 import dz.jtsgen.processor.visitors.TSAVisitorParam;
 
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.Modifier;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
+import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.SimpleElementVisitor8;
 import java.util.*;
@@ -79,11 +77,12 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, TSAVi
     public Void visitVariable(VariableElement e, TSAVisitorParam tsaVisitorParam) {
         final boolean isPublic = e.getModifiers().contains(Modifier.PUBLIC);
         final String name = e.getSimpleName().toString();
-        LOG.log(Level.FINEST, () -> String.format("JTExV visiting variable %s", name));
+        final boolean isIgnored = isIgnored(e);
+        LOG.log(Level.FINEST, () -> String.format("JTExV visiting variable %s%s", name, isIgnored?" (ignored)":""));
         if (isPublic && !members.containsKey(name)) {
             final String tsTypeOfExecutable = convertTypeMirrorOfMemberToTsType(e, tsaVisitorParam);
             members.put(name, new TSMember(name, tsTypeOfExecutable, false));
-            extractableMembers.add(name);
+            if (! isIgnored) extractableMembers.add(name);
         }
         return null;
     }
@@ -95,16 +94,21 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, TSAVi
             final String name = nameFromMethod(e.getSimpleName().toString());
             final String tsTypeOfExecutable = convertTypeMirrorToTsType(e, tsaVisitorParam);
             final boolean isPublic = e.getModifiers().contains(Modifier.PUBLIC);
-            LOG.finest(() -> "is getter or setter: " + (isPublic ? "public " : " ") + e.getSimpleName() + " -> " + name + ":" + tsTypeOfExecutable);
+            final boolean isIgnored = isIgnored(e);
+            LOG.finest(() -> "is getter or setter: " + (isPublic ? "public " : " ") + e.getSimpleName() + " -> " + name + ":" + tsTypeOfExecutable + " " +(isIgnored?"(ignored)":""));
             if (members.containsKey(name)) {
                 // can't be read only anymore
                 members.put(name, new TSMember(name, isGetter(e) ? tsTypeOfExecutable : members.get(name).getType(), false));
             } else {
                 members.put(name, new TSMember(name, tsTypeOfExecutable, isGetter(e)));
             }
-            if (isGetter(e) && isPublic) extractableMembers.add(name);
+            if (isGetter(e) && isPublic && ! isIgnored) extractableMembers.add(name);
         }
         return null;
+    }
+
+    private boolean isIgnored(Element e) {
+        return e.getAnnotationMirrors().stream().anyMatch( (x) -> TSIgnore.class.getName().equals(x.getAnnotationType().toString()));
     }
 
 
