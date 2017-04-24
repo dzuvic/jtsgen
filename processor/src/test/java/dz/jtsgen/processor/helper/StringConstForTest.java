@@ -18,28 +18,14 @@
  *
  */
 
+package dz.jtsgen.processor.helper;
 
-apply plugin: 'java'
-
-sourceCompatibility = 1.8
-
-// the location of the generated source files
-def tsOutDir="${buildDir}/ts"
-
-repositories {
-    mavenCentral()
-}
-
-task createTsDir() {
-    mkdir (tsOutDir)
-}
-
-compileJava {
-    options.compilerArgs = [ "-s", tsOutDir ]
-    dependsOn(createTsDir)
-}
-
-dependencies {
-    compile project(":annotations")
-    compileOnly project(":processor")
+/** Some String constants used in the tests */
+public class StringConstForTest {
+    public static final String JTSGEN_MYMODULE = "jtsgen.mymodule";
+    public static final String PACKAGE_JSON = "package.json";
+    public static final String JTSGEN_UNKNOWN = "jtsgen.unknown";
+    public static final String MY_MODULE_D_TS = "my-module.d.ts";
+    public static final String JTS_DEV = "jtsgen.jtsdev";
+    public static final String JTS_DEV_D_TS = "jts-dev.d.ts";
 }
