@@ -1,7 +1,8 @@
 # Java Type Emitter For TypeScript: _jtsgen_
 
-This project is s proof of concept that emits TypeScript ambient types
-from Java sources.
+**tl;dr** Enable code completion of Java types in your TypeScript project.
+
+This project emits TypeScript ambient types from Java sources.
 `jtsgen` is implemented as an annotation processor, therefore it should be
 easily integrated in your current build infrastructure. Usually there
 are no other plugins required for your build system (maven, gradle).
@@ -13,20 +14,27 @@ or a submit pull request.
 Currently the following features are supported:
 
 * Emitting types for `@TypeScript` annotated Java classes and interfaces
+* Ignoring a type using `@TSIgnore` annotation
+* creating a module with corresponding package.json. The name is constructed
+  if not configured
+* Configuration of the JavaScript / TypeScript Module using the `@TSModule`
+  annotation
 * Java package as typescript name space
 * converting getter/setter to TypeScript types
-* common top level package as module name
 * `readonly` if no setter is found
-* creating a module with corresponding package.json
 
+
+Requirements: The annotation processor only depends on the JDK. Only JDK 8
+is supported.
 
 ## Usage
 
-Currently you should not use it. This project is still in development
-so no usable artifacts are published, yet.
+Currently you should not use it. This project is still in development.
 
 The generated sources are currently currently inside the java source
-output folder.
+output folder. The output can be redirected using the regular `-s` option
+of `javac`
+
 
 ### Using in gradle projects
 

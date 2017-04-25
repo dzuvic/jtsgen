@@ -20,7 +20,12 @@
 
 package dz.jtsgen.processor.renderer.model;
 
+import dz.jtsgen.processor.model.TSModuleInfo;
+import dz.jtsgen.processor.model.TSType;
 import dz.jtsgen.processor.model.TypeScriptModel;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * render specific operations and queries of the model
@@ -33,4 +38,11 @@ public class TypeScriptRenderModel extends TypeScriptModel {
         super(model);
     }
 
+    public Collection<TSModuleInfo> moduleList() {
+        return this.getModuleInfos().values();
+    }
+
+    public List<TSType> getTsTypesByModule(TSModuleInfo module) {
+        return super.getTsTypes();
+    }
 }

@@ -22,9 +22,11 @@ package dz.jtsgen.processor;
 
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
+import dz.jtsgen.processor.helper.CompileHelper;
 import dz.jtsgen.processor.helper.OutputHelper;
 import dz.jtsgen.processor.helper.ReferenceHelper;
 import dz.jtsgen.processor.helper.StringConstForTest;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -33,7 +35,6 @@ import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardLocation;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -49,17 +50,14 @@ public class TsGenProcessorTest {
 
     @Test
     public void check_simple_interface_Full_Logging() {
-        JavaFileObject[] files = {JavaFileObjects.forResource("java/InterFaceTest.java")};
-
-        Compilation c = compileJtsDev(true,0, "java/InterFaceEmpty.java");
-
+        Compilation c = CompileHelper.compileJtsDev(true,0, "InterFaceEmpty.java");
         // check that any logging is disabled is disabled
         assertEquals(Logger.getLogger(TsGenProcessor.class.getPackage().getName()).getLevel(), Level.FINEST);
     }
 
     @Test
     public void check_simple_interface_No_Logging() {
-        JavaFileObject[] files = {JavaFileObjects.forResource("java/InterFaceTest.java")};
+        JavaFileObject[] files = {JavaFileObjects.forResource("jts/dev/InterFaceTest.java")};
         Compilation c = javac()
                 .withProcessors(new TsGenProcessor())
                 .withOptions(new Object[]{"-Agone=nowhere", "-AjtsgenLogLevel=DUMMY"})
@@ -71,7 +69,7 @@ public class TsGenProcessorTest {
 
     @Test
     public void test_simple_interface_1() throws IOException {
-        JavaFileObject[] files = {JavaFileObjects.forResource("java/InterFaceTest.java")};
+        JavaFileObject[] files = {JavaFileObjects.forResource("jts/dev/InterFaceTest.java")};
         Compilation c = javac()
                 .withProcessors(new TsGenProcessor())
                 .withOptions(new Object[]{"-AjtsgenModuleName=MyModule"})
@@ -98,7 +96,7 @@ public class TsGenProcessorTest {
 
     @Test
     public void test_simple_interface_no_package() throws IOException {
-        JavaFileObject[] files = {JavaFileObjects.forResource("java/InterFaceTestNoPackage.java")};
+        JavaFileObject[] files = {JavaFileObjects.forResource("InterFaceTestNoPackage.java")};
         Compilation c = javac()
                 .withProcessors(new TsGenProcessor())
                 .compile(files);
@@ -115,14 +113,14 @@ public class TsGenProcessorTest {
 
     @Test
     public void test_two_simple_interface_with_one_ignored() throws IOException {
-        Compilation c = compileJtsDev(false, 0, "java/InterFaceTest.java", "java/InterFaceTestIgnored.java");
+        Compilation c = CompileHelper.compileJtsDev(false, 0, "InterFaceTest.java", "InterFaceTestIgnored.java");
         assertEquals("must have Type InterFaceTest", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTest\\s+\\{")).size());
         assertEquals("must not have Type InterFaceTestIgnored", 0, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTestIgnored\\s*\\{")).size());
     }
 
     @Test
     public void test_two_simple_interface_with_one_ignored_partially() throws IOException {
-        Compilation c = compileJtsDev(false, 0, "java/InterFaceTest.java", "java/InterFaceTestWithOneIgnoredMethod.java");
+        Compilation c = CompileHelper.compileJtsDev(false, 0, "InterFaceTest.java", "InterFaceTestWithOneIgnoredMethod.java");
         assertEquals("must have Type InterFaceTest", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTest\\s+\\{")).size());
         assertEquals("must have Type InterFaceTestWithOneIgnoredMethod", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTestWithOneIgnoredMethod\\s*\\{")).size());
         assertEquals("the member otherIntIgnored must not be included", 0, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("otherIntIgnored")).size());
@@ -131,14 +129,14 @@ public class TsGenProcessorTest {
 
     @Test
     public void two_types() throws IOException {
-        Compilation c = compileJtsDev(false,0, "java/InterFaceTest.java", "java/MemberTestObject.java");
+        Compilation c = CompileHelper.compileJtsDev(false,0, "InterFaceTest.java", "MemberTestObject.java");
         assertEquals("must have Type MemberTestObject", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+MemberTestObject\\s*\\{")).size());
         assertEquals("must have Type InterFaceTest", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTest\\s+\\{")).size());
     }
 
     @Test
     public void test_simple_class() throws IOException {
-        Compilation c = compileJtsDev(false,0,"java/MemberTestObject.java");
+        Compilation c = CompileHelper.compileJtsDev(false,0,"MemberTestObject.java");
 
         assertEquals("must be readonly", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+readonly\\s+x_with_getter_only:\\s+number")).size());
         assertEquals("the setter/getter is not readonly", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+x_with_getter_setter:\\s+number")).size());
@@ -148,21 +146,12 @@ public class TsGenProcessorTest {
         assertEquals("don't include the non public members", 0, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("member_package_protected:\\s+number")).size());
     }
 
-    /** small helper for compiling several java files in an unified way */
-    private Compilation compileJtsDev(boolean debugLog, int warningCount, String ... fileNames) {
-        assert fileNames != null;
-        JavaFileObject[] files = Arrays.stream(fileNames).map(JavaFileObjects::forResource).toArray(JavaFileObject[]::new);
-        Compilation c =  javac()
-                .withProcessors(new TsGenProcessor())
-                .withOptions(debugLog ? new Object[]{"-AjtsgenLogLevel=FINEST"} : new Object[]{})
-                .compile(files);
-
-        assertEquals(0, c.errors().size());
-        assertEquals(c.diagnostics().asList().stream().filter(x -> x.getKind().equals(Diagnostic.Kind.WARNING)).count(), warningCount);
-        assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, JTS_DEV, PACKAGE_JSON).isPresent());
-        assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, JTS_DEV, JTS_DEV_D_TS).isPresent());
-
-        return c;
+    @Test
+    @Ignore
+    public void members_with_module_definitions() throws IOException {
+        Compilation c = CompileHelper.compileForModule("jts/modules/testM1",true,0, "MemberWithModuleDef.java", "package-info.java");
+        assertEquals("must have Type MemberWithModuleDef", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+MemberTestObject\\s*\\{")).size());
+        assertEquals("must have author Me Myself And I", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+\"author\":\\s+\"Me Myself And I\"")).size());
     }
 
 }

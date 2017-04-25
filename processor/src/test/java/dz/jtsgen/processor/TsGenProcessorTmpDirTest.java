@@ -79,7 +79,7 @@ public class TsGenProcessorTmpDirTest {
 
     @Test
     public void test_simple_interface_minus_d_option() throws IOException {
-        JavaFileObject[] files = {JavaFileObjects.forResource("java/InterFaceTestNoPackage.java")};
+        JavaFileObject[] files = {JavaFileObjects.forResource("InterFaceTestNoPackage.java")};
         Compilation c = javac()
                 .withProcessors(new TsGenProcessor())
                 .withOptions(new Object[]{"-d", tmpDir.toAbsolutePath().toString()})

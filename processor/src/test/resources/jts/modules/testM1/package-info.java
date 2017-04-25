@@ -18,21 +18,12 @@
  *
  */
 
-package dz.jtsgen.processor.renderer.helper;
+@TSModule(
+        author="Me Myself And I",
+        moduleName="testM1",
+        version="2.0.0",
+        customTypeMappings={"java.util.Date:string"}
+)
+package jts.modules.testM1;
 
-
-import dz.jtsgen.processor.model.TSModuleInfo;
-
-import javax.annotation.processing.ProcessingEnvironment;
-import javax.tools.FileObject;
-import javax.tools.StandardLocation;
-import java.io.IOException;
-
-public final class ModuleResourceHelper {
-
-    public static FileObject createResource(ProcessingEnvironment env, TSModuleInfo moduleName, String fileName) throws IOException {
-        return env
-                .getFiler()
-                .createResource(StandardLocation.SOURCE_OUTPUT, "jtsgen." + moduleName.getModuleDirectoryName().toLowerCase(), fileName);
-    }
-}
+import dz.jtsgen.annotations.TSModule;

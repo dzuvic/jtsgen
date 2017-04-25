@@ -17,22 +17,12 @@
  * along with jtsgen.  If not, see http://www.gnu.org/licenses/
  *
  */
+package jts.modules.testM1;
 
-package dz.jtsgen.processor.renderer.helper;
+import dz.jtsgen.annotations.TypeScript;
 
-
-import dz.jtsgen.processor.model.TSModuleInfo;
-
-import javax.annotation.processing.ProcessingEnvironment;
-import javax.tools.FileObject;
-import javax.tools.StandardLocation;
-import java.io.IOException;
-
-public final class ModuleResourceHelper {
-
-    public static FileObject createResource(ProcessingEnvironment env, TSModuleInfo moduleName, String fileName) throws IOException {
-        return env
-                .getFiler()
-                .createResource(StandardLocation.SOURCE_OUTPUT, "jtsgen." + moduleName.getModuleDirectoryName().toLowerCase(), fileName);
-    }
+@TypeScript
+public interface InterFaceTestModuleM1 {
+    int getSomeInt();
+    String getSomeString();
 }

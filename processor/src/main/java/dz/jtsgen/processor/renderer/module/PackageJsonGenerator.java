@@ -20,14 +20,14 @@
 
 package dz.jtsgen.processor.renderer.module;
 
+import dz.jtsgen.processor.model.TSModuleInfo;
 import dz.jtsgen.processor.renderer.model.TypeScriptRenderModel;
 
 import static dz.jtsgen.processor.helper.IdentHelper.identPrefix;
 
+final class PackageJsonGenerator {
 
-public class PackageJsonGenerator {
-
-    public static String packageJsonFor(TSModule module, TypeScriptRenderModel model) {
+    static String packageJsonFor(TSModuleInfo module, TypeScriptRenderModel model) {
         StringBuilder builder = new StringBuilder(200);
         builder.append("{").append(System.lineSeparator());
         addline(builder,"name",module.getModuleName());

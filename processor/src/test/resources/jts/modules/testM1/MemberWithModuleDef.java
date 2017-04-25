@@ -18,21 +18,16 @@
  *
  */
 
-package dz.jtsgen.processor.renderer.helper;
+package jts.modules.testM1;
 
+import dz.jtsgen.annotations.TSModule;
+import dz.jtsgen.annotations.TypeScript;
 
-import dz.jtsgen.processor.model.TSModuleInfo;
+import java.time.LocalDate;
+import java.util.Date;
 
-import javax.annotation.processing.ProcessingEnvironment;
-import javax.tools.FileObject;
-import javax.tools.StandardLocation;
-import java.io.IOException;
-
-public final class ModuleResourceHelper {
-
-    public static FileObject createResource(ProcessingEnvironment env, TSModuleInfo moduleName, String fileName) throws IOException {
-        return env
-                .getFiler()
-                .createResource(StandardLocation.SOURCE_OUTPUT, "jtsgen." + moduleName.getModuleDirectoryName().toLowerCase(), fileName);
-    }
+@TypeScript
+public class MemberWithModuleDef {
+    public Date date_string=new Date();
+    public LocalDate localDate=LocalDate.now();
 }

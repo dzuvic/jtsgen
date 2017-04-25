@@ -34,14 +34,14 @@ import static org.mockito.Mockito.when;
 public class TypeScriptModelTest {
     @Test
     public void testAddOne() {
-        TypeScriptModel tsm = TypeScriptModel.newModel();
+        TypeScriptModel tsm = TypeScriptModel.newModelWithDefaultModule();
         tsm.addTSTypes(singletonList(createTsType("a.B")));
         assertEquals(1,tsm.getTsTypes().size());
     }
 
     @Test
     public void testAddTwoDifferent() {
-        TypeScriptModel tsm = TypeScriptModel.newModel();
+        TypeScriptModel tsm = TypeScriptModel.newModelWithDefaultModule();
         tsm.addTSTypes(singletonList(createTsType("a.B")));
         tsm.addTSTypes(singletonList(createTsType("a.A")));
         assertEquals(2,tsm.getTsTypes().size());
@@ -49,7 +49,7 @@ public class TypeScriptModelTest {
 
     @Test
     public void testAddTwoSame() {
-        TypeScriptModel tsm = TypeScriptModel.newModel();
+        TypeScriptModel tsm = TypeScriptModel.newModelWithDefaultModule();
         tsm.addTSTypes(singletonList(createTsType("a.B")));
         tsm.addTSTypes(singletonList(createTsType("a.B")));
         assertEquals(1,tsm.getTsTypes().size());

@@ -22,7 +22,9 @@ package dz.jtsgen.processor;
 
 import com.google.auto.service.AutoService;
 import dz.jtsgen.annotations.TSIgnore;
+import dz.jtsgen.annotations.TSModule;
 import dz.jtsgen.annotations.TypeScript;
+import dz.jtsgen.processor.jtp.TSModuleHandler;
 import dz.jtsgen.processor.model.TypeScriptModel;
 import dz.jtsgen.processor.renderer.TSRenderer;
 import dz.jtsgen.processor.visitors.TSAVisitor;
@@ -33,15 +35,15 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
-import java.util.*;
-import java.util.logging.Level;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import static dz.jtsgen.processor.model.TypeScriptModel.newModel;
-import static java.util.Collections.singletonList;
+import static dz.jtsgen.processor.model.TypeScriptModel.newModelWithDefaultModule;
 import static java.util.logging.Level.INFO;
-import static java.util.stream.Collectors.joining;
 
 /**
  * The main processor for generating the ambient typescript types.
@@ -52,16 +54,21 @@ import static java.util.stream.Collectors.joining;
 @SupportedAnnotationTypes(value = {"dz.jtsgen.annotations.*"})
 @SupportedOptions({
         "jtsgenLogLevel",
-        "jtsgenModuleName"
+        "jtsgenModuleName",
+        "jtsgenModuleVersion",
+        "jtsgenModuleDescription",
+        "jtsgenModuleAuthor",
+        "jtsgenModuleLicense",
+        "jtsgenModuleAuthorUrl"
 })
 public class TsGenProcessor extends AbstractProcessorWithLogging {
 
     // Order of annotations to process
-    private static final List<Class<?>> PROCESSING_ORDER = singletonList(TypeScript.class);
+    private static final List<Class<?>> PROCESSING_ORDER = Arrays.asList(TSModule.class, TypeScript.class);
 
     private static Logger LOG = Logger.getLogger(TsGenProcessor.class.getName());
 
-    final private TypeScriptModel typeScriptModel = newModel();
+    final private TypeScriptModel typeScriptModel = newModelWithDefaultModule();
 
     public void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
@@ -71,27 +78,16 @@ public class TsGenProcessor extends AbstractProcessorWithLogging {
         try {
             LOG.log(INFO, () -> String.format("P: Processing Annotations %s (isOver=%b)", annotations, roundEnv.processingOver()));
             if (roundEnv.processingOver() && !roundEnv.errorRaised()) {
-                LOG.log(Level.INFO, () -> "P: processing over");
+                LOG.info(() -> "P: processing over. Start rendering.");
                 new TSRenderer(processingEnv, typeScriptModel).writeFiles();
             } else if (roundEnv.processingOver() && roundEnv.errorRaised()) {
-                LOG.log(Level.INFO, () -> "P: processing over. error raised. nothing to do");
+                LOG.info(() -> "P: processing over. error raised. nothing to do");
             } else {
-                LOG.fine(() -> String.format("P: Annotations %s", annotations.stream().map(TypeElement::getSimpleName).collect(joining())));
                 PROCESSING_ORDER.forEach(
                         (x) -> {
                             final Optional<? extends TypeElement> annotation = annotations.stream().filter((y) -> y.getSimpleName().contentEquals(x.getSimpleName())).findFirst();
-                            if (annotation.isPresent()) {
-                                LOG.fine( () -> String.format("P: Annotations %s", annotation.get().getSimpleName()));
-                                Set<? extends Element> annotatedElements = roundEnv.getElementsAnnotatedWith(TypeScript.class).stream().filter(
-                                        (ignoring) -> ignoring.getAnnotationMirrors().stream().noneMatch( (y)->{
-                                            return TSIgnore.class.getSimpleName().equals(y.getAnnotationType().asElement().getSimpleName().toString());
-                                        })
-                                ).collect(Collectors.toSet());
-                                final TSAVisitor typeScriptAnnotationVisitor = new TSAVisitor(typeScriptModel, this.processingEnv);
-                                for (Element e : annotatedElements) {
-                                    typeScriptModel.addTSTypes(typeScriptAnnotationVisitor.visit(e, new TSAVisitorParam(annotation.get(), this.processingEnv, typeScriptModel)));
-                                }
-                            }
+                            LOG.finest(() -> String.format("P: Annotation %s member %s", x, annotation.isPresent()));
+                            annotation.ifPresent(typeElement -> processElements(typeElement, roundEnv));
                         }
                 );
             }
@@ -101,7 +97,28 @@ public class TsGenProcessor extends AbstractProcessorWithLogging {
             e.printStackTrace();
         }
 
+
+
         return true;
+    }
+
+    private void processElements(TypeElement annotation, RoundEnvironment roundEnv) {
+        LOG.fine( () -> String.format("P: Processing Annotation %s", annotation.getSimpleName()));
+        if (annotation.getSimpleName().contentEquals(TypeScript.class.getSimpleName())) {
+            Set<? extends Element> annotatedElements = roundEnv.getElementsAnnotatedWith(TypeScript.class).stream().filter(
+                    (ignoring) -> ignoring.getAnnotationMirrors().stream().noneMatch((y) -> {
+                        return TSIgnore.class.getSimpleName().equals(y.getAnnotationType().asElement().getSimpleName().toString());
+                    })
+            ).collect(Collectors.toSet());
+            final TSAVisitor typeScriptAnnotationVisitor = new TSAVisitor(typeScriptModel, this.processingEnv);
+            for (Element e : annotatedElements) {
+                typeScriptModel.addTSTypes(typeScriptAnnotationVisitor.visit(e, new TSAVisitorParam(annotation, this.processingEnv, typeScriptModel)));
+            }
+        } else if (annotation.getSimpleName().contentEquals(TSModule.class.getSimpleName())) {
+            Set<? extends Element> annotatedElements = roundEnv.getElementsAnnotatedWith(TSModule.class);
+            if (annotatedElements.size() > 1) annotatedElements.forEach( x -> this.processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING,"Multiple TSModule not supported. Multiple Modules with same ", x));
+            typeScriptModel.addModuleInfos(new TSModuleHandler(this.processingEnv).process(annotatedElements));
+        }
     }
 
     public SourceVersion getSupportedSourceVersion() {
