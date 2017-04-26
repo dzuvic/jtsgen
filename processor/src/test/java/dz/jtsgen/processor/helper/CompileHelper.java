@@ -45,11 +45,11 @@ public class CompileHelper {
 
     /** small helper for compiling several java files in an unified way */
     public static Compilation compileJtsDev(boolean debugLog, int warningCount, String... fileNames) {
-        return compileForModule("jts/dev", debugLog, warningCount, fileNames);
+        return compileForModule("jts/dev", JTS_DEV, JTS_DEV_D_TS, debugLog, warningCount, fileNames);
     }
 
     /** small helper for compiling several java files in an unified way for a specific module */
-    public static Compilation compileForModule(String packageDir, boolean debugLog, int warningCount, String... fileNames) {
+    public static Compilation compileForModule(String packageDir, String folderName, String tdsFilename, boolean debugLog, int warningCount, String... fileNames) {
         assert fileNames != null;
         JavaFileObject[] files = Arrays.stream(fileNames).map((x) -> JavaFileObjects.forResource(packageDir + "/" +x)).toArray(JavaFileObject[]::new);
         Compilation c =  javac()
@@ -68,8 +68,8 @@ public class CompileHelper {
         }
 
         assertEquals(c.diagnostics().asList().stream().filter(x -> x.getKind().equals(Diagnostic.Kind.WARNING)).count(), warningCount);
-        assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, JTS_DEV, PACKAGE_JSON).isPresent());
-        assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, JTS_DEV, JTS_DEV_D_TS).isPresent());
+        assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName , PACKAGE_JSON).isPresent());
+        assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, tdsFilename).isPresent());
 
         return c;
     }

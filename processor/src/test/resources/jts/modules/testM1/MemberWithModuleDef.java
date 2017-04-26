@@ -29,5 +29,4 @@ import java.util.Date;
 @TypeScript
 public class MemberWithModuleDef {
     public Date date_string=new Date();
-    public LocalDate localDate=LocalDate.now();
 }

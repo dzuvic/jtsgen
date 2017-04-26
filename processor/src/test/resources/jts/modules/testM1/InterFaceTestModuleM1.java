@@ -21,7 +21,7 @@ package jts.modules.testM1;
 
 import dz.jtsgen.annotations.TypeScript;
 
-@TypeScript
+// Must not be in output
 public interface InterFaceTestModuleM1 {
     int getSomeInt();
     String getSomeString();

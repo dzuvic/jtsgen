@@ -25,6 +25,7 @@ import dz.jtsgen.processor.model.TSType;
 import dz.jtsgen.processor.model.TypeScriptModel;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -38,11 +39,11 @@ public class TypeScriptRenderModel extends TypeScriptModel {
         super(model);
     }
 
-    public Collection<TSModuleInfo> moduleList() {
-        return this.getModuleInfos().values();
-    }
-
     public List<TSType> getTsTypesByModule(TSModuleInfo module) {
         return super.getTsTypes();
+    }
+
+    public Collection<TSModuleInfo> moduleList() {
+        return Collections.singletonList(this.getModuleInfo());
     }
 }

@@ -117,7 +117,7 @@ public class TsGenProcessor extends AbstractProcessorWithLogging {
         } else if (annotation.getSimpleName().contentEquals(TSModule.class.getSimpleName())) {
             Set<? extends Element> annotatedElements = roundEnv.getElementsAnnotatedWith(TSModule.class);
             if (annotatedElements.size() > 1) annotatedElements.forEach( x -> this.processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING,"Multiple TSModule not supported. Multiple Modules with same ", x));
-            typeScriptModel.addModuleInfos(new TSModuleHandler(this.processingEnv).process(annotatedElements));
+            new TSModuleHandler(this.processingEnv).process(annotatedElements).stream().findFirst().ifPresent(this.typeScriptModel::addModuleInfo);
         }
     }
 

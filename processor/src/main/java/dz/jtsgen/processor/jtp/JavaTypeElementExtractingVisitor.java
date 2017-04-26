@@ -113,13 +113,11 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, TSAVi
 
 
     private String convertTypeMirrorToTsType(ExecutableElement theElement, TSAVisitorParam tsaVisitorParam) {
-        TypeMirror typeMirror = theElement.getReturnType();
-        return typeMirror.accept(new MirrotTypeToTSConverterVisitor(theElement), tsaVisitorParam);
+        return new MirrotTypeToTSConverterVisitor(theElement,tsaVisitorParam).visit(theElement.getReturnType());
     }
 
     private String convertTypeMirrorOfMemberToTsType(VariableElement theElement, TSAVisitorParam tsaVisitorParam) {
-        TypeMirror typeMirror = theElement.asType();
-        return typeMirror.accept(new MirrotTypeToTSConverterVisitor(theElement), tsaVisitorParam);
+        return new MirrotTypeToTSConverterVisitor(theElement, tsaVisitorParam).visit(theElement.asType());
     }
 
     List<TSMember> getMembers() {

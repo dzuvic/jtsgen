@@ -22,14 +22,13 @@ package dz.jtsgen.processor.jtp;
 
 import dz.jtsgen.annotations.TSModule;
 import dz.jtsgen.processor.model.TSModuleInfo;
+import dz.jtsgen.processor.model.TSTargetType;
 import dz.jtsgen.processor.util.StringUtils;
 
 import javax.annotation.processing.ProcessingEnvironment;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.AnnotationValue;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.SimpleAnnotationValueVisitor8;
 import javax.tools.Diagnostic;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -67,25 +66,49 @@ public final class TSModuleHandler {
                                     else if ("customTypeMappings".equals(simpleName)) customTypeMapping = entry.getValue();
                                 }
 
-                                final String versionString = version != null ? (String)version.getValue() : null;
-                                final String descriptionString = description != null ? (String)description.getValue() : null ;
-                                final String authorString = author != null ? (String)author.getValue() : null ;
-                                final String authorUrlString = authorUrl != null ? (String)authorUrl.getValue() : null ;
-                                final String licenseString = license != null ? (String)license.getValue() : null ;
+                                final String versionString = version != null ? (String) version.getValue() : null;
+                                final String descriptionString = description != null ? (String) description.getValue() : null;
+                                final String authorString = author != null ? (String) author.getValue() : null;
+                                final String authorUrlString = authorUrl != null ? (String) authorUrl.getValue() : null;
+                                final String licenseString = license != null ? (String) license.getValue() : null;
                                 final String moduleNameString = moduleName != null ? (String) moduleName.getValue() : null;
-                                final Collection<String> customTypeMappingCollection = customTypeMapping != null ? (List) customTypeMapping.getValue() : null;
-                                if ( moduleNameString == null || moduleNameString.isEmpty() || ! StringUtils.isPackageFriendly(moduleNameString)) {
-                                    this.env.getMessager().printMessage(Diagnostic.Kind.ERROR,"The module name '" + moduleNameString + "' is not package name friendly", x);
+                                if (moduleNameString == null || moduleNameString.isEmpty() || !StringUtils.isPackageFriendly(moduleNameString)) {
+                                    this.env.getMessager().printMessage(Diagnostic.Kind.ERROR, "The module name '" + moduleNameString + "' is not package name friendly", x);
                                     return null;
                                 }
+                                Map<String, String> customTypeMappingMap = convertTypeMapping(customTypeMapping, x);
                                 return new TSModuleInfo((String) moduleName.getValue(), packageName)
                                         .withModuleData(versionString, descriptionString, authorString, authorUrlString, licenseString)
-                                        .withMapping(customTypeMappingCollection);
+                                        .withMapping(customTypeMappingMap);
                             }
                     );
                 })
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toSet());
+    }
+
+    private Map<String, String> convertTypeMapping(AnnotationValue customMappingValue, Element element) {
+        List<TSTargetType> targetTypes = new SimpleAnnotationValueVisitor8<List<TSTargetType>, Void>() {
+            @Override
+            public List<TSTargetType> visitArray(List<? extends AnnotationValue> vals, Void aVoid) {
+                return vals.stream()
+                        .map(x -> {
+                            String value = (String) x.getValue();
+                            String[] params = value.split(":");
+                            if (params.length != 2 && params[0] != null && params[1] != null) {
+                                env.getMessager().printMessage(Diagnostic.Kind.ERROR, "param not valid. Expecting origin and target type separated by colon. Got:" + x, element);
+                                return Optional.<TSTargetType>empty();
+                            }
+                            assert params[0] != null;
+                            return Optional.of(new TSTargetType(params[0].trim(), params[1].trim()));
+                        })
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
+                        .collect(Collectors.toList());
+            }
+        }.visit(customMappingValue);
+        
+        return targetTypes.stream().collect(Collectors.toMap(TSTargetType::getJavaType, TSTargetType::toString));
     }
 }

@@ -147,11 +147,13 @@ public class TsGenProcessorTest {
     }
 
     @Test
-    @Ignore
     public void members_with_module_definitions() throws IOException {
-        Compilation c = CompileHelper.compileForModule("jts/modules/testM1",true,0, "MemberWithModuleDef.java", "package-info.java");
-        assertEquals("must have Type MemberWithModuleDef", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+MemberTestObject\\s*\\{")).size());
-        assertEquals("must have author Me Myself And I", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+\"author\":\\s+\"Me Myself And I\"")).size());
+        final String folderName = "jtsgen.testm1";
+        final String tdsFilename = "test-m1.d.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/testM1", folderName, tdsFilename,false,0, "MemberWithModuleDef.java", "package-info.java");
+        assertEquals("must have author Me Myself And I", 1, OutputHelper.findSourceLine(c, folderName, PACKAGE_JSON, Pattern.compile("^\\s+\"author\":\\s+\"Me Myself And I\"")).size());
+        assertEquals("must have Type MemberWithModuleDef", 1, OutputHelper.findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+interface\\s+MemberWithModuleDef\\s*\\{")).size());
+        assertEquals("java.util.Date must be converted to string", 1, OutputHelper.findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+date_string:\\s+string;")).size());
     }
 
 }

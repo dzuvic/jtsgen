@@ -7,16 +7,7 @@ import java.util.stream.Collectors;
 public class TypeScriptModel {
 
     // java package -> TSModuleInfo
-    private final Map<String,TSModuleInfo> moduleInfos = new HashMap<>();
-
-    /**
-     * @return create an empty TypeScriptModel with one default module
-     */
-    public static TypeScriptModel newModelWithDefaultModule() {
-        TypeScriptModel result = new TypeScriptModel();
-        result.addModuleInfo(new TSModuleInfo("unknown", null));
-        return result;
-    }
+    private TSModuleInfo moduleInfo = new TSModuleInfo("unknown", null);
 
     // all converted TS Types
     private final List<TSType> tsTypes=new ArrayList<>();
@@ -26,15 +17,23 @@ public class TypeScriptModel {
     }
 
     /**
+     * @return create an empty TypeScriptModel with one default module
+     */
+    public static TypeScriptModel newModelWithDefaultModule() {
+        return new TypeScriptModel();
+    }
+
+
+    /**
      * copy constructor for renderer
      */
     protected TypeScriptModel(TypeScriptModel ts) {
         this.tsTypes.addAll(ts.getTsTypes());
-        this.moduleInfos.putAll(ts.getModuleInfos());
+        this.moduleInfo= ts.moduleInfo;
     }
 
     public void addModuleInfo(TSModuleInfo moduleInfo) {
-        this.moduleInfos.put(moduleInfo.getJavaPackage().orElse(""),moduleInfo);
+        this.moduleInfo = moduleInfo;
     }
 
     public void addTSTypes(final List<TSType> visitorResult) {
@@ -57,14 +56,8 @@ public class TypeScriptModel {
         return tsTypes;
     }
 
-    protected Map<String, TSModuleInfo> getModuleInfos() {
-        return moduleInfos;
+    public TSModuleInfo getModuleInfo() {
+        return this.moduleInfo;
     }
-
-    public void addModuleInfos(Set<TSModuleInfo> tsModuleInfos) {
-        assert tsModuleInfos != null;
-        // if any modules are defined, then remove the default module
-        if (this.getModuleInfos().get("") != null && this.getModuleInfos().get("").isDefault()) this.getModuleInfos().remove("");
-        tsModuleInfos.forEach((x) -> this.getModuleInfos().put(x.getJavaPackage().orElseThrow(IllegalArgumentException::new),x));
-    }
+    
 }

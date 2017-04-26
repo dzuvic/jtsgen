@@ -25,7 +25,7 @@ import dz.jtsgen.processor.util.StringUtils;
 import java.util.*;
 
 /**
- * Describes a JavaScript Module
+ * Describes a JavaScript Module.
  * <p>
  * Created by zuvic on 16.02.17.
  */
@@ -39,7 +39,7 @@ public final class TSModuleInfo {
     private final String moduleLicense;
     private final String moduleAuthorUrl;
     private final String umdVariableName;
-    private final Set<String> customMappings = new HashSet<>();
+    private final Map<String,String> customMappings = new HashMap<>();
 
     public TSModuleInfo(String moduleName, String javaPackage
     ) {
@@ -73,8 +73,12 @@ public final class TSModuleInfo {
                 this.umdVariableName, this.customMappings);
     }
 
-    public TSModuleInfo withMapping(Collection<String> customTypeMappingCollection) {
-        return null;
+    public TSModuleInfo withMapping(Map<String, String> customTypeMappingCollection) {
+        final Map<String,String> mapping = new HashMap<>();
+        mapping.putAll(customTypeMappingCollection);
+        return new TSModuleInfo(this.moduleName, this.javaPackage,
+                       this.moduleVersion, this.moduleDescription, this.moduleAuthor, this.moduleLicense, this.moduleAuthorUrl,
+                       this.umdVariableName, mapping);
     }
 
     // the author was just too lazy writing a builder for this type...
@@ -87,7 +91,7 @@ public final class TSModuleInfo {
             , String moduleLicense
             , String moduleAuthorUrl
             , String umdVariableName
-            , Collection<String> customMappings
+            , Map<String,String> customMappings
     ) {
         assert StringUtils.isPackageFriendly(moduleName);
         this.moduleName = moduleName;
@@ -101,7 +105,7 @@ public final class TSModuleInfo {
         this.moduleAuthor = moduleAuthor == null ? "unknown" : moduleAuthor;
         this.moduleLicense = moduleLicense == null ? "unknown" : moduleLicense;
         this.moduleAuthorUrl = moduleAuthorUrl == null ? "unknown" : moduleAuthorUrl;
-        if (customMappings != null) this.customMappings.addAll(customMappings);
+        if (customMappings != null) this.customMappings.putAll(customMappings);
 
     }
 
@@ -162,7 +166,7 @@ public final class TSModuleInfo {
         return moduleAuthorUrl;
     }
 
-    public Set<String> getCustomMappings() {
+    public Map<String,String> getCustomMappings() {
         return customMappings;
     }
 
