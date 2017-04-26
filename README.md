@@ -9,7 +9,7 @@ are no other plugins required for your build system (maven, gradle).
 
 This is only a proof of concept and it currently support only some simple
 type mappings, therefore either submit an issue on [github](https://github.com/dzuvic/jtsgen/issues)
-or a submit pull request.
+or a pull request if you want a specific feature being implemented.
 
 Currently the following features are supported:
 
@@ -18,7 +18,9 @@ Currently the following features are supported:
 * creating a module with corresponding package.json. The name is constructed
   if not configured
 * Configuration of the JavaScript / TypeScript Module using the `@TSModule`
-  annotation
+  annotation, e.g. the module name or the author of the exported ES module
+* simple custom type conversion, e.g. java.util.Date to string can configured
+  at the TSModule annotation. All custom annotation are in one place.
 * Java package as typescript name space
 * converting getter/setter to TypeScript types
 * `readonly` if no setter is found
@@ -29,12 +31,41 @@ is supported.
 
 ## Usage
 
-Currently you should not use it. This project is still in development.
+This project is still in development, so major changes are still on the
+way and might break using it.
 
-The generated sources are currently currently inside the java source
-output folder. The output can be redirected using the regular `-s` option
-of `javac`
 
+The jtsgen annotation processor registers itself using the
+[ServiceLoader](http://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html)
+protocol. Therefore when the processor is available on the compile or
+annotation class path it should be automatically invoked when compiling
+the annotated Java classes.
+
+Hint: Don't use `jtsgen-processor` as a compile time or runtime dependency.
+Either get you build system to use the `javac` annotation class path or
+excluding it from the transitive dependencies, e.g. using
+`compileOnly` in Gradle or `optional` in Maven.
+
+The generated sources are currently beneath the java source output folder.
+The output can be redirected using the regular `-s` option of `javac`.
+
+An example is currently in development: [jtsgen-examples](https://github.com/dzuvic/jtsgen-example)
+
+#### Simple Example
+
+Annotate the class or the interface with a `@TypeScript` annotation like this:
+
+````
+@TypeScript
+public interface InterFaceSample {
+    int getSomeInt();
+    String getSomeString();
+}
+````
+
+When compiling this class a complete ES module including a valid `package.json`
+is generated in the source output folder for a later deployment into
+a npm compatible repository. Although this feature is not tested in any way.
 
 ### Using in gradle projects
 
@@ -49,8 +80,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly "jtsgen:jtsgen-annotations:0.0.1"
-    compileOnly "jtsgen:jtsgen-processor:0.0.1"
+    compileOnly "jtsgen:jtsgen-annotations:0.0.2"
+    compileOnly "jtsgen:jtsgen-processor:0.0.2"
 }
 ````
 
