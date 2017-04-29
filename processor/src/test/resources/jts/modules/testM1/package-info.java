@@ -22,7 +22,7 @@
         author="Me Myself And I",
         moduleName="testM1",
         version="2.0.0",
-        customTypeMappings={"java.util.Date:string"}
+        customTypeMappings={"java.util.Date -> string"}
 )
 package jts.modules.testM1;
 

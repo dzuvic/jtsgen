@@ -18,23 +18,17 @@
  *
  */
 
-package dz.jtsgen.processor.model;
+package jts.dev;
 
-/**
- *  A kind of target representation for the conversion a specific java type.
- */
-public interface TSTargetType {
+import dz.jtsgen.annotations.TypeScript;
 
-    /**
-     * the type the processor should look for (without any type params or nested types.
-     */
-    String getJavaType();
+import java.util.ArrayList;
+import java.util.List;
 
+@TypeScript
+public class MemberContainerTest {
+    
+    public List only_List=new ArrayList();
 
-    /**
-     * this toString is meant as an textual representation for the renderer
-     */
-    @Override
-    String toString();
+    public List<String> list_Of_String=new ArrayList<>();
 }
-

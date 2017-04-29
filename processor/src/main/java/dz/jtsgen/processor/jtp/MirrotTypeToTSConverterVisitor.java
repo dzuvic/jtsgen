@@ -21,6 +21,7 @@
 package dz.jtsgen.processor.jtp;
 
 
+import dz.jtsgen.processor.model.TSTargetType;
 import dz.jtsgen.processor.model.TypeScriptModel;
 import dz.jtsgen.processor.visitors.TSAVisitorParam;
 
@@ -29,14 +30,22 @@ import javax.lang.model.element.Element;
 import javax.lang.model.type.*;
 import javax.lang.model.util.AbstractTypeVisitor8;
 import javax.tools.Diagnostic;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static dz.jtsgen.processor.model.tstarget.TSTargetFactory.createTSTargetByMapping;
 
 /**
 *  This Visitor is used to convert a Java Type to an TS type
  * Created by zuvic on 04.04.17.
  */
 public class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<String, Void> {
+
+    private static Logger LOG = Logger.getLogger(MirrotTypeToTSConverterVisitor.class.getName());
+
 
     private final Map<String,String> declaredTypeConversions;
 
@@ -55,14 +64,17 @@ public class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<String,
     }
 
     private Map<String, String> createDefaultDeclaredTypeConversion() {
-        Map<String,String> result = new HashMap<>();
-        result.put("java.lang.String","string");
-        result.put("java.lang.Integer","number");
-        result.put("java.lang.Double","number");
-        result.put("java.lang.Number","number");
-        result.put("java.lang.Long","number");
-        result.put("java.lang.Short","number");
-        return result;
+        return Stream.of(
+                createTSTargetByMapping("java.lang.String -> string"),
+                createTSTargetByMapping("java.lang.Integer -> number"),
+                createTSTargetByMapping("java.lang.Double -> number"),
+                createTSTargetByMapping("java.lang.Number -> number"),
+                createTSTargetByMapping("java.lang.Long -> number"),
+                createTSTargetByMapping("java.lang.Short -> number")
+        ).filter(Optional::isPresent)
+            .map(Optional::get)
+            .collect(Collectors.toMap(TSTargetType::getJavaType, TSTargetType::toString));
+
     }
 
     @Override
@@ -91,9 +103,20 @@ public class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<String,
     @Override
     public String visitDeclared(DeclaredType t, Void x) {
         String nameOfType=t.toString();
-        if (this.declaredTypeConversions.containsKey(nameOfType)) return this.declaredTypeConversions.get(nameOfType);
+        if (this.declaredTypeConversions.containsKey(nameOfType)) {
+            LOG.finest(()-> "TC: declared Type in conversion List:" + nameOfType);
+            return this.declaredTypeConversions.get(nameOfType);
+        }
+        Optional<TSTargetType> tsTargetType = extractType(nameOfType, t);
+        if (tsTargetType.isPresent()) {
+            return tsTargetType.get().toString();
+        }
         this.env.getMessager().printMessage(Diagnostic.Kind.WARNING,"declared type not known or found " + nameOfType, currentElement);
         return "any";
+    }
+
+    private Optional<TSTargetType> extractType(String nameOfType, DeclaredType t) {
+        return Optional.empty();
     }
 
     @Override

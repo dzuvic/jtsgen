@@ -135,6 +135,13 @@ public class TsGenProcessorTest {
     }
 
     @Test
+    public void test_container_types() throws IOException {
+        Compilation c = CompileHelper.compileJtsDev(true,2,  "MemberContainerTest.java");
+        assertEquals("must have Type MemberContainerTest", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+MemberContainerTest\\s*\\{")).size());
+    }
+
+
+    @Test
     public void test_simple_class() throws IOException {
         Compilation c = CompileHelper.compileJtsDev(false,0,"MemberTestObject.java");
 

@@ -64,10 +64,10 @@ public @interface TSModule {
 
     /**
      *   custom Type Mapping for the module: this is a list of String, each describing a type mapping. Each String consists
-     *   of a Java Type (canonical name) and the resulting TypeScript Type. Both Types are separated with a colon, e.g.:
+     *   of a Java Type (canonical name) and the resulting TypeScript Type. Both Types are separated with an arrow, e.g.:
      *
      *   <pre>
-     *       java.util.Date:IDateJSStatic
+     *       java.util.Date -> IDateJSStatic
      *   </pre>
      *
      *   The Processor has no knowledge about the the necessary imports.

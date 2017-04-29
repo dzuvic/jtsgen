@@ -23,14 +23,21 @@ package dz.jtsgen.processor.jtp;
 import dz.jtsgen.annotations.TSModule;
 import dz.jtsgen.processor.model.TSModuleInfo;
 import dz.jtsgen.processor.model.TSTargetType;
+import dz.jtsgen.processor.model.tstarget.TSTargetFactory;
 import dz.jtsgen.processor.util.StringUtils;
 
 import javax.annotation.processing.ProcessingEnvironment;
-import javax.lang.model.element.*;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.AnnotationValue;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.SimpleAnnotationValueVisitor8;
 import javax.tools.Diagnostic;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -92,16 +99,13 @@ public final class TSModuleHandler {
         List<TSTargetType> targetTypes = new SimpleAnnotationValueVisitor8<List<TSTargetType>, Void>() {
             @Override
             public List<TSTargetType> visitArray(List<? extends AnnotationValue> vals, Void aVoid) {
+                
                 return vals.stream()
                         .map(x -> {
                             String value = (String) x.getValue();
-                            String[] params = value.split(":");
-                            if (params.length != 2 && params[0] != null && params[1] != null) {
-                                env.getMessager().printMessage(Diagnostic.Kind.ERROR, "param not valid. Expecting origin and target type separated by colon. Got:" + x, element);
-                                return Optional.<TSTargetType>empty();
-                            }
-                            assert params[0] != null;
-                            return Optional.of(new TSTargetType(params[0].trim(), params[1].trim()));
+                            Optional<TSTargetType> result = TSTargetFactory.createTSTargetByMapping(value);
+                            if (! result.isPresent()) env.getMessager().printMessage(Diagnostic.Kind.ERROR, "param not valid. Expecting origin and target type separated by '->'. Got:" + x, element);
+                            return result ;
                         })
                         .filter(Optional::isPresent)
                         .map(Optional::get)

@@ -18,23 +18,40 @@
  *
  */
 
-package dz.jtsgen.processor.model;
+package dz.jtsgen.processor.model.tstarget;
+
+import dz.jtsgen.processor.model.TSTargetType;
 
 /**
- *  A kind of target representation for the conversion a specific java type.
+ *  represents a simple type direct conversion.
  */
-public interface TSTargetType {
+final class TSTargetSimpleType implements TSTargetType{
 
     /**
      * the type the processor should look for (without any type params or nested types.
      */
-    String getJavaType();
+    private  final String javaType;
 
+    /**
+     * the resulting target type, currently as String
+     */
+    private  final String tsTargetType;
+
+    TSTargetSimpleType(String javaType, String tsTargetType) {
+        this.javaType = javaType;
+        this.tsTargetType = tsTargetType;
+    }
+
+    public String getJavaType() {
+        return javaType;
+    }
 
     /**
      * this toString is meant as an textual representation for the renderer
      */
     @Override
-    String toString();
+    public String toString() {
+        return tsTargetType;
+    }
 }
 
