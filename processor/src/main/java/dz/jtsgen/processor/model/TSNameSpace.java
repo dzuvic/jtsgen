@@ -101,4 +101,9 @@ public class TSNameSpace {
         if (!this.children.containsKey(thatName)) throw new IllegalArgumentException("no namespace " + thatName + " in current node " + this.name);
         else return this.children.get(thatName);
     }
+
+    // only for tests
+    Map<String, TSNameSpace> getChildren() {
+        return children;
+    }
 }

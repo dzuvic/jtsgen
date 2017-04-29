@@ -20,6 +20,7 @@
 package dz.jtsgen.processor.util;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,11 +35,11 @@ public final class StringUtils {
     private static final Pattern PATTERN = Pattern.compile(PATTERN_STRING);
 
     //  @see <a href="http://docs.oracle.com/javase/specs/jls/se7/html/jls-3.html#jls-3.8">JVM Spec 3.8</a>
-    public static final Pattern PACKAGE_PATTERN = Pattern.compile("^[a-zA-Z_$][a-zA-Z0-9_$]*(\\.[a-z0-9A-Z_$]+)*$");
+    static final Pattern PACKAGE_PATTERN = Pattern.compile("^[a-zA-Z_$][a-zA-Z0-9_$]*(\\.[a-z0-9A-Z_$]+)*$");
 
     /**
      * @param format simple format String with slf4j like '{}' as
-     * @param items
+     * @param items the items
      * @return the formatted string or an empty String if format string is null
      */
     public static String arrayFormat(String format, Object[] items) {
@@ -65,8 +66,8 @@ public final class StringUtils {
         if (item == null) return "null";
         if (item instanceof Collection) {
             Collection<String> ofStrings = ((Collection<?>) item).stream()
-                    .filter((x) -> x != null)
-                    .map((x) -> x.toString())
+                    .filter(Objects::nonNull)
+                    .map(Object::toString)
                     .collect(Collectors.toList());
             return String.join(",", ofStrings);
         }
@@ -80,10 +81,16 @@ public final class StringUtils {
         else return Optional.empty();
     }
 
+    /**
+     *
+     * @param name the string to process
+     * @param sep the separator, if null use a dot (optional)
+     * @return the first element of the string separated by sep
+     */
     public static String car(String name, String... sep) {
         String realSep = separator(sep);
         final int i = name.indexOf(realSep);
-        if (i > 0) return name.substring(0, i - 1);
+        if (i > 0) return name.substring(0, i );
         else return name;
     }
 
@@ -136,7 +143,7 @@ public final class StringUtils {
 
     /**
      * @param input mus not be null
-     * @return
+     * @return string in dash notation
      */
     public static String camelCaseToDash(String input) {
         if (input == null) throw new IllegalArgumentException("camelCaseToDash argument must not be null");

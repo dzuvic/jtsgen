@@ -1,4 +1,4 @@
-# Java Type Emitter For TypeScript: _jtsgen_
+# _jtsgen_: Convert Java Types to TypeScript
 
 **tl;dr** Enable code completion of Java types in your TypeScript project.
 

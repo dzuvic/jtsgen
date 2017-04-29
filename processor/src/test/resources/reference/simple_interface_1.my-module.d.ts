@@ -3,7 +3,7 @@
 
 
 declare namespace MyModule {
-  export namespace jt {
+  export namespace jts {
     export namespace dev {
       export interface InterFaceTest {
         readonly someString: string;

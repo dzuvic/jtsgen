@@ -33,6 +33,14 @@ import static org.junit.Assert.*;
 public class StringUtilsTest {
 
     @Test
+     public void tesrCarOfString() throws Exception {
+         assertEquals("de", StringUtils.car("de.dz"));
+         assertEquals("de", StringUtils.car("de"));
+         assertEquals("", StringUtils.car(""));
+         assertEquals("a", StringUtils.car("a.b.c.d"));
+     }
+
+    @Test
     public void testMessageWithNulls() throws Exception {
         assertEquals("", StringUtils.arrayFormat("", new Object[]{"a"}));
         assertEquals("", StringUtils.arrayFormat(null, new Object[]{"a"}));
@@ -53,7 +61,7 @@ public class StringUtilsTest {
 
     @Test
     public void testMessageWithList() throws Exception {
-        assertEquals("1,2,3", StringUtils.arrayFormat("{}", new Object[]{  Arrays.asList(new Integer[] { 1, 2, 3 }) } ));
+        assertEquals("1,2,3", StringUtils.arrayFormat("{}", new Object[]{  Arrays.asList(1, 2, 3) } ));
     }
 
     @Test
