@@ -22,6 +22,7 @@ package dz.jtsgen.processor.jtp;
 
 import dz.jtsgen.annotations.TSIgnore;
 import dz.jtsgen.processor.model.TSMember;
+import dz.jtsgen.processor.model.TSTargetType;
 import dz.jtsgen.processor.visitors.TSAVisitorParam;
 
 import javax.lang.model.element.*;
@@ -80,7 +81,7 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, TSAVi
         final boolean isIgnored = isIgnored(e);
         LOG.log(Level.FINEST, () -> String.format("JTExV visiting variable %s%s", name, isIgnored?" (ignored)":""));
         if (isPublic && !members.containsKey(name)) {
-            final String tsTypeOfExecutable = convertTypeMirrorOfMemberToTsType(e, tsaVisitorParam);
+            final TSTargetType tsTypeOfExecutable = convertTypeMirrorOfMemberToTsType(e, tsaVisitorParam);
             members.put(name, new TSMember(name, tsTypeOfExecutable, false));
             if (! isIgnored) extractableMembers.add(name);
         }
@@ -92,7 +93,7 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, TSAVi
         LOG.fine(() -> String.format("JTExV visiting executable %s", e.toString()));
         if (isGetterOrSetter(e)) {
             final String name = nameFromMethod(e.getSimpleName().toString());
-            final String tsTypeOfExecutable = convertTypeMirrorToTsType(e, tsaVisitorParam);
+            final TSTargetType tsTypeOfExecutable = convertTypeMirrorToTsType(e, tsaVisitorParam);
             final boolean isPublic = e.getModifiers().contains(Modifier.PUBLIC);
             final boolean isIgnored = isIgnored(e);
             LOG.finest(() -> "is getter or setter: " + (isPublic ? "public " : " ") + e.getSimpleName() + " -> " + name + ":" + tsTypeOfExecutable + " " +(isIgnored?"(ignored)":""));
@@ -112,11 +113,11 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, TSAVi
     }
 
 
-    private String convertTypeMirrorToTsType(ExecutableElement theElement, TSAVisitorParam tsaVisitorParam) {
+    private TSTargetType convertTypeMirrorToTsType(ExecutableElement theElement, TSAVisitorParam tsaVisitorParam) {
         return new MirrotTypeToTSConverterVisitor(theElement,tsaVisitorParam).visit(theElement.getReturnType());
     }
 
-    private String convertTypeMirrorOfMemberToTsType(VariableElement theElement, TSAVisitorParam tsaVisitorParam) {
+    private TSTargetType convertTypeMirrorOfMemberToTsType(VariableElement theElement, TSAVisitorParam tsaVisitorParam) {
         return new MirrotTypeToTSConverterVisitor(theElement, tsaVisitorParam).visit(theElement.asType());
     }
 

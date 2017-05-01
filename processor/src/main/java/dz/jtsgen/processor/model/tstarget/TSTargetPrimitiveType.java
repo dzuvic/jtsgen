@@ -28,9 +28,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *  represents a simple decl type for direct conversion. No Type Params
+ *  represents a simple type direct conversion.
  */
-final class TSTargetSimpleType implements TSTargetType{
+final class TSTargetPrimitiveType implements TSTargetType{
 
     /**
      * the type the processor should look for (without any type params or nested types.
@@ -42,7 +42,7 @@ final class TSTargetSimpleType implements TSTargetType{
      */
     private  final String tsTargetType;
 
-    TSTargetSimpleType(String javaType, String tsTargetType) {
+    TSTargetPrimitiveType(String javaType, String tsTargetType) {
         this.javaType = javaType;
         this.tsTargetType = tsTargetType;
     }

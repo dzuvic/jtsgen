@@ -19,22 +19,24 @@
  */
 package dz.jtsgen.processor.model;
 
+import dz.jtsgen.processor.model.tstarget.TSTargets;
+
 public class TSMember {
-    public static final TSMember INVALD = new TSMember("1nvalid","1nvalid", true,true);
+    public static final TSMember INVALD = new TSMember("invalid", TSTargets.NONE, true,true);
 
     private final String name;
-    private final String type; // TODO refactor to TSTYPE?
+    private final TSTargetType type;
     private final boolean readOnly;
     private final boolean invalid;
 
-    private TSMember(String name, String type, boolean readOnly, boolean invalid) {
+    private TSMember(String name, TSTargetType type, boolean readOnly, boolean invalid) {
         this.name = name;
         this.type = type;
         this.readOnly = readOnly;
         this.invalid = invalid;
     }
 
-    public TSMember(String name, String type, boolean readOnly) {
+    public TSMember(String name, TSTargetType type, boolean readOnly) {
         this(name, type, readOnly, false);
     }
 
@@ -42,7 +44,7 @@ public class TSMember {
         return name;
     }
 
-    public String getType() {
+    public TSTargetType getType() {
         return type;
     }
 

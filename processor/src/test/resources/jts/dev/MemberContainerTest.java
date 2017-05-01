@@ -28,7 +28,7 @@ import java.util.List;
 @TypeScript
 public class MemberContainerTest {
     
-    public List only_List=new ArrayList();
+//    public List only_List=new ArrayList();
 
     public List<String> list_Of_String=new ArrayList<>();
 }

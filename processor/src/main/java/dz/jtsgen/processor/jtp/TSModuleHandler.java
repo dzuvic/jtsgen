@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -83,7 +84,7 @@ public final class TSModuleHandler {
                                     this.env.getMessager().printMessage(Diagnostic.Kind.ERROR, "The module name '" + moduleNameString + "' is not package name friendly", x);
                                     return null;
                                 }
-                                Map<String, String> customTypeMappingMap = convertTypeMapping(customTypeMapping, x);
+                                Map<String, TSTargetType> customTypeMappingMap = convertTypeMapping(customTypeMapping, x);
                                 return new TSModuleInfo((String) moduleName.getValue(), packageName)
                                         .withModuleData(versionString, descriptionString, authorString, authorUrlString, licenseString)
                                         .withMapping(customTypeMappingMap);
@@ -95,7 +96,7 @@ public final class TSModuleHandler {
                 .collect(Collectors.toSet());
     }
 
-    private Map<String, String> convertTypeMapping(AnnotationValue customMappingValue, Element element) {
+    private Map<String, TSTargetType> convertTypeMapping(AnnotationValue customMappingValue, Element element) {
         List<TSTargetType> targetTypes = new SimpleAnnotationValueVisitor8<List<TSTargetType>, Void>() {
             @Override
             public List<TSTargetType> visitArray(List<? extends AnnotationValue> vals, Void aVoid) {
@@ -113,6 +114,6 @@ public final class TSModuleHandler {
             }
         }.visit(customMappingValue);
         
-        return targetTypes.stream().collect(Collectors.toMap(TSTargetType::getJavaType, TSTargetType::toString));
+        return targetTypes.stream().collect(Collectors.toMap(TSTargetType::getJavaType, Function.identity()));
     }
 }

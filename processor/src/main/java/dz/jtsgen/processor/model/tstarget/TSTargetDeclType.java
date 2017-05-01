@@ -22,15 +22,15 @@ package dz.jtsgen.processor.model.tstarget;
 
 import dz.jtsgen.processor.model.TSTargetType;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
- *  represents a simple decl type for direct conversion. No Type Params
+ *  represents a simple type direct conversion.
  */
-final class TSTargetSimpleType implements TSTargetType{
+final class TSTargetDeclType implements TSTargetType{
 
     /**
      * the type the processor should look for (without any type params or nested types.
@@ -41,10 +41,14 @@ final class TSTargetSimpleType implements TSTargetType{
      * the resulting target type, currently as String
      */
     private  final String tsTargetType;
+    private final List<String> typeParameters;
+    private  final Map<String,TSTargetType> typeParametersTypes;
 
-    TSTargetSimpleType(String javaType, String tsTargetType) {
+    TSTargetDeclType(String javaType, String tsTargetType, List<String> typeParameters, Map<String, TSTargetType> typeParametersTypes) {
         this.javaType = javaType;
         this.tsTargetType = tsTargetType;
+        this.typeParameters = typeParameters;
+        this.typeParametersTypes = typeParametersTypes == null ? new HashMap<>() : typeParametersTypes;
     }
 
     public String getJavaType() {
@@ -56,22 +60,22 @@ final class TSTargetSimpleType implements TSTargetType{
      */
     @Override
     public String toString() {
-        return tsTargetType;
+        return tsTargetType+"<"+typeParameters.stream().collect(Collectors.joining(","))+">";
     }
 
     @Override
     public boolean isReferenceType() {
-        return false;
+        return true;
     }
 
     @Override
     public List<String> typeParameters() {
-        return Collections.emptyList();
+        return this.typeParameters;   
     }
 
     @Override
     public Map<String, TSTargetType> typeParameterTypes() {
-        return new HashMap<>();
+        return this.typeParametersTypes;
     }
 }
 

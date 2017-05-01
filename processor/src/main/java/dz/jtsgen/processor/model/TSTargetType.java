@@ -20,13 +20,16 @@
 
 package dz.jtsgen.processor.model;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  *  A kind of target representation for the conversion a specific java type.
  */
 public interface TSTargetType {
 
     /**
-     * the type the processor should look for (without any type params or nested types.
+     * TODO: doc
      */
     String getJavaType();
 
@@ -36,5 +39,21 @@ public interface TSTargetType {
      */
     @Override
     String toString();
+
+    /**
+     * @return returns true if target was mapped from a declaration type (reference type)
+     *
+      */
+    boolean isReferenceType();
+
+    /**
+     * @return a list of type variables
+     */
+    List<String> typeParameters();
+
+    /**
+     * @return a map of type variables types
+     */
+    Map<String,TSTargetType> typeParameterTypes();
 }
 

@@ -39,7 +39,7 @@ public final class TSModuleInfo {
     private final String moduleLicense;
     private final String moduleAuthorUrl;
     private final String umdVariableName;
-    private final Map<String,String> customMappings = new HashMap<>();
+    private final Map<String,TSTargetType> customMappings = new HashMap<>();
 
     public TSModuleInfo(String moduleName, String javaPackage
     ) {
@@ -73,8 +73,8 @@ public final class TSModuleInfo {
                 this.umdVariableName, this.customMappings);
     }
 
-    public TSModuleInfo withMapping(Map<String, String> customTypeMappingCollection) {
-        final Map<String,String> mapping = new HashMap<>();
+    public TSModuleInfo withMapping(Map<String, TSTargetType> customTypeMappingCollection) {
+        final Map<String,TSTargetType> mapping = new HashMap<>();
         mapping.putAll(customTypeMappingCollection);
         return new TSModuleInfo(this.moduleName, this.javaPackage,
                        this.moduleVersion, this.moduleDescription, this.moduleAuthor, this.moduleLicense, this.moduleAuthorUrl,
@@ -91,7 +91,7 @@ public final class TSModuleInfo {
             , String moduleLicense
             , String moduleAuthorUrl
             , String umdVariableName
-            , Map<String,String> customMappings
+            , Map<String,TSTargetType> customMappings
     ) {
         assert StringUtils.isPackageFriendly(moduleName);
         this.moduleName = moduleName;
@@ -166,7 +166,7 @@ public final class TSModuleInfo {
         return moduleAuthorUrl;
     }
 
-    public Map<String,String> getCustomMappings() {
+    public Map<String,TSTargetType> getCustomMappings() {
         return customMappings;
     }
 
