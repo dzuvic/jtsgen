@@ -21,13 +21,17 @@
 package dz.jtsgen.processor.model.tstarget;
 
 import dz.jtsgen.processor.model.TSTargetType;
+import dz.jtsgen.processor.util.StringUtils;
 
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static dz.jtsgen.processor.util.StringUtils.withoutTypeArgs;
 
 /**
  * creates a TSTargetType by the string representation of the java to ts type mapping
@@ -36,6 +40,10 @@ public final class TSTargetFactory {
     private final static Logger LOG = Logger.getLogger(TSTargetFactory.class.getName());
     private final static Pattern TYPE_PARAM_PATTERN = Pattern.compile("<\\s*(\\w+)\\s*(,\\s*\\w+\\s*)*>");
 
+    /**
+     * @param mappingString the Mapping String
+     * @return the corresponding TSTarget of that mapping string
+     */
     public static Optional<TSTargetType> createTSTargetByMapping(String mappingString) {
         if (mappingString == null || !mappingString.contains("->")) return Optional.empty();
 
@@ -62,11 +70,6 @@ public final class TSTargetFactory {
 
     }
 
-    private static String withoutTypeArgs(String javaTypeString) {
-        if (javaTypeString == null) return "";
-        return javaTypeString.replaceAll("<.*>","");
-    }
-
     private static String withoutParens(String javaTypeString) {
         if (javaTypeString == null) return "";
         return javaTypeString.replaceAll("[<,>]","");
@@ -85,4 +88,17 @@ public final class TSTargetFactory {
         return jTypeVars;
     }
 
+    /**
+     * @param tstype the original TSTarget
+     * @param typeParamMap the Type param map
+     * @return a copy of TSTargetType with resolved Type Params
+     */
+    public static TSTargetType copyWithTypeParams(TSTargetType tstype, Map<String, TSTargetType> typeParamMap) {
+        Optional<TSTargetInternal> tsTargetInternal = Optional.ofNullable (tstype instanceof TSTargetInternal ? (TSTargetInternal) tstype : null);
+        return new TSTargetDeclType(
+                tstype.getJavaType(),
+                tsTargetInternal.map(TSTargetInternal::tsTargetType).orElse("none"),
+                tstype.typeParameters(),
+                typeParamMap);
+    }
 }

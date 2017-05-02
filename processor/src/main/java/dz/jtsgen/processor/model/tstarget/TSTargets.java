@@ -42,4 +42,5 @@ public final class TSTargets {
     public static final TSTargetType BOOLEAN =  createTSTargetByMapping("java.lang.Boolean -> boolean").orElse(NONE);
 
     public static final TSTargetType COLLECTION = createTSTargetByMapping("java.util.Collection<T> -> Array<T>").orElse(NONE);
+    public static final TSTargetType MAPS = createTSTargetByMapping("java.util.Map<U,V> -> Map<U,V>").orElse(NONE);
 }

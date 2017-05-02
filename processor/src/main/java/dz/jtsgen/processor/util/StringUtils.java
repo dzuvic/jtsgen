@@ -35,11 +35,11 @@ public final class StringUtils {
     private static final Pattern PATTERN = Pattern.compile(PATTERN_STRING);
 
     //  @see <a href="http://docs.oracle.com/javase/specs/jls/se7/html/jls-3.html#jls-3.8">JVM Spec 3.8</a>
-    static final Pattern PACKAGE_PATTERN = Pattern.compile("^[a-zA-Z_$][a-zA-Z0-9_$]*(\\.[a-z0-9A-Z_$]+)*$");
+    private static final Pattern PACKAGE_PATTERN = Pattern.compile("^[a-zA-Z_$][a-zA-Z0-9_$]*(\\.[a-z0-9A-Z_$]+)*$");
 
     /**
      * @param format simple format String with slf4j like '{}' as
-     * @param items the items
+     * @param items  the items
      * @return the formatted string or an empty String if format string is null
      */
     public static String arrayFormat(String format, Object[] items) {
@@ -82,15 +82,14 @@ public final class StringUtils {
     }
 
     /**
-     *
      * @param name the string to process
-     * @param sep the separator, if null use a dot (optional)
+     * @param sep  the separator, if null use a dot (optional)
      * @return the first element of the string separated by sep
      */
     public static String car(String name, String... sep) {
         String realSep = separator(sep);
         final int i = name.indexOf(realSep);
-        if (i > 0) return name.substring(0, i );
+        if (i > 0) return name.substring(0, i);
         else return name;
     }
 
@@ -156,6 +155,16 @@ public final class StringUtils {
     }
 
     public static boolean isPackageFriendly(String moduleName) {
-        return moduleName!=null && PACKAGE_PATTERN.matcher(moduleName).matches();
+        return moduleName != null && PACKAGE_PATTERN.matcher(moduleName).matches();
+    }
+
+    /**
+     * @param javaTypeString the type String
+     * @return the string without any type arguments
+     */
+    public static String withoutTypeArgs(String javaTypeString) {
+        if (javaTypeString == null) return "";
+        return javaTypeString.replaceAll("<.*>", "");
     }
 }
+

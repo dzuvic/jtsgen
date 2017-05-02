@@ -25,12 +25,13 @@ import dz.jtsgen.processor.model.TSTargetType;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
  *  represents a simple type direct conversion.
  */
-final class TSTargetDeclType implements TSTargetType{
+final class TSTargetDeclType implements TSTargetType, TSTargetInternal {
 
     /**
      * the type the processor should look for (without any type params or nested types.
@@ -60,7 +61,17 @@ final class TSTargetDeclType implements TSTargetType{
      */
     @Override
     public String toString() {
-        return tsTargetType+"<"+typeParameters.stream().collect(Collectors.joining(","))+">";
+        StringBuilder result=new StringBuilder();
+        result.append(tsTargetType);
+        if (typeParametersTypes.size() > 0) {
+            result.append("<");
+            result.append(
+                    typeParameters.stream().map(x -> (typeParametersTypes.get(x) != null) ? typeParametersTypes.get(x).toString() : null)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.joining(", ")));
+            result.append(">");
+        }
+        return result.toString();
     }
 
     @Override
@@ -76,6 +87,11 @@ final class TSTargetDeclType implements TSTargetType{
     @Override
     public Map<String, TSTargetType> typeParameterTypes() {
         return this.typeParametersTypes;
+    }
+
+    @Override
+    public String tsTargetType() {
+        return this.tsTargetType;
     }
 }
 

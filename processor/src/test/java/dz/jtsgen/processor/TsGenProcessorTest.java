@@ -136,8 +136,12 @@ public class TsGenProcessorTest {
 
     @Test
     public void test_container_types() throws IOException {
-        Compilation c = CompileHelper.compileJtsDev(true,1,  "MemberContainerTest.java");
+        Compilation c = CompileHelper.compileJtsDev(false,0,  "MemberContainerTest.java");
         assertEquals("must have Type MemberContainerTest", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+MemberContainerTest\\s*\\{")).size());
+        assertEquals("list must be mapped to Array<string>", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("list_Of_String:\\s+Array<string>;")).size());
+        assertEquals("set must be mapped to Array<number>", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("set_Of_Int:\\s+Array<number>;")).size());
+        assertEquals("list without type param must be mapped to Array", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("only_List:\\s+Array;")).size());
+        assertEquals("java.util.Map must be mapped to Map<..>", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("map_of_string_to_list_of_string:\\s+Map<string,\\s+Array<string>>;")).size());
     }
 
 

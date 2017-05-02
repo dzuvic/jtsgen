@@ -18,25 +18,12 @@
  *
  */
 
-package jts.dev;
+package dz.jtsgen.processor.model.tstarget;
 
-import dz.jtsgen.annotations.TypeScript;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.HashSet;
-
-@TypeScript
-public class MemberContainerTest {
+/**
+ * the factory needs access to the inner data, this is ensured by implementing TSTargetInternal
+ */
+interface TSTargetInternal {
     
-    public List only_List=new ArrayList();
-
-    public List<String> list_Of_String=new ArrayList<>();
-
-    public Set<Integer> set_Of_Int = new HashSet<>();
-
-    public Map<String,List<String>> map_of_string_to_list_of_string = new HashMap<>();
+    String tsTargetType();
 }

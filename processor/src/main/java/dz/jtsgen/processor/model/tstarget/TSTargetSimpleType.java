@@ -30,7 +30,7 @@ import java.util.Map;
 /**
  *  represents a simple decl type for direct conversion. No Type Params
  */
-final class TSTargetSimpleType implements TSTargetType{
+final class TSTargetSimpleType implements TSTargetType, TSTargetInternal{
 
     /**
      * the type the processor should look for (without any type params or nested types.
@@ -72,6 +72,11 @@ final class TSTargetSimpleType implements TSTargetType{
     @Override
     public Map<String, TSTargetType> typeParameterTypes() {
         return new HashMap<>();
+    }
+
+    @Override
+    public String tsTargetType() {
+        return this.tsTargetType;
     }
 }
 

@@ -30,7 +30,7 @@ import java.util.Map;
 /**
  *  represents a simple type direct conversion.
  */
-final class TSTargetPrimitiveType implements TSTargetType{
+final class TSTargetPrimitiveType implements TSTargetType, TSTargetInternal{
 
     /**
      * the type the processor should look for (without any type params or nested types.
@@ -72,6 +72,11 @@ final class TSTargetPrimitiveType implements TSTargetType{
     @Override
     public Map<String, TSTargetType> typeParameterTypes() {
         return new HashMap<>();
+    }
+
+    @Override
+    public String tsTargetType() {
+        return this.tsTargetType;
     }
 }
 

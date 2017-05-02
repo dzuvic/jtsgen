@@ -65,6 +65,13 @@ public class StringUtilsTest {
     }
 
     @Test
+    public void testRemoveTypeArgs() {
+        assertEquals("",StringUtils.withoutTypeArgs(null));
+        assertEquals("a",StringUtils.withoutTypeArgs("a<b>"));
+        assertEquals("a",StringUtils.withoutTypeArgs("a<b<c>>"));
+    }
+
+    @Test
     public void qualifiedTests() throws Exception {
        assertEquals("",StringUtils.lastOf(""));
        assertEquals("d",StringUtils.lastOf("a.b.c.d"));
