@@ -20,8 +20,11 @@
 
 package dz.jtsgen.processor.util;
 
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -49,6 +52,15 @@ public final class StreamUtils {
     public static <X, Y> Stream<Tuple<X, Y>> zip(Stream<X> x, Stream<Y> y) {
         assert x != null && y != null;
         return zip(x, y, Tuple::new);
+    }
+
+    @SafeVarargs
+    public static <T> Optional<T> firstOptional(Supplier<Optional<T>> ... optionals) {
+        return Arrays.stream(optionals)
+                .map(Supplier::get)
+                .filter(Optional::isPresent)
+                .findFirst()
+                .orElseGet(Optional::empty);
     }
 
 }

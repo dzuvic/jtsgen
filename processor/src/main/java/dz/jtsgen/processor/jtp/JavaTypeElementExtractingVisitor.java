@@ -69,8 +69,11 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, TSAVi
     @Override
     public Void visitType(TypeElement e, TSAVisitorParam tsaVisitorParam) {
         LOG.log(Level.FINEST, () -> String.format("JTExV visiting type %s", e.toString()));
-        TSMember member = tsMemberVisitor.visit(e.asType(), tsaVisitorParam);
-        this.members.put(member.getName(), member);
+        Optional<TSMember> member = Optional.ofNullable(tsMemberVisitor.visit(e.asType(), tsaVisitorParam));
+        member.ifPresent(x->this.members.put(x.getName(), x));
+        if (!member.isPresent()) {
+            LOG.info( () -> "could not the type '" + e + "' to a TSMember");
+        }
         return null;
     }
 
@@ -93,17 +96,18 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, TSAVi
         LOG.fine(() -> String.format("JTExV visiting executable %s", e.toString()));
         if (isGetterOrSetter(e)) {
             final String name = nameFromMethod(e.getSimpleName().toString());
-            final TSTargetType tsTypeOfExecutable = convertTypeMirrorToTsType(e, tsaVisitorParam);
             final boolean isPublic = e.getModifiers().contains(Modifier.PUBLIC);
             final boolean isIgnored = isIgnored(e);
-            LOG.finest(() -> "is getter or setter: " + (isPublic ? "public " : " ") + e.getSimpleName() + " -> " + name + ":" + tsTypeOfExecutable + " " +(isIgnored?"(ignored)":""));
+            if (isGetter(e) && ( !isPublic ||  isIgnored )) return null; // return early for not converting private types
+            final TSTargetType tsTypeOfExecutable = convertTypeMirrorToTsType(e, tsaVisitorParam);
+            LOG.fine(() -> "is getter or setter: " + (isPublic ? "public " : " ") + e.getSimpleName() + " -> " + name + ":" + tsTypeOfExecutable + " " +(isIgnored?"(ignored)":""));
             if (members.containsKey(name)) {
                 // can't be read only anymore
                 members.put(name, new TSMember(name, isGetter(e) ? tsTypeOfExecutable : members.get(name).getType(), false));
             } else {
                 members.put(name, new TSMember(name, tsTypeOfExecutable, isGetter(e)));
             }
-            if (isGetter(e) && isPublic && ! isIgnored) extractableMembers.add(name);
+            if (isGetter(e)) extractableMembers.add(name);
         }
         return null;
     }

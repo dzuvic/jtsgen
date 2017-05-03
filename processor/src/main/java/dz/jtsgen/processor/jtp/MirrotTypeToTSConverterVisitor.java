@@ -22,6 +22,7 @@ package dz.jtsgen.processor.jtp;
 
 
 import dz.jtsgen.processor.model.TSTargetType;
+import dz.jtsgen.processor.model.TSType;
 import dz.jtsgen.processor.model.TypeScriptModel;
 import dz.jtsgen.processor.model.tstarget.TSTargetFactory;
 import dz.jtsgen.processor.model.tstarget.TSTargets;
@@ -31,6 +32,7 @@ import dz.jtsgen.processor.visitors.TSAVisitorParam;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.*;
 import javax.lang.model.util.AbstractTypeVisitor8;
 import javax.tools.Diagnostic;
@@ -40,7 +42,9 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static dz.jtsgen.processor.model.tstarget.TSTargetFactory.createTSTargetByMapping;
 import static dz.jtsgen.processor.model.tstarget.TSTargets.*;
+import static dz.jtsgen.processor.util.StreamUtils.firstOptional;
 import static dz.jtsgen.processor.util.StringUtils.withoutTypeArgs;
 import static javax.tools.Diagnostic.Kind.WARNING;
 
@@ -57,11 +61,10 @@ public class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTarge
 
     private final Element currentElement;
 
-    private final ProcessingEnvironment env;
-
-    private final TypeScriptModel model;
+    private final TSAVisitorParam tsaVisitorParam;
 
     MirrotTypeToTSConverterVisitor(Element currentElement, TSAVisitorParam tsaVisitorParam) {
+        this.tsaVisitorParam=tsaVisitorParam;
         this.declaredTypeConversions = new LinkedHashMap<>();
         this.declaredTypeConversions.putAll(tsaVisitorParam.getTsModel().getModuleInfo().getCustomMappings());
         this.declaredTypeConversions.putAll(
@@ -70,8 +73,6 @@ public class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTarge
                         .collect(Collectors.toMap(TSTargetType::getJavaType,Function.identity()))
         );
         this.currentElement = currentElement;
-        this.model = tsaVisitorParam.getTsModel();
-        this.env = tsaVisitorParam.getpEnv();
     }
 
     private List<TSTargetType> createDefaultDeclaredTypeConversion() {
@@ -81,7 +82,7 @@ public class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTarge
 
     @Override
     public TSTargetType visitIntersection(IntersectionType t, Void x) {
-        this.env.getMessager().printMessage(Diagnostic.Kind.ERROR, "intersection type not supported", currentElement);
+        this.env().getMessager().printMessage(Diagnostic.Kind.ERROR, "intersection type not supported", currentElement);
         return null;
     }
 
@@ -105,27 +106,32 @@ public class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTarge
     @Override
     public TSTargetType visitDeclared(DeclaredType t, Void x) {
         LOG.fine(() -> "TSCV: visitDeclared " + t);
-        String nameOfType = t.toString();
+        String nameOfTypeWithTypeParams = t.toString();
         Optional<TSTargetType> tsTargetType = extractType(t);
         if (tsTargetType.isPresent()) {
             return tsTargetType.get();
         }
-        this.env.getMessager().printMessage(WARNING, "declared type not known or found " + nameOfType, currentElement);
+        this.env().getMessager().printMessage(WARNING, "declared type not known or found " + nameOfTypeWithTypeParams, currentElement);
         return TSTargets.ANY;
     }
 
     private Optional<TSTargetType> extractType(DeclaredType t) {
-        return directConversionType(t)
-                .map(x -> {
+        final String nameOfType = withoutTypeArgs(t.toString());
+        return firstOptional(
+                ()-> directConversionType(t, nameOfType),
+                ()-> typeInModel(t, nameOfType),
+                ()-> typeNotInModel(t,nameOfType)
+        ).map(x -> {
                     if (x.typeParameters().size() > 0) return typeParametrized(t, x);
                     else return x;
                 });
     }
 
+    // check if type is in declared type
     private TSTargetType typeParametrized(DeclaredType declType, TSTargetType tstype) {
         if (declType.getTypeArguments() != null && declType.getTypeArguments().size() > 0) {
             LOG.finest(() -> "TCSV decl type type params:" + declType.getTypeArguments());
-            if (tstype.typeParameters().size() != declType.getTypeArguments().size()) this.env.getMessager().printMessage(WARNING, "type params of origin and target type differ", currentElement);
+            if (tstype.typeParameters().size() != declType.getTypeArguments().size()) this.env().getMessager().printMessage(WARNING, "type params of origin and target type differ", currentElement);
             Map<String,TSTargetType> typeParamMap = StreamUtils.zip(declType.getTypeArguments().stream(), tstype.typeParameters().stream())
                     .map(it -> {
                                     TSTargetType tsTargetType =  Optional.ofNullable(this.visit(it.getFirst())).orElse(TSTargets.ANY);
@@ -136,16 +142,34 @@ public class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTarge
         }
         return tstype;
     }
+    // if type is not in declared types, then convert the type recursivly and put them into the model
+    private Optional<TSTargetType> typeInModel(DeclaredType t, String nameOfType) {
+        return model().checkTSTargetType(nameOfType);
+    }
 
-    private Optional<TSTargetType> directConversionType(DeclaredType t) {
-        final String nameOfType = withoutTypeArgs(t.toString());
+    private Optional<TSTargetType> typeNotInModel(DeclaredType t, String nameOfType) {
+        Element javaElement = env().getTypeUtils().asElement(t);
+        LOG.finest(() -> "TCSV: not in Model " + javaElement);
+        //FIXME: change the following line by extending the model and refactoring
+        createTSTargetByMapping("" + nameOfType + "->" + "any").ifPresent(x -> model().addTSTarget(x));
+        final Optional<TypeElement> typeElement = Optional.ofNullable( (javaElement instanceof TypeElement) ? (TypeElement) javaElement :null);
+        final Optional<TSType> tsType = typeElement.flatMap( x -> new JavaTypeHandler().createTsModelWithEmbeddedTypes(x, this.tsaVisitorParam));
+        final Optional<TSTargetType> result = tsType.flatMap(x -> {
+            model().addTSTypes(Collections.singletonList(x));
+            return createTSTargetByMapping("" + nameOfType + "->" + x.getNamespace()+"."+x.getName());
+        });
+        LOG.finest(() -> "TCSV: converted " + t + " to " + tsType );
+        return result;
+    }
+
+    private Optional<TSTargetType> directConversionType(DeclaredType t,String nameOfType) {
         if (this.declaredTypeConversions.containsKey(nameOfType)) {
             LOG.finest(() -> "TCSV: declared Type in conversion List:" + nameOfType);
             return Optional.of(this.declaredTypeConversions.get(nameOfType));
         }
 
         // exclude the mother of all java types, any will be resolved later
-        List<? extends TypeMirror> supertypes = env.getTypeUtils().directSupertypes(t).stream().filter(
+        List<? extends TypeMirror> supertypes = env().getTypeUtils().directSupertypes(t).stream().filter(
             x -> ! "java.lang.Object".equals(x.toString())
         ).collect(Collectors.toList());
         Set<String> superTypeNames = supertypes.stream().map(
@@ -153,32 +177,33 @@ public class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTarge
                 // unfortunately Oracle/Sun decided not being accessible. Casting to internal classes is not an option
                 x -> withoutTypeArgs(x.toString())
         ).collect(Collectors.toSet());
+        LOG.finest(() -> "TCSV: list of super types for " + nameOfType + ": " + superTypeNames);
 
         return this.declaredTypeConversions.values().stream().filter( x -> superTypeNames.contains(x.getJavaType())).findFirst();
     }
 
     @Override
     public TSTargetType visitError(ErrorType t, Void x) {
-        this.env.getMessager().printMessage(Diagnostic.Kind.WARNING, "error type not supported, mapped to any", currentElement);
+        this.env().getMessager().printMessage(Diagnostic.Kind.WARNING, "error type not supported, mapped to any", currentElement);
         return TSTargets.ANY;
     }
 
     @Override
     public TSTargetType visitTypeVariable(TypeVariable t, Void x) {
         LOG.fine(() -> "TSCV: visitTypeVariable " + t);
-        this.env.getMessager().printMessage(WARNING, "arrays partially supported", currentElement);
+        this.env().getMessager().printMessage(WARNING, "arrays partially supported", currentElement);
         return TSTargets.ANY;
     }
 
     @Override
     public TSTargetType visitWildcard(WildcardType t, Void x) {
-        this.env.getMessager().printMessage(Diagnostic.Kind.WARNING, "wildcard type not supported");
+        this.env().getMessager().printMessage(Diagnostic.Kind.WARNING, "wildcard type not supported");
         return TSTargets.ANY;
     }
 
     @Override
     public TSTargetType visitExecutable(ExecutableType t, Void x) {
-        this.env.getMessager().printMessage(Diagnostic.Kind.WARNING, "executable type not supported", currentElement);
+        this.env().getMessager().printMessage(Diagnostic.Kind.WARNING, "executable type not supported", currentElement);
         return TSTargets.ANY;
     }
 
@@ -189,7 +214,15 @@ public class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTarge
 
     @Override
     public TSTargetType visitUnion(UnionType t, Void x) {
-        this.env.getMessager().printMessage(Diagnostic.Kind.WARNING, "union type not supported", currentElement);
+        this.env().getMessager().printMessage(Diagnostic.Kind.WARNING, "union type not supported", currentElement);
         return TSTargets.ANY;
+    }
+
+    private ProcessingEnvironment env() {
+        return this.tsaVisitorParam.getpEnv();
+    }
+
+    private TypeScriptModel model() {
+        return this.tsaVisitorParam.getTsModel();
     }
 }

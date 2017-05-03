@@ -30,8 +30,8 @@ import static dz.jtsgen.processor.model.tstarget.TSTargetFactory.createTSTargetB
 public final class TSTargets {
     public static final TSTargetType NONE = new TSTargetPrimitiveType("", "Never");
     public static final TSTargetType NULL = new TSTargetPrimitiveType("null","null");
-    public static final TSTargetType ANY = createTSTargetByMapping("java.lang.Object:any").orElse(NONE);
-    public static final TSTargetType VOID = createTSTargetByMapping("java.lang.Void:Void").orElse(NONE);
+    public static final TSTargetType ANY = createTSTargetByMapping("java.lang.Object -> any").orElse(NONE);
+    public static final TSTargetType VOID = createTSTargetByMapping("java.lang.Void -> Void").orElse(NONE);
 
     public static final TSTargetType STRING = createTSTargetByMapping("java.lang.String -> string").orElse(NONE);
     public static final TSTargetType INTEGER = createTSTargetByMapping("java.lang.Integer -> number").orElse(NONE);

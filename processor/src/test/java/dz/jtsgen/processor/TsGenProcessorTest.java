@@ -158,6 +158,32 @@ public class TsGenProcessorTest {
     }
 
     @Test
+    public void test_simple_enum() throws IOException {
+        Compilation c = CompileHelper.compileJtsDev(false,0,"InterfaceWithEnum.java","SomeEnum.java");
+    }
+
+    @Test
+    public void test_simple_date() throws IOException {
+        Compilation c = CompileHelper.compileJtsDev(false,0,"InterfaceWithDate.java");
+        assertEquals("must have Type InterfaceWithDate", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterfaceWithDate\\s*\\{")).size());
+        assertEquals("must have Type Date", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+Date\\s*\\{")).size());
+
+        // namespave java.util
+        assertEquals("must have namespace java", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+namespace\\s+java\\s*\\{")).size());
+        assertEquals("must have namespace util", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+namespace\\s+util\\s*\\{")).size());
+
+        // must have some Date attributes
+        assertEquals("must attribute hours: number;", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+hours:\\s*number;")).size());
+        assertEquals("must attribute seconds: number;", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+seconds:\\s*number;")).size());
+        assertEquals("must attribute month: number;", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+month:\\s*number;")).size());
+        assertEquals("must attribute year: number;", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+year:\\s*number;")).size());
+        assertEquals("must attribute minutes: number;", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+minutes:\\s*number;")).size());
+
+        // must be mapped to java.util.Date
+        assertEquals("must be mapped to java.util.Date", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+someDate:\\s+java.util.Date;")).size());
+    }
+
+    @Test
     public void members_with_module_definitions() throws IOException {
         final String folderName = "jtsgen.testm1";
         final String tdsFilename = "test-m1.d.ts";

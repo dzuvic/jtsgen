@@ -28,6 +28,7 @@ import javax.lang.model.element.TypeElement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -46,6 +47,12 @@ public class JavaTypeHandler {
         LOG.log(Level.FINEST, () -> String.format("JTH tsi created %s", tsi.toString()));
         result.add(tsi);
         return result;
+    }
+
+    Optional<TSType> createTsModelWithEmbeddedTypes(TypeElement e, TSAVisitorParam aParam) {
+        TSInterface tsi = new TSInterface(e).addMembers(findMembers(e, aParam));
+        LOG.log(Level.FINEST, () -> String.format("JTH single tsi created %s", tsi.toString()));
+        return Optional.ofNullable(tsi);
     }
 
     private Collection<? extends TSMember> findMembers(TypeElement e, TSAVisitorParam aParam) {

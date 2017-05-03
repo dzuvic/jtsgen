@@ -12,6 +12,9 @@ public class TypeScriptModel {
     // all converted TS Types
     private final List<TSType> tsTypes=new ArrayList<>();
 
+    // a list of java types to ts mapping, that are added indirectly
+    private Map<String, TSTargetType> tsTargetTypes = new HashMap<>();
+
     private TypeScriptModel() {
 
     }
@@ -59,5 +62,12 @@ public class TypeScriptModel {
     public TSModuleInfo getModuleInfo() {
         return this.moduleInfo;
     }
-    
+
+    public Optional<TSTargetType> checkTSTargetType(String nameOfType) {
+        return Optional.ofNullable(this.tsTargetTypes.get(nameOfType));
+    }
+
+    public void addTSTarget(TSTargetType tsTargetByMapping) {
+        this.tsTargetTypes.put(tsTargetByMapping.getJavaType(),tsTargetByMapping);
+    }
 }
