@@ -19,11 +19,10 @@
  */
 package dz.jtsgen.processor.jtp;
 
-import dz.jtsgen.processor.model.TSInterface;
-import dz.jtsgen.processor.model.TSMember;
-import dz.jtsgen.processor.model.TSType;
+import dz.jtsgen.processor.model.*;
 import dz.jtsgen.processor.visitors.TSAVisitorParam;
 
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,6 +30,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
+import static javax.lang.model.element.ElementKind.ENUM_CONSTANT;
 
 /**
  * creates interface models for each java interface or class.
@@ -40,24 +42,52 @@ import java.util.logging.Logger;
 public class JavaTypeHandler {
 
     private static Logger LOG = Logger.getLogger(JavaTypeHandler.class.getName());
-    
+
     public List<TSType> createTsModels(TypeElement e, TSAVisitorParam aParam) {
         final List<TSType> result = new ArrayList<>();
-        TSInterface tsi = new TSInterface(e).addMembers(findMembers(e, aParam));
+        Optional<TSType> tsi = handleJavaType(e, aParam);
         LOG.log(Level.FINEST, () -> String.format("JTH tsi created %s", tsi.toString()));
-        result.add(tsi);
+        tsi.ifPresent(result::add);
         return result;
     }
 
     Optional<TSType> createTsModelWithEmbeddedTypes(TypeElement e, TSAVisitorParam aParam) {
-        TSInterface tsi = new TSInterface(e).addMembers(findMembers(e, aParam));
+        Optional<TSType> tsi = handleJavaType(e, aParam);
         LOG.log(Level.FINEST, () -> String.format("JTH single tsi created %s", tsi.toString()));
-        return Optional.ofNullable(tsi);
+        return tsi;
+    }
+
+    private Optional<TSType> handleJavaType(TypeElement element, TSAVisitorParam tsaParam) {
+        TSType result = null;
+        switch (element.getKind()) {
+            case CLASS: {
+                result = new TSInterface(element).addMembers(findMembers(element, tsaParam));
+                break;
+            }
+            case INTERFACE: {
+                result = new TSInterface(element).addMembers(findMembers(element, tsaParam));
+                break;
+            }
+            case ENUM: {
+                result = new TSEnum(element).addMembers(findEnumMembers(element, tsaParam));
+                break;
+            }
+            default: break;
+        }
+       return Optional.ofNullable(result);
+    }
+
+    private Collection<? extends TSMember> findEnumMembers(TypeElement element, TSAVisitorParam tsaParam) {
+        return element.getEnclosedElements().stream()
+                .filter(x->x.getKind()==ENUM_CONSTANT)
+                .map ( x -> new TSEnumMember(x.getSimpleName().toString())
+                ).collect(Collectors.toList());
     }
 
     private Collection<? extends TSMember> findMembers(TypeElement e, TSAVisitorParam aParam) {
         JavaTypeElementExtractingVisitor visitor = new JavaTypeElementExtractingVisitor(e, aParam);
         e.getEnclosedElements().stream()
+                .filter(x -> x.getKind()== ElementKind.FIELD || x.getKind()==ElementKind.METHOD)
                 .forEach((x) -> visitor.visit(x, aParam));
         return visitor.getMembers();
     }

@@ -9,6 +9,7 @@ declare namespace MyModule {
         readonly someString: string;
         readonly someInt: number;
       }
+
     }
   }
  }

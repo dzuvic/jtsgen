@@ -24,6 +24,7 @@ import dz.jtsgen.processor.helper.IdentHelper;
 import dz.jtsgen.processor.model.TSModuleInfo;
 import dz.jtsgen.processor.model.TSNameSpace;
 import dz.jtsgen.processor.model.TSType;
+import dz.jtsgen.processor.model.rendering.TSTypeVisitor;
 import dz.jtsgen.processor.renderer.helper.ModuleResourceHelper;
 import dz.jtsgen.processor.renderer.helper.PrintWriterWithLogging;
 import dz.jtsgen.processor.renderer.model.TypeScriptRenderModel;
@@ -98,26 +99,9 @@ public final class TSDGenerator {
 
     private void outputTypes(TSModuleInfo module, int ident, List<TSType> types, PrintWriter out) {
         if (types.isEmpty()) return;
-        types.forEach(x -> {
-                    out.print(IdentHelper.identPrefix(ident));
-                    out.print("export interface ");
-                    out.print(x.getName());
-                    out.println(" {");
 
-                    x.getMembers().forEach(y -> {
-                        out.print(IdentHelper.identPrefix(ident + 1));
-                        if (y.isReadOnly()) out.print("readonly ");
-                        out.print(y.getName());
-                        out.print(": ");
-                        out.print(y.getType());
-                        out.println(";");
-                    });
-
-                    out.print(IdentHelper.identPrefix(ident));
-                    out.println("}");
-
-                }
-        );
+        TSTypeVisitor tsTypeVisitor = new DefaultTSTypeVisitor(out);
+        types.forEach(x -> x.accept(tsTypeVisitor, ident));
     }
 
     private void writeHeader(TSModuleInfo module, PrintWriter out) {

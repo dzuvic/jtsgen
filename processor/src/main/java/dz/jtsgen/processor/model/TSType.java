@@ -1,13 +1,15 @@
 package dz.jtsgen.processor.model;
 
+import dz.jtsgen.processor.model.rendering.TSTypeElement;
 import dz.jtsgen.processor.util.StringUtils;
 
 import javax.lang.model.element.Element;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class TSType {
+public abstract class TSType implements TSTypeElement {
     private final String namespace;
     private final String name;
     private final String qualifiedName;
@@ -67,4 +69,10 @@ public abstract class TSType {
         return this.toStringBuilder().append("}").toString();
     }
 
+    public abstract String getKeyword();
+
+    public TSType addMembers(Collection<? extends TSMember> members) {
+        this.getMembers().addAll(members);
+        return this;
+    }
 }

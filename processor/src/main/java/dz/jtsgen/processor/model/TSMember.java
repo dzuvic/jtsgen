@@ -19,9 +19,11 @@
  */
 package dz.jtsgen.processor.model;
 
+import dz.jtsgen.processor.model.rendering.TSMemberElement;
+import dz.jtsgen.processor.model.rendering.TSMemberVisitor;
 import dz.jtsgen.processor.model.tstarget.TSTargets;
 
-public class TSMember {
+public class TSMember implements TSMemberElement {
     public static final TSMember INVALD = new TSMember("invalid", TSTargets.NONE, true,true);
 
     private final String name;
@@ -61,5 +63,10 @@ public class TSMember {
         StringBuilder builder=new StringBuilder();
         builder.append("TSMember{").append(name).append(":").append(type).append("}");
         return builder.toString();
+    }
+
+    @Override
+    public void accept(TSMemberVisitor visitor) {
+        visitor.visit(this);
     }
 }

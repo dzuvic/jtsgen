@@ -140,7 +140,6 @@ public class TsGenProcessorTest {
         assertEquals("must have Type MemberContainerTest", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+MemberContainerTest\\s*\\{")).size());
         assertEquals("list must be mapped to Array<string>", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("list_Of_String:\\s+Array<string>;")).size());
         assertEquals("set must be mapped to Array<number>", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("set_Of_Int:\\s+Array<number>;")).size());
-        assertEquals("list without type param must be mapped to Array", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("only_List:\\s+Array;")).size());
         assertEquals("java.util.Map must be mapped to Map<..>", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("map_of_string_to_list_of_string:\\s+Map<string,\\s+Array<string>>;")).size());
     }
 
@@ -159,7 +158,14 @@ public class TsGenProcessorTest {
 
     @Test
     public void test_simple_enum() throws IOException {
-        Compilation c = CompileHelper.compileJtsDev(false,0,"InterfaceWithEnum.java","SomeEnum.java");
+        Compilation c = CompileHelper.compileJtsDev(true,0,"InterfaceWithEnum.java","SomeEnum.java");
+
+        assertEquals("must have Type SomeEnum", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+enum\\s+SomeEnum\\s*\\{")).size());
+        assertEquals("must have Type InterfaceWithEnum", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterfaceWithEnum\\s*\\{")).size());
+
+        assertEquals("must include enum values", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+A, B, C\\s*$")).size());
+        assertEquals("must have the member someEnum: SomeEnum", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+readonly\\s+someEnum:\\s+jts.dev.SomeEnum;")).size());
+
     }
 
     @Test

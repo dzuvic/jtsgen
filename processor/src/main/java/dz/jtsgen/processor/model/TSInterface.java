@@ -1,5 +1,7 @@
 package dz.jtsgen.processor.model;
 
+import dz.jtsgen.processor.model.rendering.TSTypeVisitor;
+
 import javax.lang.model.element.TypeElement;
 import java.util.Collection;
 
@@ -10,8 +12,13 @@ public class TSInterface extends TSType {
         super(e, e.getQualifiedName().toString());
     }
 
-    public TSInterface addMembers(Collection<? extends TSMember> members) {
-        this.getMembers().addAll(members);
-        return this;
+    @Override
+    public String getKeyword() {
+        return "interface";
+    }
+
+    @Override
+    public void accept(TSTypeVisitor visitor, int ident) {
+        visitor.visit(this, ident);
     }
 }
