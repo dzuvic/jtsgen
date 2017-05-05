@@ -158,7 +158,7 @@ public class TsGenProcessorTest {
 
     @Test
     public void test_simple_enum() throws IOException {
-        Compilation c = CompileHelper.compileJtsDev(true,0,"InterfaceWithEnum.java","SomeEnum.java");
+        Compilation c = CompileHelper.compileJtsDev(false,0,"InterfaceWithEnum.java","SomeEnum.java");
 
         assertEquals("must have Type SomeEnum", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+enum\\s+SomeEnum\\s*\\{")).size());
         assertEquals("must have Type InterfaceWithEnum", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterfaceWithEnum\\s*\\{")).size());
@@ -166,6 +166,26 @@ public class TsGenProcessorTest {
         assertEquals("must include enum values", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+A, B, C\\s*$")).size());
         assertEquals("must have the member someEnum: SomeEnum", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+readonly\\s+someEnum:\\s+jts.dev.SomeEnum;")).size());
 
+    }
+
+    @Test
+    public void test_default_exclusion() throws IOException {
+        Compilation c = CompileHelper.compileJtsDev(false,1,"InterFaceTestWithSunInternal.java");
+
+        assertEquals("must have Type InterfaceWithEnum", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTestWithSunInternal\\s*\\{")).size());
+        assertEquals("must be mapped to any", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+readonly\\s+mustBeExcluded:\\s+any;")).size());
+
+        assertEquals("must not have the type Version included", 0, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+Version\\s*\\{")).size());
+        assertEquals("must not have member from Version", 0, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("jdkSpecialVersion:\\s+string;")).size());
+    }
+
+    @Test
+    public void test_custom_exclusion() throws IOException {
+        final String folderName = "jtsgen.exclusion_test";
+        final String tdsFilename = "exclusion_test.d.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/exclude", folderName, tdsFilename,false,0, "InterFaceTestSelfExclusion.java", "package-info.java");
+
+        assertEquals("must have Type InterfaceWithEnum", 0, OutputHelper.findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTestSelfExclusion\\s*\\{")).size());
     }
 
     @Test

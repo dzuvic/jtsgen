@@ -23,7 +23,6 @@ package dz.jtsgen.processor.helper;
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
 import dz.jtsgen.processor.TsGenProcessor;
-import org.junit.Assert;
 
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
@@ -34,7 +33,6 @@ import static com.google.testing.compile.Compiler.javac;
 import static dz.jtsgen.processor.helper.StringConstForTest.JTS_DEV;
 import static dz.jtsgen.processor.helper.StringConstForTest.JTS_DEV_D_TS;
 import static dz.jtsgen.processor.helper.StringConstForTest.PACKAGE_JSON;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -61,13 +59,12 @@ public class CompileHelper {
             c.errors().forEach(System.err::println);
             fail("No Compilation error should occur");
         }
-
-        if (c.warnings().size()!= warningCount) {
+        long myWarnungs = c.diagnostics().asList().stream().filter(x -> x.getKind().equals(Diagnostic.Kind.WARNING)).count();
+        if (myWarnungs != warningCount) {
             c.warnings().forEach(System.err::println);
             fail("Warnings count differ "+warningCount+" (expected) !="+c.warnings().size());
         }
 
-        assertEquals(c.diagnostics().asList().stream().filter(x -> x.getKind().equals(Diagnostic.Kind.WARNING)).count(), warningCount);
         assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName , PACKAGE_JSON).isPresent());
         assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, tdsFilename).isPresent());
 

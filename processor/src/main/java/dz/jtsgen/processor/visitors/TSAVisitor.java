@@ -36,41 +36,45 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class TSAVisitor extends SimpleElementVisitor8<List<TSType>, TSAVisitorParam> {
+public class TSAVisitor extends SimpleElementVisitor8<List<TSType>, Void> {
 
     private static Logger LOG = Logger.getLogger(TSAVisitor.class.getName());
 
-    private ProcessingEnvironment env;
+    private TSAVisitorParam tsaVisitorParam;
     private JavaTypeHandler javaTypeHandler;
 
-    public TSAVisitor(TypeScriptModel typeScriptModel, ProcessingEnvironment processingEnv) {
+    public TSAVisitor(TSAVisitorParam tsaVisitorParam) {
         super(Collections.emptyList());
-        javaTypeHandler = new JavaTypeHandler();
-        this.env = processingEnv;
+        javaTypeHandler = new JavaTypeHandler(tsaVisitorParam);
+        this.tsaVisitorParam = tsaVisitorParam;
     }
 
     @Override
-    public List<TSType> visitType(TypeElement e, TSAVisitorParam param) {
+    public List<TSType> visitType(TypeElement e, Void param) {
         LOG.log(Level.FINER,() -> String.format("visitType %s", e.toString() ));
-        return javaTypeHandler.createTsModels(e, param);
+        return javaTypeHandler.createTsModels(e);
     }
 
     @Override
-    public List<TSType> visitVariable(VariableElement e, TSAVisitorParam aVoid) {
+    public List<TSType> visitVariable(VariableElement e, Void aVoid) {
         LOG.log(Level.FINER,() -> String.format("visitVariable %s", e.toString() ));
-        env.getMessager().printMessage(Diagnostic.Kind.ERROR,"TypeScript annotation not supported for variable.Use TSGenOption instead.", e);
+        env().getMessager().printMessage(Diagnostic.Kind.ERROR,"TypeScript annotation not supported for variable.Use TSGenOption instead.", e);
         return super.visitVariable(e, aVoid);
     }
 
     @Override
-    public List<TSType> visitUnknown(Element e, TSAVisitorParam aVoid) {
+    public List<TSType> visitUnknown(Element e, Void aVoid) {
         LOG.log(Level.FINEST, () -> String.format("unkown Type: %s", e));
         return super.visitUnknown(e, aVoid);
     }
 
     @Override
-    public List<TSType> visitPackage(PackageElement e, TSAVisitorParam aVoid) {
-        env.getMessager().printMessage(Diagnostic.Kind.ERROR,"currently not supported for package", e);
+    public List<TSType> visitPackage(PackageElement e, Void aVoid) {
+        env().getMessager().printMessage(Diagnostic.Kind.ERROR,"currently not supported for package", e);
         return super.visitPackage(e, aVoid);
+    }
+
+    private ProcessingEnvironment env() {
+        return this.tsaVisitorParam.getpEnv();
     }
 }

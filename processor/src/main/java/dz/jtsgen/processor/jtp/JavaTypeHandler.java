@@ -43,33 +43,43 @@ public class JavaTypeHandler {
 
     private static Logger LOG = Logger.getLogger(JavaTypeHandler.class.getName());
 
-    public List<TSType> createTsModels(TypeElement e, TSAVisitorParam aParam) {
+    private final TSAVisitorParam tsaVisitorParam;
+
+    public JavaTypeHandler(TSAVisitorParam tsaVisitorParam) {
+        this.tsaVisitorParam = tsaVisitorParam;
+    }
+
+    public List<TSType> createTsModels(TypeElement e) {
         final List<TSType> result = new ArrayList<>();
-        Optional<TSType> tsi = handleJavaType(e, aParam);
+        Optional<TSType> tsi = handleJavaType(e);
         LOG.log(Level.FINEST, () -> String.format("JTH tsi created %s", tsi.toString()));
         tsi.ifPresent(result::add);
         return result;
     }
 
-    Optional<TSType> createTsModelWithEmbeddedTypes(TypeElement e, TSAVisitorParam aParam) {
-        Optional<TSType> tsi = handleJavaType(e, aParam);
+    Optional<TSType> createTsModelWithEmbeddedTypes(TypeElement e) {
+        Optional<TSType> tsi = handleJavaType(e);
         LOG.log(Level.FINEST, () -> String.format("JTH single tsi created %s", tsi.toString()));
         return tsi;
     }
 
-    private Optional<TSType> handleJavaType(TypeElement element, TSAVisitorParam tsaParam) {
+    private Optional<TSType> handleJavaType(TypeElement element) {
+        if (checkExclusion(element)) {
+            LOG.info( () -> "Excluding " + element);
+            return Optional.empty();
+        }
         TSType result = null;
         switch (element.getKind()) {
             case CLASS: {
-                result = new TSInterface(element).addMembers(findMembers(element, tsaParam));
+                result = new TSInterface(element).addMembers(findMembers(element));
                 break;
             }
             case INTERFACE: {
-                result = new TSInterface(element).addMembers(findMembers(element, tsaParam));
+                result = new TSInterface(element).addMembers(findMembers(element));
                 break;
             }
             case ENUM: {
-                result = new TSEnum(element).addMembers(findEnumMembers(element, tsaParam));
+                result = new TSEnum(element).addMembers(findEnumMembers(element));
                 break;
             }
             default: break;
@@ -77,18 +87,25 @@ public class JavaTypeHandler {
        return Optional.ofNullable(result);
     }
 
-    private Collection<? extends TSMember> findEnumMembers(TypeElement element, TSAVisitorParam tsaParam) {
+    private boolean checkExclusion(TypeElement element) {
+        final String typeName=element.toString();
+        return this.tsaVisitorParam.getTsModel().getModuleInfo().getExcludes().stream().anyMatch(
+                x -> x.matcher(typeName).find()
+        );
+    }
+
+    private Collection<? extends TSMember> findEnumMembers(TypeElement element) {
         return element.getEnclosedElements().stream()
                 .filter(x->x.getKind()==ENUM_CONSTANT)
                 .map ( x -> new TSEnumMember(x.getSimpleName().toString())
                 ).collect(Collectors.toList());
     }
 
-    private Collection<? extends TSMember> findMembers(TypeElement e, TSAVisitorParam aParam) {
-        JavaTypeElementExtractingVisitor visitor = new JavaTypeElementExtractingVisitor(e, aParam);
+    private Collection<? extends TSMember> findMembers(TypeElement e) {
+        JavaTypeElementExtractingVisitor visitor = new JavaTypeElementExtractingVisitor(e, tsaVisitorParam);
         e.getEnclosedElements().stream()
                 .filter(x -> x.getKind()== ElementKind.FIELD || x.getKind()==ElementKind.METHOD)
-                .forEach((x) -> visitor.visit(x, aParam));
+                .forEach(visitor::visit);
         return visitor.getMembers();
     }
 }

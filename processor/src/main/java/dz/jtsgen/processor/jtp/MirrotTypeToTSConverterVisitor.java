@@ -153,7 +153,7 @@ public class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTarge
         //FIXME: change the following line by extending the model and refactoring
         createTSTargetByMapping("" + nameOfType + "->" + "any").ifPresent(x -> model().addTSTarget(x));
         final Optional<TypeElement> typeElement = Optional.ofNullable( (javaElement instanceof TypeElement) ? (TypeElement) javaElement :null);
-        final Optional<TSType> tsType = typeElement.flatMap( x -> new JavaTypeHandler().createTsModelWithEmbeddedTypes(x, this.tsaVisitorParam));
+        final Optional<TSType> tsType = typeElement.flatMap( x -> new JavaTypeHandler(tsaVisitorParam).createTsModelWithEmbeddedTypes(x));
         final Optional<TSTargetType> result = tsType.flatMap(x -> {
             model().addTSTypes(Collections.singletonList(x));
             return createTSTargetByMapping("" + nameOfType + "->" + x.getNamespace()+"."+x.getName());

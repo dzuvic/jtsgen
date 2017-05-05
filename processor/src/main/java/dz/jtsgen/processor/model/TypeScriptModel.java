@@ -2,12 +2,17 @@ package dz.jtsgen.processor.model;
 
 
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class TypeScriptModel {
 
     // java package -> TSModuleInfo
-    private TSModuleInfo moduleInfo = new TSModuleInfo("unknown", null);
+    private TSModuleInfo moduleInfo = new TSModuleInfo("unknown", null).withTypeMappingInfo(null, defaultExclusion());
+
+    private static List<Pattern> defaultExclusion() {
+        return Arrays.stream(new String[]{"^sun", "^jdk.internal"}).map(Pattern::compile).collect(Collectors.toList());
+    }
 
     // all converted TS Types
     private final List<TSType> tsTypes=new ArrayList<>();

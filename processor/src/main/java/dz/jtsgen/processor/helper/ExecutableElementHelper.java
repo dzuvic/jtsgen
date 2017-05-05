@@ -25,12 +25,10 @@ import javax.lang.model.element.Element;
 /**
  * some helper functions
  */
-public class ExecutableElementHelper {
+public final class ExecutableElementHelper {
 
 
-    private ExecutableElementHelper() {
-        // no instance
-    }
+    private ExecutableElementHelper() { /* no instance*/ }
 
     public static boolean isGetterOrSetter(Element x) {
         return isGetter(x) || isSetter(x);

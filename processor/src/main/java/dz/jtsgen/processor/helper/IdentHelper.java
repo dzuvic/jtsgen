@@ -20,10 +20,9 @@
 
 package dz.jtsgen.processor.helper;
 
-public class IdentHelper {
-    private IdentHelper() {
-        // no instance
-    }
+public final class IdentHelper {
+    
+    private IdentHelper() { /* no instance*/ }
 
     private static final String [] IDENT_SPACES = {
         "",
@@ -42,7 +41,7 @@ public class IdentHelper {
     };
 
     private static final int IDENT_CACHE_LENGTH = IDENT_SPACES.length;
-    public static final int LENGTH_MINUS_ONE = IDENT_CACHE_LENGTH - 1;
+    private static final int LENGTH_MINUS_ONE = IDENT_CACHE_LENGTH - 1;
 
     public static String identPrefix(int level) {
         if (level < 1) return "";

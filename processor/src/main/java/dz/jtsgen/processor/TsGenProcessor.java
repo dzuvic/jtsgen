@@ -110,9 +110,10 @@ public class TsGenProcessor extends AbstractProcessorWithLogging {
                         return TSIgnore.class.getSimpleName().equals(y.getAnnotationType().asElement().getSimpleName().toString());
                     })
             ).collect(Collectors.toSet());
-            final TSAVisitor typeScriptAnnotationVisitor = new TSAVisitor(typeScriptModel, this.processingEnv);
+            final TSAVisitorParam tsaVisitorParam = new TSAVisitorParam(annotation, this.processingEnv, typeScriptModel);
+            final TSAVisitor typeScriptAnnotationVisitor = new TSAVisitor(tsaVisitorParam);
             for (Element e : annotatedElements) {
-                typeScriptModel.addTSTypes(typeScriptAnnotationVisitor.visit(e, new TSAVisitorParam(annotation, this.processingEnv, typeScriptModel)));
+                typeScriptModel.addTSTypes(typeScriptAnnotationVisitor.visit(e));
             }
         } else if (annotation.getSimpleName().contentEquals(TSModule.class.getSimpleName())) {
             Set<? extends Element> annotatedElements = roundEnv.getElementsAnnotatedWith(TSModule.class);

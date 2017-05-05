@@ -73,4 +73,10 @@ public @interface TSModule {
      *   The Processor has no knowledge about the the necessary imports.
      */
     String[] customTypeMappings() default {};
+
+    /**
+     * regular expression to exclude type conversion.
+     */
+    String[] excludes() default {"^sun", "^jdk.internal"};
+    
 }

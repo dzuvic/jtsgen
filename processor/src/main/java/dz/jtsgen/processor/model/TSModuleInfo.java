@@ -23,6 +23,7 @@ package dz.jtsgen.processor.model;
 import dz.jtsgen.processor.util.StringUtils;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * Describes a JavaScript Module.
@@ -39,11 +40,13 @@ public final class TSModuleInfo {
     private final String moduleLicense;
     private final String moduleAuthorUrl;
     private final String umdVariableName;
-    private final Map<String,TSTargetType> customMappings = new HashMap<>();
+    private final Map<String,TSTargetType> customMappings = new LinkedHashMap<>();
+    private final List<Pattern> excludes = new ArrayList<>();
+
 
     public TSModuleInfo(String moduleName, String javaPackage
     ) {
-        this(moduleName, javaPackage, null, null, null, null, null, null, null);
+        this(moduleName, javaPackage, null, null, null, null, null, null, null, null);
     }
 
     // copy constructor
@@ -57,7 +60,8 @@ public final class TSModuleInfo {
                 module.moduleLicense,
                 module.moduleAuthorUrl,
                 module.umdVariableName,
-                module.customMappings
+                module.customMappings,
+                module.excludes
         );
     }
 
@@ -70,15 +74,13 @@ public final class TSModuleInfo {
     ) {
         return new TSModuleInfo(this.moduleName, this.javaPackage,
                 moduleVersion, moduleDescription, moduleAuthor, moduleLicense, moduleAuthorUrl,
-                this.umdVariableName, this.customMappings);
+                this.umdVariableName, this.customMappings, this.excludes);
     }
 
-    public TSModuleInfo withMapping(Map<String, TSTargetType> customTypeMappingCollection) {
-        final Map<String,TSTargetType> mapping = new HashMap<>();
-        mapping.putAll(customTypeMappingCollection);
+    public TSModuleInfo withTypeMappingInfo(Map<String, TSTargetType> mapping, List<Pattern> excludes) {
         return new TSModuleInfo(this.moduleName, this.javaPackage,
                        this.moduleVersion, this.moduleDescription, this.moduleAuthor, this.moduleLicense, this.moduleAuthorUrl,
-                       this.umdVariableName, mapping);
+                       this.umdVariableName, mapping, excludes);
     }
 
     // the author was just too lazy writing a builder for this type...
@@ -92,6 +94,7 @@ public final class TSModuleInfo {
             , String moduleAuthorUrl
             , String umdVariableName
             , Map<String,TSTargetType> customMappings
+            , List<Pattern> excludes
     ) {
         assert StringUtils.isPackageFriendly(moduleName);
         this.moduleName = moduleName;
@@ -106,6 +109,7 @@ public final class TSModuleInfo {
         this.moduleLicense = moduleLicense == null ? "unknown" : moduleLicense;
         this.moduleAuthorUrl = moduleAuthorUrl == null ? "unknown" : moduleAuthorUrl;
         if (customMappings != null) this.customMappings.putAll(customMappings);
+        if (excludes != null) this.excludes.addAll(excludes);
 
     }
 
@@ -168,6 +172,10 @@ public final class TSModuleInfo {
 
     public Map<String,TSTargetType> getCustomMappings() {
         return customMappings;
+    }
+
+    public List<Pattern> getExcludes() {
+        return excludes;
     }
 
     @Override

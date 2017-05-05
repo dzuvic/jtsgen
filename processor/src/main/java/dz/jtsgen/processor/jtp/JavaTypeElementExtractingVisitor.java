@@ -41,7 +41,7 @@ import static dz.jtsgen.processor.helper.ExecutableElementHelper.*;
  * <p>
  * because of beans this Visitor is stateful: return type is void.
  */
-class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, TSAVisitorParam> {
+class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void> {
 
     private static Logger LOG = Logger.getLogger(JavaTypeElementExtractingVisitor.class.getName());
 
@@ -67,9 +67,9 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, TSAVi
     }
 
     @Override
-    public Void visitType(TypeElement e, TSAVisitorParam tsaVisitorParam) {
+    public Void visitType(TypeElement e, Void notcalled) {
         LOG.log(Level.FINEST, () -> String.format("JTExV visiting type %s", e.toString()));
-        Optional<TSMember> member = Optional.ofNullable(tsMemberVisitor.visit(e.asType(), tsaVisitorParam));
+        Optional<TSMember> member = Optional.ofNullable(tsMemberVisitor.visit(e.asType(), this.tsaVisitorParam));
         member.ifPresent(x->this.members.put(x.getName(), x));
         if (!member.isPresent()) {
             LOG.info( () -> "could not the type '" + e + "' to a TSMember");
@@ -78,7 +78,7 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, TSAVi
     }
 
     @Override
-    public Void visitVariable(VariableElement e, TSAVisitorParam tsaVisitorParam) {
+    public Void visitVariable(VariableElement e, Void notcalled) {
         final boolean isPublic = e.getModifiers().contains(Modifier.PUBLIC);
         final String name = e.getSimpleName().toString();
         final boolean isIgnored = isIgnored(e);
@@ -92,7 +92,7 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, TSAVi
     }
 
     @Override
-    public Void visitExecutable(ExecutableElement e, TSAVisitorParam tsaVisitorParam) {
+    public Void visitExecutable(ExecutableElement e, Void notcalled) {
         LOG.fine(() -> String.format("JTExV visiting executable %s", e.toString()));
         if (isGetterOrSetter(e)) {
             final String name = nameFromMethod(e.getSimpleName().toString());
