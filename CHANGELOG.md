@@ -1,5 +1,26 @@
 # Change Log
 
+## [Unreleased](https://github.com/dzuvic/jtsgen/tree/HEAD)
+
+[Full Changelog](https://github.com/dzuvic/jtsgen/compare/jtsgen-0.1.0...HEAD)
+
+**Implemented enhancements:**
+
+- name space mapping [\#10](https://github.com/dzuvic/jtsgen/issues/10)
+
+## [jtsgen-0.1.0](https://github.com/dzuvic/jtsgen/tree/jtsgen-0.1.0) (2017-05-10)
+[Full Changelog](https://github.com/dzuvic/jtsgen/compare/jtsgen-0.0.2...jtsgen-0.1.0)
+
+**Implemented enhancements:**
+
+- recursive type conversion of embedded types [\#11](https://github.com/dzuvic/jtsgen/issues/11)
+- Support for Generics and nesting Types [\#8](https://github.com/dzuvic/jtsgen/issues/8)
+- Support for Enums [\#6](https://github.com/dzuvic/jtsgen/issues/6)
+
+**Fixed bugs:**
+
+- name space generation missing last character [\#9](https://github.com/dzuvic/jtsgen/issues/9)
+
 ## [jtsgen-0.0.2](https://github.com/dzuvic/jtsgen/tree/jtsgen-0.0.2) (2017-04-26)
 **Implemented enhancements:**
 
