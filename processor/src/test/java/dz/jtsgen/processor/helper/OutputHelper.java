@@ -36,12 +36,16 @@ import java.util.stream.Collectors;
  * Some Helper regarding the Test Output
  */
 public class OutputHelper {
+
     public static List<String> findSourceLine(Compilation c, String packageName, String fileName, Pattern pattern) throws IOException {
         Assert.assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT,packageName, fileName).isPresent());
         JavaFileObject jfo = c.generatedFile(StandardLocation.SOURCE_OUTPUT,packageName, fileName).get();
         try (Reader r = jfo.openReader(false)) {
             return IOUtils.readLines(r).stream().filter( (x) -> pattern.matcher(x).find()).collect(Collectors.toList());
         }
+    }
 
+    public static int countPatterns(Compilation c, String packageName, String fileName, Pattern pattern) throws IOException {
+        return findSourceLine(c,packageName, fileName, pattern).size();
     }
 }

@@ -65,6 +65,10 @@ public class CompileHelper {
             fail("Warnings count differ "+warningCount+" (expected) !="+c.warnings().size());
         }
 
+        if (! c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName , PACKAGE_JSON).isPresent() || ! c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, tdsFilename).isPresent()) {
+            c.generatedFiles().forEach(System.out::println);
+        }
+
         assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName , PACKAGE_JSON).isPresent());
         assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, tdsFilename).isPresent());
 

@@ -67,8 +67,17 @@ public @interface TSModule {
      *   of a Java Type (canonical name) and the resulting TypeScript Type. Both Types are separated with an arrow, e.g.:
      *
      *   <pre>
-     *       java.util.Date -> IDateJSStatic
+     *       {@code java.util.Date -> IDateJSStatic }
      *   </pre>
+     *
+     *   It is possible to declare type variables, that will be converted also, e.g. :
+     *
+     *   <pre>
+     *       {@code java.util.List<T> -> Array<T> }
+     *   </pre>
+     *
+     *   will convert any java.util.List or it's subtypes to an Array type in TypeScript. If the matched java type has
+     *   a type parameter the converted type parameter will be inserted accordingly.
      *
      *   The Processor has no knowledge about the the necessary imports.
      */
@@ -78,5 +87,16 @@ public @interface TSModule {
      * regular expression to exclude type conversion.
      */
     String[] excludes() default {"^sun", "^jdk.internal"};
+
+
+    /**
+     * A list of name spaces, that should me mapped (shortened). The empty default maps the top level name space of the
+     * directly converted types to the root name space.
+     *
+     *
+     *  {@code "a.b.c -> " }: Maps a.b.c to root
+     *
+     */
+    String[] nameSpaceMapping() default {};
     
 }

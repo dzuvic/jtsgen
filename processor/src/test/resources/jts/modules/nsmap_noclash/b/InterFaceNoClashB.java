@@ -18,24 +18,11 @@
  *
  */
 
-package dz.jtsgen.processor.model;
+package jts.modules.nsmap_noclash.b;
 
-import dz.jtsgen.processor.model.rendering.TSTypeVisitor;
+import dz.jtsgen.annotations.TypeScript;
 
-import javax.lang.model.element.Element;
-
-public class TSEnum extends TSType {
-    public TSEnum(Element e, String namespace, String name) {
-        super(e, namespace, name);
-    }
-
-    @Override
-    public String getKeyword() {
-        return "enum";
-    }
-
-    @Override
-    public void accept(TSTypeVisitor visitor, int ident) {
-        visitor.visit(this, ident);
-    }
+@TypeScript
+public interface InterFaceNoClashB {
+    String getSomeString();
 }

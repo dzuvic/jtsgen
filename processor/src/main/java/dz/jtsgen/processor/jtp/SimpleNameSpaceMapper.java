@@ -18,33 +18,27 @@
  *
  */
 
-package dz.jtsgen.processor.renderer.query;
+package dz.jtsgen.processor.jtp;
 
 import dz.jtsgen.processor.model.TypeScriptModel;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 /**
-*
- * Created by zuvic on 14.02.17.
+ * Simple name space mapper. Currently string based to keep things simple
  */
-public class PackageQuery {
-    /**
-     * @return the top leveled namespace names
-     */
-    public static List<String> topPackages(TypeScriptModel model) {
-        List<String> result = new ArrayList<>();
-        int min=Integer.MAX_VALUE;
-        //
-        for (String i: model.getTsTypes().stream().map((x) -> x.getNamespace()).collect(Collectors.toList())){
-            if (i.length() < min) {
-                result = new ArrayList<>();
-                min=Integer.MAX_VALUE;
-                result.add(i);
-            } else if (i.length() == min) result.add(i);
-        }
-        return result;
+final class SimpleNameSpaceMapper {
+    final TypeScriptModel model;
+
+    SimpleNameSpaceMapper(TypeScriptModel model) {
+        this.model = model;
     }
+
+    String mapNameSpace(String originNameSpace) {
+        assert originNameSpace != null;
+        return model.getModuleInfo().getNameSpaceMappings().stream()
+                .filter(x -> originNameSpace.startsWith(x.originNameSpace()))
+                .findFirst()
+                .map(x -> originNameSpace.replaceFirst("^" + x.originNameSpace(), x.targetNameSpace()).replaceFirst("^\\.", ""))
+                .orElse(originNameSpace);
+    }
+
 }

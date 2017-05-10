@@ -20,22 +20,24 @@
 
 package dz.jtsgen.processor.model;
 
-import dz.jtsgen.processor.model.rendering.TSTypeVisitor;
+import dz.jtsgen.processor.util.Tuple;
 
-import javax.lang.model.element.Element;
-
-public class TSEnum extends TSType {
-    public TSEnum(Element e, String namespace, String name) {
-        super(e, namespace, name);
+/**
+ * just a simple representation of a name space mapping
+ *
+ * the empty string represents the root name space
+ */
+public final class NameSpaceMapping extends Tuple<String,String> {
+    public NameSpaceMapping(String first, String second) {
+        super(first==null ? "" : first, second==null? "" :second);
     }
 
-    @Override
-    public String getKeyword() {
-        return "enum";
-    }
+    public String originNameSpace(){ return this.getFirst();}
+
+    public String targetNameSpace(){ return this.getSecond();}
 
     @Override
-    public void accept(TSTypeVisitor visitor, int ident) {
-        visitor.visit(this, ident);
+    public String toString() {
+        return this.originNameSpace() +" -> " + this.targetNameSpace();
     }
 }

@@ -1,7 +1,6 @@
 package dz.jtsgen.processor.model;
 
 import dz.jtsgen.processor.model.rendering.TSTypeElement;
-import dz.jtsgen.processor.util.StringUtils;
 
 import javax.lang.model.element.Element;
 import java.util.ArrayList;
@@ -12,18 +11,18 @@ import java.util.Optional;
 public abstract class TSType implements TSTypeElement {
     private final String namespace;
     private final String name;
-    private final String qualifiedName;
     private final List<TSMember> members = new ArrayList<>();
     private String documentString;
     private List<TSType> superTypes = new ArrayList<>();
     private Element element;
 
-    public TSType(Element e, String qualifiedName) {
-        assert qualifiedName != null;
-        this.qualifiedName = qualifiedName;
-        this.name = StringUtils.lastOf(qualifiedName);
-        this.namespace = StringUtils.untill(qualifiedName);
+    public TSType(Element e, String namespace, String name) {
+        assert namespace != null;
+        assert name != null;
+
         this.element = e;
+        this.namespace = namespace;
+        this.name = name;
     }
 
     public String getNamespace() {
@@ -46,10 +45,6 @@ public abstract class TSType implements TSTypeElement {
         return superTypes;
     }
 
-    public String getQualifiedName() {
-        return qualifiedName;
-    }
-
     public Optional<Element> getElement() {
         return Optional.ofNullable(element);
     }
@@ -57,7 +52,6 @@ public abstract class TSType implements TSTypeElement {
     protected StringBuilder toStringBuilder() {
         StringBuilder builder = new StringBuilder();
         builder.append(this.getClass().getSimpleName()).append("{");
-        builder.append("qualifiedName=").append(this.qualifiedName).append("; ");
         if (!superTypes.isEmpty()) builder.append("superTypes=").append(this.getSuperTypes().toString()).append("; ");
         if (!members.isEmpty()) builder.append("members=").append(this.members.toString()).append("; ");
         return builder;

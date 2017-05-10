@@ -25,6 +25,8 @@ import dz.jtsgen.annotations.TSIgnore;
 import dz.jtsgen.annotations.TSModule;
 import dz.jtsgen.annotations.TypeScript;
 import dz.jtsgen.processor.jtp.TSModuleHandler;
+import dz.jtsgen.processor.jtp.TSModuleInfoEnforcer;
+import dz.jtsgen.processor.model.NameSpaceMapping;
 import dz.jtsgen.processor.model.TypeScriptModel;
 import dz.jtsgen.processor.renderer.TSRenderer;
 import dz.jtsgen.processor.visitors.TSAVisitor;
@@ -97,29 +99,40 @@ public class TsGenProcessor extends AbstractProcessorWithLogging {
             e.printStackTrace();
         }
 
-
-
         return true;
     }
 
+    // process all annotations
     private void processElements(TypeElement annotation, RoundEnvironment roundEnv) {
         LOG.fine( () -> String.format("P: Processing Annotation %s", annotation.getSimpleName()));
         if (annotation.getSimpleName().contentEquals(TypeScript.class.getSimpleName())) {
-            Set<? extends Element> annotatedElements = roundEnv.getElementsAnnotatedWith(TypeScript.class).stream().filter(
-                    (ignoring) -> ignoring.getAnnotationMirrors().stream().noneMatch((y) -> {
-                        return TSIgnore.class.getSimpleName().equals(y.getAnnotationType().asElement().getSimpleName().toString());
-                    })
-            ).collect(Collectors.toSet());
-            final TSAVisitorParam tsaVisitorParam = new TSAVisitorParam(annotation, this.processingEnv, typeScriptModel);
-            final TSAVisitor typeScriptAnnotationVisitor = new TSAVisitor(tsaVisitorParam);
-            for (Element e : annotatedElements) {
-                typeScriptModel.addTSTypes(typeScriptAnnotationVisitor.visit(e));
-            }
+            processTypeScriptAnnotation(annotation, roundEnv);
         } else if (annotation.getSimpleName().contentEquals(TSModule.class.getSimpleName())) {
             Set<? extends Element> annotatedElements = roundEnv.getElementsAnnotatedWith(TSModule.class);
             if (annotatedElements.size() > 1) annotatedElements.forEach( x -> this.processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING,"Multiple TSModule not supported. Multiple Modules with same ", x));
             new TSModuleHandler(this.processingEnv).process(annotatedElements).stream().findFirst().ifPresent(this.typeScriptModel::addModuleInfo);
         }
+    }
+
+    // process TypeScript Annotation
+    private void processTypeScriptAnnotation(TypeElement annotation, RoundEnvironment roundEnv) {
+        Set<? extends Element> annotatedElements = roundEnv.getElementsAnnotatedWith(TypeScript.class).stream().filter(
+                (ignoring) -> ignoring.getAnnotationMirrors().stream().noneMatch((y) -> {
+                    return TSIgnore.class.getSimpleName().equals(y.getAnnotationType().asElement().getSimpleName().toString());
+                })).collect(Collectors.toSet());
+        // this is needed for: updating data from CLI and calculating a name space mapping, if needed
+        new TSModuleInfoEnforcer(this.processingEnv,this.typeScriptModel).createUpdatedTSModuleInfo(annotatedElements).ifPresent( x -> {
+            typeScriptModel.addModuleInfo(x);
+            final TSAVisitorParam tsaVisitorParam = new TSAVisitorParam(annotation, this.processingEnv, typeScriptModel);
+            final TSAVisitor typeScriptAnnotationVisitor = new TSAVisitor(tsaVisitorParam);
+            for (Element e : annotatedElements) {
+                typeScriptModel.addTSTypes(typeScriptAnnotationVisitor.visit(e));
+            }
+        });
+    }
+
+    private String computeModuleName(List<NameSpaceMapping> nameSpaceMappings) {
+        return null;
     }
 
     public SourceVersion getSupportedSourceVersion() {

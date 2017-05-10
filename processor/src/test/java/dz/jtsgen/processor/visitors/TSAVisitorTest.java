@@ -39,10 +39,7 @@ public class TSAVisitorTest {
 
     @Mock
     private ProcessingEnvironment envMockm;
-
-    @Mock
-    private TypeScriptModel modelMock;
-
+    
     @Mock
     private Messager messagerMock;
 
@@ -53,8 +50,9 @@ public class TSAVisitorTest {
     @Before
     public void init() {
         MockitoAnnotations.initMocks(this);
+        TypeScriptModel tsm = TypeScriptModel.newModelWithDefaultModule();
         when(envMockm.getMessager()).thenReturn(messagerMock);
-        this.tsaVisitorParam= new TSAVisitorParam(annotationMock,envMockm,modelMock);
+        this.tsaVisitorParam= new TSAVisitorParam(annotationMock,envMockm,tsm);
         testee = new TSAVisitor(tsaVisitorParam);
     }
 

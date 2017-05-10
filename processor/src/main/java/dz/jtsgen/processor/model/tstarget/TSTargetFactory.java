@@ -21,7 +21,6 @@
 package dz.jtsgen.processor.model.tstarget;
 
 import dz.jtsgen.processor.model.TSTargetType;
-import dz.jtsgen.processor.util.StringUtils;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -31,6 +30,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static dz.jtsgen.processor.util.StringUtils.splitIntoTwo;
 import static dz.jtsgen.processor.util.StringUtils.withoutTypeArgs;
 
 /**
@@ -45,29 +45,25 @@ public final class TSTargetFactory {
      * @return the corresponding TSTarget of that mapping string
      */
     public static Optional<TSTargetType> createTSTargetByMapping(String mappingString) {
-        if (mappingString == null || !mappingString.contains("->")) return Optional.empty();
 
-        String[] params = mappingString.split("->");
-        if (params.length != 2 && params[0] != null && params[1] != null) {
-            return Optional.empty();
-        }
-        assert params[0] != null;
-        final String javaTypeString = params[0].trim();
-        final String tsTypeString = params[1].trim();
-        LinkedList<String> jTypeVars = typeVars(javaTypeString);
-        LinkedList<String> tsTypeVars = typeVars(javaTypeString);
+        return splitIntoTwo(mappingString).flatMap(x -> {
 
-        if (jTypeVars.size()!=tsTypeVars.size() && Collections.disjoint(jTypeVars,tsTypeVars)) {
-            LOG.info(()-> "TSTar: type variables disjoint: " + jTypeVars + " / " + tsTypeVars + " from " + mappingString);
-            return Optional.empty();
-        }
-        return Optional.of (
-                jTypeVars.isEmpty() ?
-                   new TSTargetSimpleType(javaTypeString, tsTypeString)
-                   : new TSTargetDeclType(withoutTypeArgs(javaTypeString), withoutTypeArgs(tsTypeString),jTypeVars,null)
-            );
+                    if ("".equals(x.getFirst()) || "".equals(x.getSecond())) return Optional.empty();
 
+                    LinkedList<String> jTypeVars = typeVars(x.getFirst());
+                    LinkedList<String> tsTypeVars = typeVars(x.getSecond());
 
+                    if (jTypeVars.size() != tsTypeVars.size() && Collections.disjoint(jTypeVars, tsTypeVars)) {
+                        LOG.info(() -> "TSTar: type variables disjoint: " + jTypeVars + " / " + tsTypeVars + " from " + mappingString);
+                        return Optional.empty();
+                    }
+                    return Optional.of(
+                            jTypeVars.isEmpty() ?
+                                    new TSTargetSimpleType(x.getFirst(), x.getSecond())
+                                    : new TSTargetDeclType(withoutTypeArgs(x.getFirst()), withoutTypeArgs(x.getSecond()), jTypeVars, null)
+                    );
+                }
+        );
     }
 
     private static String withoutParens(String javaTypeString) {

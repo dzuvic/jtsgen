@@ -52,6 +52,12 @@ public class Tuple<U,V> {
     }
 
     @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Tuple(");
+        return sb.append(first).append(", ").append(second).append(")").toString();
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(getFirst(), getSecond());
     }

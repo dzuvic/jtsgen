@@ -54,6 +54,12 @@ public final class StreamUtils {
         return zip(x, y, Tuple::new);
     }
 
+    /**
+     *
+     * @param optionals functions returning optional
+     * @param <T> common Type
+     * @return the first result of the function not beeing empty
+     */
     @SafeVarargs
     public static <T> Optional<T> firstOptional(Supplier<Optional<T>> ... optionals) {
         return Arrays.stream(optionals)

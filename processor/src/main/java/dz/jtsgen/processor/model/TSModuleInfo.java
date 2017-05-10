@@ -40,13 +40,14 @@ public final class TSModuleInfo {
     private final String moduleLicense;
     private final String moduleAuthorUrl;
     private final String umdVariableName;
-    private final Map<String,TSTargetType> customMappings = new LinkedHashMap<>();
-    private final List<Pattern> excludes = new ArrayList<>();
+    private Map<String,TSTargetType> customMappings;
+    private List<Pattern> excludes;
+    private List<NameSpaceMapping> nameSpaceMappings;
 
 
     public TSModuleInfo(String moduleName, String javaPackage
     ) {
-        this(moduleName, javaPackage, null, null, null, null, null, null, null, null);
+        this(moduleName, javaPackage, null, null, null, null, null, null, null, null, null);
     }
 
     // copy constructor
@@ -61,26 +62,55 @@ public final class TSModuleInfo {
                 module.moduleAuthorUrl,
                 module.umdVariableName,
                 module.customMappings,
-                module.excludes
+                module.excludes,
+                module.nameSpaceMappings
         );
     }
 
+    /**
+     *
+     * @param moduleVersion if null use current
+     * @param moduleDescription if null use current
+     * @param moduleAuthor if null use current
+     * @param moduleLicense if null use current
+     * @param moduleAuthorUrl if null use current
+     * @param moduleName if null use current
+     * @return return a copy with params changed
+     */
+
     public TSModuleInfo withModuleData(
-            String moduleVersion
+              String moduleVersion
             , String moduleDescription
             , String moduleAuthor
             , String moduleLicense
             , String moduleAuthorUrl
+            , String moduleName
     ) {
-        return new TSModuleInfo(this.moduleName, this.javaPackage,
-                moduleVersion, moduleDescription, moduleAuthor, moduleLicense, moduleAuthorUrl,
-                this.umdVariableName, this.customMappings, this.excludes);
+        return new TSModuleInfo(
+                moduleName == null ? this.moduleName : moduleName ,
+                this.javaPackage,
+                moduleVersion== null ? this.moduleVersion : moduleVersion ,
+                moduleDescription== null ? this.moduleDescription : moduleDescription ,
+                moduleAuthor== null ? this.moduleAuthor : moduleAuthor ,
+                moduleLicense== null ? this.moduleLicense : moduleLicense ,
+                moduleAuthorUrl== null ? this.moduleAuthorUrl : moduleAuthorUrl ,
+                this.umdVariableName, this.customMappings, this.excludes, this.nameSpaceMappings);
     }
 
-    public TSModuleInfo withTypeMappingInfo(Map<String, TSTargetType> mapping, List<Pattern> excludes) {
+    public TSModuleInfo withTypeMappingInfo(Map<String, TSTargetType> mapping, List<Pattern> excludes, List<NameSpaceMapping> nameSpaceMappings) {
         return new TSModuleInfo(this.moduleName, this.javaPackage,
                        this.moduleVersion, this.moduleDescription, this.moduleAuthor, this.moduleLicense, this.moduleAuthorUrl,
-                       this.umdVariableName, mapping, excludes);
+                       this.umdVariableName, mapping, excludes, nameSpaceMappings);
+    }
+
+    /**
+     *
+     * @param nameSpaceMappings if null or empty use current
+     * @return copy with changed value
+     */
+    public TSModuleInfo withNameSpaceMapping(List<NameSpaceMapping> nameSpaceMappings) {
+        return this.withTypeMappingInfo(this.customMappings, this.excludes,
+                (nameSpaceMappings == null || nameSpaceMappings.isEmpty()) ? this.nameSpaceMappings : nameSpaceMappings);
     }
 
     // the author was just too lazy writing a builder for this type...
@@ -95,6 +125,7 @@ public final class TSModuleInfo {
             , String umdVariableName
             , Map<String,TSTargetType> customMappings
             , List<Pattern> excludes
+            , List<NameSpaceMapping> nameSpaceMappings
     ) {
         assert StringUtils.isPackageFriendly(moduleName);
         this.moduleName = moduleName;
@@ -108,8 +139,19 @@ public final class TSModuleInfo {
         this.moduleAuthor = moduleAuthor == null ? "unknown" : moduleAuthor;
         this.moduleLicense = moduleLicense == null ? "unknown" : moduleLicense;
         this.moduleAuthorUrl = moduleAuthorUrl == null ? "unknown" : moduleAuthorUrl;
-        if (customMappings != null) this.customMappings.putAll(customMappings);
-        if (excludes != null) this.excludes.addAll(excludes);
+
+        final Map<String,TSTargetType> customMappingsCopy=new LinkedHashMap<>();
+        final List<Pattern> excludesCopy = new ArrayList<>();
+        final List<NameSpaceMapping> nameSpaceMappingCopy = new LinkedList<>();
+
+        if (customMappings != null) customMappingsCopy.putAll(customMappings);
+        if (excludes != null) excludesCopy.addAll(excludes);
+        if (nameSpaceMappings != null) nameSpaceMappingCopy.addAll(nameSpaceMappings);
+
+        this.customMappings=Collections.unmodifiableMap(customMappingsCopy);
+        this.excludes=Collections.unmodifiableList(excludesCopy);
+        this.nameSpaceMappings=Collections.unmodifiableList(nameSpaceMappingCopy);
+
 
     }
 
@@ -118,7 +160,9 @@ public final class TSModuleInfo {
      */
     public boolean isDefault() {
         return this.javaPackage == null;
+
     }
+
 
     public Optional<String> getJavaPackage() {
         return Optional.ofNullable(this.javaPackage);
@@ -176,6 +220,10 @@ public final class TSModuleInfo {
 
     public List<Pattern> getExcludes() {
         return excludes;
+    }
+
+    public List<NameSpaceMapping> getNameSpaceMappings() {
+        return nameSpaceMappings;
     }
 
     @Override

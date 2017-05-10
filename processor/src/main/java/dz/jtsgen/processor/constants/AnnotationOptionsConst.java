@@ -18,24 +18,13 @@
  *
  */
 
-package dz.jtsgen.processor.model;
+package dz.jtsgen.processor.constants;
 
-import dz.jtsgen.processor.model.rendering.TSTypeVisitor;
-
-import javax.lang.model.element.Element;
-
-public class TSEnum extends TSType {
-    public TSEnum(Element e, String namespace, String name) {
-        super(e, namespace, name);
-    }
-
-    @Override
-    public String getKeyword() {
-        return "enum";
-    }
-
-    @Override
-    public void accept(TSTypeVisitor visitor, int ident) {
-        visitor.visit(this, ident);
-    }
+public final class AnnotationOptionsConst {
+    public static final String JTSGEN_OUTPUT_OPTION_MODULENAME = "jtsgenModuleName";
+    public static final String JTSGEN_OUTPUT_OPTION_MODULEVERSION =  "jtsgenModuleVersion";
+    public static final String JTSGEN_OUTPUT_OPTION_MODULEDESCRIPTION =  "jtsgenModuleDescription";
+    public static final String JTSGEN_OUTPUT_OPTION_MODULEAUTHOR =  "jtsgenModuleAuthor";
+    public static final String JTSGEN_OUTPUT_OPTION_MODULELICENSE =  "jtsgenModuleLicense";
+    public static final String JTSGEN_OUTPUT_OPTION_MODULEAUTHORURL =  "jtsgenModuleAuthorUrl";
 }

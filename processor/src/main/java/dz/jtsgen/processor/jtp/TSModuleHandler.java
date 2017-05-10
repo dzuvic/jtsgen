@@ -21,6 +21,7 @@
 package dz.jtsgen.processor.jtp;
 
 import dz.jtsgen.annotations.TSModule;
+import dz.jtsgen.processor.model.NameSpaceMapping;
 import dz.jtsgen.processor.model.TSModuleInfo;
 import dz.jtsgen.processor.model.TSTargetType;
 import dz.jtsgen.processor.model.tstarget.TSTargetFactory;
@@ -40,6 +41,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static dz.jtsgen.processor.util.RegExHelper.compileToPattern;
+import static dz.jtsgen.processor.util.StringUtils.splitIntoTwo;
 
 /**
  * Handles TSModule Annotations
@@ -61,7 +63,7 @@ public final class TSModuleHandler {
                     Optional<? extends AnnotationMirror> bla = x.getAnnotationMirrors().stream().filter((y) -> y.getAnnotationType().equals(this.annotationElement)).findFirst();
                     return bla.map((y) -> {
                                 final String packageName = x.toString();
-                                AnnotationValue moduleName = null, version = null, author = null, authorUrl = null, description = null, license = null, customTypeMapping = null, exclAnnotationValue = null;
+                                AnnotationValue moduleName = null, version = null, author = null, authorUrl = null, description = null, license = null, customTypeMapping = null, exclAnnotationValue = null, nameSpaceMappingAnnotationValue = null;
                                 for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : y.getElementValues().entrySet()) {
                                     final String simpleName = entry.getKey().getSimpleName().toString();
                                     if ("version".equals(simpleName)) version = entry.getValue();
@@ -73,6 +75,8 @@ public final class TSModuleHandler {
                                     else if ("license".equals(simpleName)) license = entry.getValue();
                                     else if ("customTypeMappings".equals(simpleName)) customTypeMapping = entry.getValue();
                                     else if ("excludes".equals(simpleName)) exclAnnotationValue = entry.getValue();
+                                    else if ("nameSpaceMapping".equals(simpleName))
+                                        nameSpaceMappingAnnotationValue = entry.getValue();
                                 }
 
                                 final String versionString = version != null ? (String) version.getValue() : null;
@@ -87,9 +91,10 @@ public final class TSModuleHandler {
                                 }
                                 Map<String, TSTargetType> customTypeMappingMap = convertTypeMapping(customTypeMapping, x);
                                 List<Pattern> exclusionList = convertExclusion(exclAnnotationValue, x);
-                                return new TSModuleInfo((String) moduleName.getValue(), packageName)
-                                        .withModuleData(versionString, descriptionString, authorString, authorUrlString, licenseString)
-                                        .withTypeMappingInfo(customTypeMappingMap, exclusionList);
+                                List<NameSpaceMapping> nameSpaceMappings = convertToNameSpaceMappings(nameSpaceMappingAnnotationValue, x);
+                                return new TSModuleInfo(moduleNameString, packageName)
+                                        .withModuleData(versionString, descriptionString, authorString, authorUrlString, licenseString, moduleNameString)
+                                        .withTypeMappingInfo(customTypeMappingMap, exclusionList, nameSpaceMappings);
                             }
                     );
                 })
@@ -98,29 +103,51 @@ public final class TSModuleHandler {
                 .collect(Collectors.toSet());
     }
 
+    private List<NameSpaceMapping> convertToNameSpaceMappings(AnnotationValue nameSpaceMappingAnnotationValue, Element element) {
+        if (nameSpaceMappingAnnotationValue == null) return null;
+        return new SimpleAnnotationValueVisitor8<List<NameSpaceMapping>, Void>() {
+            @Override
+            public List<NameSpaceMapping> visitArray(List<? extends AnnotationValue> vals, Void aVoid) {
+                return vals.stream()
+                        .map(x -> {
+                            String value = (String) x.getValue();
+                            Optional<NameSpaceMapping> result = splitIntoTwo(value).flatMap(y -> Optional.of(new NameSpaceMapping(y.getFirst(), y.getSecond())));
+                            if (!result.isPresent())
+                                env.getMessager().printMessage(Diagnostic.Kind.ERROR, "param not valid. Expecting a name space mapping. Got:" + x, element);
+                            return result;
+                        })
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
+                        .collect(Collectors.toList());
+            }
+
+        }.visit(nameSpaceMappingAnnotationValue);
+    }
+
     private List<Pattern> convertExclusion(AnnotationValue exclAnnotationValue, Element element) {
-        if (exclAnnotationValue==null) return null;
+        if (exclAnnotationValue == null) return null;
         return new SimpleAnnotationValueVisitor8<List<Pattern>, Void>() {
-                    @Override
-                    public List<Pattern> visitArray(List<? extends AnnotationValue> vals, Void aVoid) {
-                        return vals.stream()
-                                .map(x -> {
-                                    String value = (String) x.getValue();
-                                    Optional<Pattern> result = compileToPattern(value);
-                                    if (! result.isPresent()) env.getMessager().printMessage(Diagnostic.Kind.ERROR, "param not valid. Expecting a regular Expression. Got:" + x, element);
-                                    return result ;
-                                })
-                                .filter(Optional::isPresent)
-                                .map(Optional::get)
-                                .collect(Collectors.toList());
-                    }
+            @Override
+            public List<Pattern> visitArray(List<? extends AnnotationValue> vals, Void aVoid) {
+                return vals.stream()
+                        .map(x -> {
+                            String value = (String) x.getValue();
+                            Optional<Pattern> result = compileToPattern(value);
+                            if (!result.isPresent())
+                                env.getMessager().printMessage(Diagnostic.Kind.ERROR, "param not valid. Expecting a regular Expression. Got:" + x, element);
+                            return result;
+                        })
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
+                        .collect(Collectors.toList());
+            }
 
         }.visit(exclAnnotationValue);
     }
 
 
     private Map<String, TSTargetType> convertTypeMapping(AnnotationValue customMappingValue, Element element) {
-        if (customMappingValue==null) return null;
+        if (customMappingValue == null) return null;
         List<TSTargetType> targetTypes = new SimpleAnnotationValueVisitor8<List<TSTargetType>, Void>() {
             @Override
             public List<TSTargetType> visitArray(List<? extends AnnotationValue> vals, Void aVoid) {
@@ -128,15 +155,16 @@ public final class TSModuleHandler {
                         .map(x -> {
                             String value = (String) x.getValue();
                             Optional<TSTargetType> result = TSTargetFactory.createTSTargetByMapping(value);
-                            if (! result.isPresent()) env.getMessager().printMessage(Diagnostic.Kind.ERROR, "param not valid. Expecting origin and target type separated by '->'. Got:" + x, element);
-                            return result ;
+                            if (!result.isPresent())
+                                env.getMessager().printMessage(Diagnostic.Kind.ERROR, "param not valid. Expecting origin and target type separated by '->'. Got:" + x, element);
+                            return result;
                         })
                         .filter(Optional::isPresent)
                         .map(Optional::get)
                         .collect(Collectors.toList());
             }
         }.visit(customMappingValue);
-        
+
         return targetTypes.stream().filter(Objects::nonNull).collect(Collectors.toMap(TSTargetType::getJavaType, Function.identity()));
     }
 }

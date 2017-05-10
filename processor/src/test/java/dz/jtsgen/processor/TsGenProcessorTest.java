@@ -40,6 +40,8 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import static com.google.testing.compile.Compiler.javac;
+import static dz.jtsgen.processor.helper.OutputHelper.countPatterns;
+import static dz.jtsgen.processor.helper.OutputHelper.findSourceLine;
 import static dz.jtsgen.processor.helper.StringConstForTest.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -114,33 +116,33 @@ public class TsGenProcessorTest {
     @Test
     public void test_two_simple_interface_with_one_ignored() throws IOException {
         Compilation c = CompileHelper.compileJtsDev(false, 0, "InterFaceTest.java", "InterFaceTestIgnored.java");
-        assertEquals("must have Type InterFaceTest", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTest\\s+\\{")).size());
-        assertEquals("must not have Type InterFaceTestIgnored", 0, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTestIgnored\\s*\\{")).size());
+        assertEquals("must have Type InterFaceTest", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTest\\s+\\{")).size());
+        assertEquals("must not have Type InterFaceTestIgnored", 0, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTestIgnored\\s*\\{")).size());
     }
 
     @Test
     public void test_two_simple_interface_with_one_ignored_partially() throws IOException {
         Compilation c = CompileHelper.compileJtsDev(false, 0, "InterFaceTest.java", "InterFaceTestWithOneIgnoredMethod.java");
-        assertEquals("must have Type InterFaceTest", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTest\\s+\\{")).size());
-        assertEquals("must have Type InterFaceTestWithOneIgnoredMethod", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTestWithOneIgnoredMethod\\s*\\{")).size());
-        assertEquals("the member otherIntIgnored must not be included", 0, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("otherIntIgnored")).size());
-        assertEquals("the member otherStringNotIgnored must be included", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("otherStringNotIgnored:\\s+string;")).size());
+        assertEquals("must have Type InterFaceTest", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTest\\s+\\{")).size());
+        assertEquals("must have Type InterFaceTestWithOneIgnoredMethod", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTestWithOneIgnoredMethod\\s*\\{")).size());
+        assertEquals("the member otherIntIgnored must not be included", 0, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("otherIntIgnored")).size());
+        assertEquals("the member otherStringNotIgnored must be included", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("otherStringNotIgnored:\\s+string;")).size());
     }
 
     @Test
     public void two_types() throws IOException {
         Compilation c = CompileHelper.compileJtsDev(false,0, "InterFaceTest.java", "MemberTestObject.java");
-        assertEquals("must have Type MemberTestObject", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+MemberTestObject\\s*\\{")).size());
-        assertEquals("must have Type InterFaceTest", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTest\\s+\\{")).size());
+        assertEquals("must have Type MemberTestObject", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+MemberTestObject\\s*\\{")).size());
+        assertEquals("must have Type InterFaceTest", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTest\\s+\\{")).size());
     }
 
     @Test
     public void test_container_types() throws IOException {
         Compilation c = CompileHelper.compileJtsDev(false,0,  "MemberContainerTest.java");
-        assertEquals("must have Type MemberContainerTest", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+MemberContainerTest\\s*\\{")).size());
-        assertEquals("list must be mapped to Array<string>", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("list_Of_String:\\s+Array<string>;")).size());
-        assertEquals("set must be mapped to Array<number>", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("set_Of_Int:\\s+Array<number>;")).size());
-        assertEquals("java.util.Map must be mapped to Map<..>", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("map_of_string_to_list_of_string:\\s+Map<string,\\s+Array<string>>;")).size());
+        assertEquals("must have Type MemberContainerTest", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+MemberContainerTest\\s*\\{")).size());
+        assertEquals("list must be mapped to Array<string>", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("list_Of_String:\\s+Array<string>;")).size());
+        assertEquals("set must be mapped to Array<number>", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("set_Of_Int:\\s+Array<number>;")).size());
+        assertEquals("java.util.Map must be mapped to Map<..>", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("map_of_string_to_list_of_string:\\s+Map<string,\\s+Array<string>>;")).size());
     }
 
 
@@ -148,23 +150,23 @@ public class TsGenProcessorTest {
     public void test_simple_class() throws IOException {
         Compilation c = CompileHelper.compileJtsDev(false,0,"MemberTestObject.java");
 
-        assertEquals("must be readonly", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+readonly\\s+x_with_getter_only:\\s+number")).size());
-        assertEquals("the setter/getter is not readonly", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+x_with_getter_setter:\\s+number")).size());
-        assertEquals("the setter must not be included", 0, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("x_with_setter_only:\\s+number")).size());
-        assertEquals("don't include the non public members", 0, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("member_private:\\s+number")).size());
-        assertEquals("don't include the non public members", 0, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("member_protected:\\s+number")).size());
-        assertEquals("don't include the non public members", 0, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("member_package_protected:\\s+number")).size());
+        assertEquals("must be readonly", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+readonly\\s+x_with_getter_only:\\s+number")).size());
+        assertEquals("the setter/getter is not readonly", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+x_with_getter_setter:\\s+number")).size());
+        assertEquals("the setter must not be included", 0, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("x_with_setter_only:\\s+number")).size());
+        assertEquals("don't include the non public members", 0, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("member_private:\\s+number")).size());
+        assertEquals("don't include the non public members", 0, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("member_protected:\\s+number")).size());
+        assertEquals("don't include the non public members", 0, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("member_package_protected:\\s+number")).size());
     }
 
     @Test
     public void test_simple_enum() throws IOException {
         Compilation c = CompileHelper.compileJtsDev(false,0,"InterfaceWithEnum.java","SomeEnum.java");
 
-        assertEquals("must have Type SomeEnum", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+enum\\s+SomeEnum\\s*\\{")).size());
-        assertEquals("must have Type InterfaceWithEnum", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterfaceWithEnum\\s*\\{")).size());
+        assertEquals("must have Type SomeEnum", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+enum\\s+SomeEnum\\s*\\{")).size());
+        assertEquals("must have Type InterfaceWithEnum", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterfaceWithEnum\\s*\\{")).size());
 
-        assertEquals("must include enum values", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+A, B, C\\s*$")).size());
-        assertEquals("must have the member someEnum: SomeEnum", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+readonly\\s+someEnum:\\s+jts.dev.SomeEnum;")).size());
+        assertEquals("must include enum values", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+A, B, C\\s*$")).size());
+        assertEquals("must have the member someEnum: SomeEnum", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+readonly\\s+someEnum:\\s+SomeEnum;")).size());
 
     }
 
@@ -172,11 +174,11 @@ public class TsGenProcessorTest {
     public void test_default_exclusion() throws IOException {
         Compilation c = CompileHelper.compileJtsDev(false,1,"InterFaceTestWithSunInternal.java");
 
-        assertEquals("must have Type InterfaceWithEnum", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTestWithSunInternal\\s*\\{")).size());
-        assertEquals("must be mapped to any", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+readonly\\s+mustBeExcluded:\\s+any;")).size());
+        assertEquals("must have Type InterfaceWithEnum", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTestWithSunInternal\\s*\\{")).size());
+        assertEquals("must be mapped to any", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+readonly\\s+mustBeExcluded:\\s+any;")).size());
 
-        assertEquals("must not have the type Version included", 0, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+Version\\s*\\{")).size());
-        assertEquals("must not have member from Version", 0, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("jdkSpecialVersion:\\s+string;")).size());
+        assertEquals("must not have the type Version included", 0, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+Version\\s*\\{")).size());
+        assertEquals("must not have member from Version", 0, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("jdkSpecialVersion:\\s+string;")).size());
     }
 
     @Test
@@ -185,38 +187,78 @@ public class TsGenProcessorTest {
         final String tdsFilename = "exclusion_test.d.ts";
         Compilation c = CompileHelper.compileForModule("jts/modules/exclude", folderName, tdsFilename,false,0, "InterFaceTestSelfExclusion.java", "package-info.java");
 
-        assertEquals("must have Type InterfaceWithEnum", 0, OutputHelper.findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTestSelfExclusion\\s*\\{")).size());
+        // ?? What?
+        assertEquals("must have Type InterfaceWithEnum", 0, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTestSelfExclusion\\s*\\{")).size());
+    }
+
+
+    @Test
+    public void test_custom_namespace_map() throws IOException {
+        final String folderName = "jtsgen.namespace_test";
+        final String tdsFilename = "namespace_test.d.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/nsmap", folderName, tdsFilename,false,0, "InterFaceTestNameSpaceMapped.java", "package-info.java");
+
+        assertEquals("must have Type InterFaceTestNameSpaceMapped", 1, countPatterns(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTestNameSpaceMapped\\s*\\{")) );
+        assertEquals("must not have name space easy", 1, countPatterns(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+namespace\\s+easy")) );
+    }
+
+    @Test
+    public void test_namespace_clash() throws IOException {
+        final String folderName = "jtsgen.unknown";
+        final String tdsFilename = "unknown.d.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/nsmap_clash", folderName, tdsFilename,false,1, "a/InterFaceClash.java", "b/InterFaceClash.java");
+
+        assertEquals("must have Type InterFaceClash twice", 2, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceClash\\s*\\{")).size());
+        assertEquals("must have namespace a", 1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+namespace\\s+a\\s*\\{")).size());
+        assertEquals("must have namespace b", 1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+namespace\\s+b\\s*\\{")).size());
+    }
+
+    /**
+     * Two types in different packages
+     * - has NS mapped
+     * - module name is unknown: two top level packages
+     */
+    @Test
+    public void test_namespace_noclash() throws IOException {
+        final String folderName = "jtsgen.unknown";
+        final String tdsFilename = "unknown.d.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/nsmap_noclash", folderName, tdsFilename,false,1, "a/InterFaceNoClashA.java", "b/InterFaceNoClashB.java");
+
+        assertEquals("must have Type InterFaceNoClashA", 1, countPatterns(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceNoClashA\\s*\\{")) );
+        assertEquals("must have Type InterFaceNoClashB", 1, countPatterns(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceNoClashB\\s*\\{")) );
+
+        assertEquals("must not have namesapace", 0, countPatterns(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+namespace")) );
     }
 
     @Test
     public void test_simple_date() throws IOException {
         Compilation c = CompileHelper.compileJtsDev(false,0,"InterfaceWithDate.java");
-        assertEquals("must have Type InterfaceWithDate", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterfaceWithDate\\s*\\{")).size());
-        assertEquals("must have Type Date", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+Date\\s*\\{")).size());
+        assertEquals("must have Type InterfaceWithDate", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterfaceWithDate\\s*\\{")).size());
+        assertEquals("must have Type Date", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+Date\\s*\\{")).size());
 
         // namespave java.util
-        assertEquals("must have namespace java", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+namespace\\s+java\\s*\\{")).size());
-        assertEquals("must have namespace util", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+namespace\\s+util\\s*\\{")).size());
+        assertEquals("must have namespace java", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+namespace\\s+java\\s*\\{")).size());
+        assertEquals("must have namespace util", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+namespace\\s+util\\s*\\{")).size());
 
         // must have some Date attributes
-        assertEquals("must attribute hours: number;", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+hours:\\s*number;")).size());
-        assertEquals("must attribute seconds: number;", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+seconds:\\s*number;")).size());
-        assertEquals("must attribute month: number;", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+month:\\s*number;")).size());
-        assertEquals("must attribute year: number;", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+year:\\s*number;")).size());
-        assertEquals("must attribute minutes: number;", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+minutes:\\s*number;")).size());
+        assertEquals("must attribute hours: number;", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+hours:\\s*number;")).size());
+        assertEquals("must attribute seconds: number;", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+seconds:\\s*number;")).size());
+        assertEquals("must attribute month: number;", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+month:\\s*number;")).size());
+        assertEquals("must attribute year: number;", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+year:\\s*number;")).size());
+        assertEquals("must attribute minutes: number;", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+minutes:\\s*number;")).size());
 
         // must be mapped to java.util.Date
-        assertEquals("must be mapped to java.util.Date", 1, OutputHelper.findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+someDate:\\s+java.util.Date;")).size());
+        assertEquals("must be mapped to java.util.Date", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+someDate:\\s+java.util.Date;")).size());
     }
 
     @Test
     public void members_with_module_definitions() throws IOException {
         final String folderName = "jtsgen.testm1";
         final String tdsFilename = "test-m1.d.ts";
-        Compilation c = CompileHelper.compileForModule("jts/modules/testM1", folderName, tdsFilename,false,0, "MemberWithModuleDef.java", "package-info.java");
-        assertEquals("must have author Me Myself And I", 1, OutputHelper.findSourceLine(c, folderName, PACKAGE_JSON, Pattern.compile("^\\s+\"author\":\\s+\"Me Myself And I\"")).size());
-        assertEquals("must have Type MemberWithModuleDef", 1, OutputHelper.findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+interface\\s+MemberWithModuleDef\\s*\\{")).size());
-        assertEquals("java.util.Date must be converted to string", 1, OutputHelper.findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+date_string:\\s+string;")).size());
+        Compilation c = CompileHelper.compileForModule("jts/modules/testM1", folderName, tdsFilename,true,0, "MemberWithModuleDef.java", "package-info.java");
+        assertEquals("must have author Me Myself And I", 1, findSourceLine(c, folderName, PACKAGE_JSON, Pattern.compile("^\\s+\"author\":\\s+\"Me Myself And I\"")).size());
+        assertEquals("must have Type MemberWithModuleDef", 1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+interface\\s+MemberWithModuleDef\\s*\\{")).size());
+        assertEquals("java.util.Date must be converted to string", 1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+date_string:\\s+string;")).size());
     }
 
 }

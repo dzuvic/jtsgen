@@ -2,14 +2,11 @@ package dz.jtsgen.processor.model;
 
 import dz.jtsgen.processor.model.rendering.TSTypeVisitor;
 
-import javax.lang.model.element.TypeElement;
-import java.util.Collection;
+import javax.lang.model.element.Element;
 
 public class TSInterface extends TSType {
-
-
-    public TSInterface(TypeElement e) {
-        super(e, e.getQualifiedName().toString());
+    public TSInterface(Element e, String namespace, String name) {
+        super(e, namespace, name);
     }
 
     @Override

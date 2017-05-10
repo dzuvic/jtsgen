@@ -2,14 +2,20 @@
 
 **tl;dr** Enable code completion of Java types in your TypeScript project.
 
+Annotations: [ ![Download](https://api.bintray.com/packages/dzuvic/jtsgen/annotations/images/download.svg) ](https://bintray.com/dzuvic/jtsgen/annotations/_latestVersion)
+ Processor: [ ![Download](https://api.bintray.com/packages/dzuvic/jtsgen/processor/images/download.svg) ](https://bintray.com/dzuvic/jtsgen/processor/_latestVersion)
+
+## Features
+
 This project emits TypeScript ambient types from Java sources.
 `jtsgen` is implemented as an annotation processor, therefore it should be
 easily integrated in your current build infrastructure. Usually there
-are no other plugins required for your build system (maven, gradle).
+are no other plugins required for your build system (maven, gradle). 
 
-This is only a proof of concept and it currently support only some simple
-type mappings, therefore either submit an issue on [github](https://github.com/dzuvic/jtsgen/issues)
-or a pull request if you want a specific feature being implemented.
+This project is still in development, so major changes are still on the
+way and might break using it. Therefore either submit an issue on
+[github](https://github.com/dzuvic/jtsgen/issues) or a pull request if
+you want a specific feature being implemented.
 
 Currently the following features are supported:
 
@@ -17,43 +23,29 @@ Currently the following features are supported:
 * Ignoring a type using `@TSIgnore` annotation
 * creating a module with corresponding package.json. The name is constructed
   if not configured
-* Configuration of the JavaScript / TypeScript Module using the `@TSModule`
+* Configuration of the JavaScript / TypeScript module using the `@TSModule`
   annotation, e.g. the module name or the author of the exported ES module
-* simple custom type conversion, e.g. java.util.Date to string can configured
-  at the TSModule annotation. All custom annotation are in one place.
+* Configurable type conversion and exclusion using the `@TSModule`
+  annotation. It also supports type parameters, e.g. a `ImmutableList<T>`
+  can be be mapped to your own type `ImmutableArray<T>` with a
+  corresponding (mapped) type `T`
 * Java package as typescript name space
 * converting getter/setter to TypeScript types
 * `readonly` if no setter is found
-
+* Name Space mapping to minimize the TypeScript name spaces. It can be
+  configured or calculated.
 
 Requirements: The annotation processor only depends on the JDK. Only JDK 8
-is supported.
+is currently supported.
 
 ## Usage
-
-This project is still in development, so major changes are still on the
-way and might break using it.
-
 
 The jtsgen annotation processor registers itself using the
 [ServiceLoader](http://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html)
 protocol. Therefore when the processor is available on the compile or
 annotation class path it should be automatically invoked when compiling
-the annotated Java classes.
-
-Hint: Don't use `jtsgen-processor` as a compile time or runtime dependency.
-Either get you build system to use the `javac` annotation class path or
-excluding it from the transitive dependencies, e.g. using
-`compileOnly` in Gradle or `optional` in Maven.
-
-The generated sources are currently beneath the java source output folder.
-The output can be redirected using the regular `-s` option of `javac`.
-
-An example is currently in development: [jtsgen-examples](https://github.com/dzuvic/jtsgen-example)
-
-#### Simple Example
-
-Annotate the class or the interface with a `@TypeScript` annotation like this:
+the annotated Java classes. Any Java class, interface or enum with the
+annotation `@TypeScript` will be converted, e.g.:
 
 ````
 @TypeScript
@@ -66,6 +58,107 @@ public interface InterFaceSample {
 When compiling this class a complete ES module including a valid `package.json`
 is generated in the source output folder for a later deployment into
 a npm compatible repository. Although this feature is not tested in any way.
+
+Hint: Don't use `jtsgen-processor` as a compile time or runtime dependency.
+Either get you build system to use the `javac` annotation class path or
+excluding it from the transitive dependencies, e.g. using
+`compileOnly` in Gradle or `optional` in Maven.
+
+The generated sources are currently beneath the java source output folder.
+The output can be redirected using the regular `-s` option of `javac`.
+
+An example is currently in development: [jtsgen-examples](https://github.com/dzuvic/jtsgen-example)
+
+### The TSModule Annotation
+
+Currently only one TSModule annotation is permitted in one compilation unit.
+The annotation must be put to a package Element, like this:
+
+```
+@TSModule(
+        moduleName = "namespace_test",
+        nameSpaceMapping = "jts.modules.nsmap -> easy"
+)
+package jts.modules.nsmap;
+
+import dz.jtsgen.annotations.TSModule;
+```
+
+
+The following annotation parameters are supported:
+
+*  **moduleName**: The module name of the JavaScript/TypeScript Module. This must be a java package friendly name.
+*  **author**: The author number for the package.json file
+*  **authorUrl**: The authorURL for the package.json file
+*  **version**: The version number for the package.json file, default is "1.0.0"
+*  **license**: The license for the package.json file
+*  **description**: he description for the package.json file
+*  **customTypeMappings**: Custom Type Mapping for the module, the default is `{}`
+*  **excludes**: regular expression to exclude type conversion, default is: `{"^sun", "^jdk.internal"}`
+*  **nameSpaceMapping**: The name space mapping, the default is `{}`
+
+
+
+#### Custom Type Mapping
+
+The annotation processor supports a simple mapping description language.
+The custom Type Mapping for the module is  a list of strings, each
+describing a type mapping. Each string consists of a Java Type (canonical
+name with type params) and the resulting TypeScript Type. Both Types are
+separated with an arrow, e.g.:
+
+    java.util.Date -> IDateJSStatic
+
+maps a `java.util.Date` to the TypeScript type `IDateJSStatic`
+
+It also is possible to use type variables, e.g. :
+
+    java.util.List<T> -> Array<T>
+
+
+will convert any java.util.List or it's subtypes to an Array type in
+TypeScript. If the matched java type has a type parameter the converted
+type parameter will be inserted accordingly.
+
+The annotation processor has the following conversions for declaration
+types configured:
+
+
+The Processor has no knowledge about the the necessary imports.
+
+
+#### Name Space Mapping
+
+TSModule accepts a list of name spaces, that should me mapped (shortened).
+In case of an empty list, a name space mapping will be calculated. In
+that case the top top level packages will be mapped to the root name space.
+
+Some examples:
+
+* `a.b.c -> `: Maps a.b.c to root
+* `a.b.c -> a.b`: Maps a.b.c to namespace a
+
+
+### Annotation Processor Params
+
+with the following annotation processor parameters some of the settings
+made using the `TSModule` annotation can be overridden:
+
+* jtsgenLogLevel: enable additional logging. Use ine of the following
+  `j.u.Logging` levels: ,`OFF` ,`SEVERE` ,`WARNING` ,`INFO` ,`CONFIG`
+  ,`FINE` ,`FINER` ,`FINEST` ,`ALL`
+* jtsgenModuleName: the name of the module, that should be exported
+* jtsgenModuleVersion: the version number of the module
+* jtsgenModuleDescription: the description of the module
+* jtsgenModuleAuthor: the module author
+* jtsgenModuleLicense: the npm license string of the module
+* jtsgenModuleAuthorUr: the URL of the author
+
+To use one of them, use the javac prefix `-A`, e.g.
+
+    javac -AjtsgenLogLevel=FINEST MyClass.java`
+
+
 
 ### Using in gradle projects
 
@@ -80,25 +173,18 @@ repositories {
 }
 
 dependencies {
-    compileOnly "jtsgen:jtsgen-annotations:0.0.2"
-    compileOnly "jtsgen:jtsgen-processor:0.0.2"
+    compileOnly "jtsgen:jtsgen-annotations:0.1.0"
+    compileOnly "jtsgen:jtsgen-processor:0.1.0"
 }
 ````
-
-### Processing Options
-
-The processor currently support the following Options:
-
-* `jtsgenLogLevel` The j.u.l. Logging for error reporting and debugging
-* `jtsgenModuleName` The name of the default module
 
 
 ## License And Legal Notes
 
 The following licenses apply `jtsgen`:
 
-The annotations are Apache 2.0 licensed. The rest of `jtsgen`,
-especially the processor , is GPLv3 licensed. The license texts are
+The **annotations** are **Apache 2.0** licensed. The **other parts** of `jtsgen`,
+especially the processor, are **GPLv3** licensed. The license texts are
 included in the file `LICENSE`. Because `jtsgen` as a sort of a compiler
 plugin you shouldn't redistribute the compiler in your projects. It's
 just like using OpenJDK: the generated code is *not* affected by

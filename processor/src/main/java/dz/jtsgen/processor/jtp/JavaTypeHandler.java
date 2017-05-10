@@ -32,6 +32,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import static dz.jtsgen.processor.util.StringUtils.lastOf;
+import static dz.jtsgen.processor.util.StringUtils.untill;
 import static javax.lang.model.element.ElementKind.ENUM_CONSTANT;
 
 /**
@@ -45,8 +47,11 @@ public class JavaTypeHandler {
 
     private final TSAVisitorParam tsaVisitorParam;
 
+    private final SimpleNameSpaceMapper namespaceMapper;
+
     public JavaTypeHandler(TSAVisitorParam tsaVisitorParam) {
         this.tsaVisitorParam = tsaVisitorParam;
+        this.namespaceMapper = new SimpleNameSpaceMapper(tsaVisitorParam.getTsModel());
     }
 
     public List<TSType> createTsModels(TypeElement e) {
@@ -64,22 +69,27 @@ public class JavaTypeHandler {
     }
 
     private Optional<TSType> handleJavaType(TypeElement element) {
+        if (element == null) return Optional.empty();
+
         if (checkExclusion(element)) {
             LOG.info( () -> "Excluding " + element);
             return Optional.empty();
         }
         TSType result = null;
+        final String name = lastOf(element.toString());
+        final String namespace = this.namespaceMapper.mapNameSpace(untill(element.toString()));
         switch (element.getKind()) {
-            case CLASS: {
-                result = new TSInterface(element).addMembers(findMembers(element));
+            case CLASS:
+            {
+                result = new TSInterface(element, namespace, name).addMembers(findMembers(element));
                 break;
             }
             case INTERFACE: {
-                result = new TSInterface(element).addMembers(findMembers(element));
+                result = new TSInterface(element, namespace, name).addMembers(findMembers(element));
                 break;
             }
             case ENUM: {
-                result = new TSEnum(element).addMembers(findEnumMembers(element));
+                result = new TSEnum(element, namespace, name).addMembers(findEnumMembers(element));
                 break;
             }
             default: break;

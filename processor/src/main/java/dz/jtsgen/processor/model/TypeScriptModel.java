@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 public class TypeScriptModel {
 
     // java package -> TSModuleInfo
-    private TSModuleInfo moduleInfo = new TSModuleInfo("unknown", null).withTypeMappingInfo(null, defaultExclusion());
+    private TSModuleInfo moduleInfo = new TSModuleInfo("unknown", null).withTypeMappingInfo(null, defaultExclusion(),null);
 
     private static List<Pattern> defaultExclusion() {
         return Arrays.stream(new String[]{"^sun", "^jdk.internal"}).map(Pattern::compile).collect(Collectors.toList());
@@ -74,5 +74,13 @@ public class TypeScriptModel {
 
     public void addTSTarget(TSTargetType tsTargetByMapping) {
         this.tsTargetTypes.put(tsTargetByMapping.getJavaType(),tsTargetByMapping);
+    }
+
+    public boolean usesDefaultNameSpaceMapping() {
+        return moduleInfo.getNameSpaceMappings().size()==0;
+    }
+
+    public void defineDefaultNamespaceMapping(List<NameSpaceMapping> nameSpaceMappings) {
+        this.moduleInfo=this.moduleInfo.withNameSpaceMapping(nameSpaceMappings);
     }
 }

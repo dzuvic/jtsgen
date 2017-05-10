@@ -82,6 +82,7 @@ public final class TSDGenerator {
             out.print("declare namespace ");
             out.print(module.getModuleName());
             out.println(" {");
+            outputTypes(module,  1, ns.getTypes(), out);
             ns.getSubNamespaces().forEach(x -> writeNameSpaces(module, ns.getSubNameSapce(x), 1, out));
             out.println(" }");
         } else {

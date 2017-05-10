@@ -35,7 +35,10 @@ dependencies {
     testCompile "com.google.testing.compile:compile-testing:0.10"
     testCompile "org.mockito:mockito-core:2.7.21"
     testCompile "commons-io:commons-io:2.5"
-    compileOnly "com.google.auto.service:auto-service:1.0-rc2"
+
+    compile 'com.google.guava:guava:21.0'
+
+    compileOnly "com.google.auto.service:auto-service:1.0-rc3"
     compileOnly  files(Jvm.current().toolsJar)
     runtime files(Jvm.current().toolsJar)
 }

@@ -18,24 +18,11 @@
  *
  */
 
-package dz.jtsgen.processor.model;
+// Test excludion of itself, so no output should be generated
+@TSModule(
+        moduleName = "namespace_test",
+        nameSpaceMapping = "jts.modules.nsmap -> easy"
+)
+package jts.modules.nsmap;
 
-import dz.jtsgen.processor.model.rendering.TSTypeVisitor;
-
-import javax.lang.model.element.Element;
-
-public class TSEnum extends TSType {
-    public TSEnum(Element e, String namespace, String name) {
-        super(e, namespace, name);
-    }
-
-    @Override
-    public String getKeyword() {
-        return "enum";
-    }
-
-    @Override
-    public void accept(TSTypeVisitor visitor, int ident) {
-        visitor.visit(this, ident);
-    }
-}
+import dz.jtsgen.annotations.TSModule;

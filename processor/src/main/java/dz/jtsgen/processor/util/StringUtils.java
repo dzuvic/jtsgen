@@ -166,5 +166,37 @@ public final class StringUtils {
         if (javaTypeString == null) return "";
         return javaTypeString.replaceAll("<.*>", "");
     }
+
+    /**
+     * @param param  a string
+     * @return  empty if null else trimmed
+     */
+    public static String notEmptytrimmed(String param) {
+        return param==null ? "" : param.trim();
+    }
+
+    /**
+     *
+     * @param mappingString a string that is with an arrow
+     * @return a tuple of two strings
+     */
+    public static Optional<Tuple<String, String>> splitIntoTwo(String mappingString) {
+        if (mappingString == null || !mappingString.contains("->")) return Optional.empty();
+        String[] params = mappingString.split("->");
+        if (params.length != 2) {
+            return Optional.empty();
+        }
+        return Optional.of(new Tuple<>(notEmptytrimmed(params[0]), notEmptytrimmed(params[1])));
+    }
+
+    /**
+     *
+     * @param theString the string to take a look into
+     * @param sep the separator, if null or empty it's an dot "."
+     * @return the amount of
+     */
+    public static int countMatches(String theString, String... sep) {
+        return (theString == null) ? 0 : theString.length() - theString.replace(separator(sep), "").length();
+    }
 }
 

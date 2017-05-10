@@ -21,6 +21,7 @@
 package dz.jtsgen.processor.model;
 
 
+import dz.jtsgen.processor.util.StringUtils;
 import org.junit.Test;
 
 import javax.lang.model.element.Name;
@@ -60,8 +61,7 @@ public class TypeScriptModelTest {
         final Name mockedName = mock(Name.class);
         when(mockedName.toString()).thenReturn(canonicalName);
         when(mockedTypeElement.getQualifiedName()).thenReturn(mockedName);
-        return new TSInterface(mockedTypeElement);
-
+        return new TSInterface(mockedTypeElement, StringUtils.untill(canonicalName), StringUtils.lastOf(canonicalName));
     }
 
 }

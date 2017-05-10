@@ -156,7 +156,7 @@ public class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTarge
         final Optional<TSType> tsType = typeElement.flatMap( x -> new JavaTypeHandler(tsaVisitorParam).createTsModelWithEmbeddedTypes(x));
         final Optional<TSTargetType> result = tsType.flatMap(x -> {
             model().addTSTypes(Collections.singletonList(x));
-            return createTSTargetByMapping("" + nameOfType + "->" + x.getNamespace()+"."+x.getName());
+            return createTSTargetByMapping("" + nameOfType + "->" + ("".equals(x.getNamespace())? "" : x.getNamespace()+".") +x.getName());
         });
         LOG.finest(() -> "TCSV: converted " + t + " to " + tsType );
         return result;

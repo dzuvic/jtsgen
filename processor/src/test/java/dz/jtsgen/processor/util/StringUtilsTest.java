@@ -26,6 +26,7 @@ import org.junit.runners.JUnit4;
 
 import java.util.Arrays;
 
+import static dz.jtsgen.processor.util.StringUtils.*;
 import static org.junit.Assert.*;
 
 
@@ -33,80 +34,88 @@ import static org.junit.Assert.*;
 public class StringUtilsTest {
 
     @Test
+    public void testCountMatches() throws Exception {
+        assertEquals(countMatches("a.b.c"),2);
+        assertEquals(countMatches("a"),0);
+        assertEquals(countMatches(""),0);
+        assertEquals(countMatches(null),0);
+    }
+
+    @Test
      public void tesrCarOfString() throws Exception {
-         assertEquals("de", StringUtils.car("de.dz"));
-         assertEquals("de", StringUtils.car("de"));
-         assertEquals("", StringUtils.car(""));
-         assertEquals("a", StringUtils.car("a.b.c.d"));
+         assertEquals("de", car("de.dz"));
+         assertEquals("de", car("de"));
+         assertEquals("", car(""));
+         assertEquals("a", car("a.b.c.d"));
      }
 
     @Test
     public void testMessageWithNulls() throws Exception {
-        assertEquals("", StringUtils.arrayFormat("", new Object[]{"a"}));
-        assertEquals("", StringUtils.arrayFormat(null, new Object[]{"a"}));
-        assertEquals("", StringUtils.arrayFormat("{}", new Object[]{""}));
-        assertEquals("?", StringUtils.arrayFormat("{}", null));
-        assertEquals("null", StringUtils.arrayFormat("{}", new Object[]{null, null}));
+        assertEquals("", arrayFormat("", new Object[]{"a"}));
+        assertEquals("", arrayFormat(null, new Object[]{"a"}));
+        assertEquals("", arrayFormat("{}", new Object[]{""}));
+        assertEquals("?", arrayFormat("{}", null));
+        assertEquals("null", arrayFormat("{}", new Object[]{null, null}));
     }
 
     @Test
     public void testMessageWithSomeObjects() throws Exception {
-        assertEquals("a", StringUtils.arrayFormat("{}", new Object[]{"a"}));
-        assertEquals("1", StringUtils.arrayFormat("{}", new Object[]{1}));
-        assertEquals("1?", StringUtils.arrayFormat("{}{}", new Object[]{1}));
-        assertEquals("12", StringUtils.arrayFormat("{}{}", new Object[]{1,2}));
-        assertEquals("1 2", StringUtils.arrayFormat("{} {}", new Object[]{1,2,3}));
-        assertEquals("abc", StringUtils.arrayFormat("abc", new Object[]{1,2,3}));
+        assertEquals("a", arrayFormat("{}", new Object[]{"a"}));
+        assertEquals("1", arrayFormat("{}", new Object[]{1}));
+        assertEquals("1?", arrayFormat("{}{}", new Object[]{1}));
+        assertEquals("12", arrayFormat("{}{}", new Object[]{1,2}));
+        assertEquals("1 2", arrayFormat("{} {}", new Object[]{1,2,3}));
+        assertEquals("abc", arrayFormat("abc", new Object[]{1,2,3}));
     }
 
     @Test
     public void testMessageWithList() throws Exception {
-        assertEquals("1,2,3", StringUtils.arrayFormat("{}", new Object[]{  Arrays.asList(1, 2, 3) } ));
+        assertEquals("1,2,3", arrayFormat("{}", new Object[]{  Arrays.asList(1, 2, 3) } ));
     }
 
     @Test
     public void testRemoveTypeArgs() {
-        assertEquals("",StringUtils.withoutTypeArgs(null));
-        assertEquals("a",StringUtils.withoutTypeArgs("a<b>"));
-        assertEquals("a",StringUtils.withoutTypeArgs("a<b<c>>"));
+        assertEquals("",withoutTypeArgs(null));
+        assertEquals("a",withoutTypeArgs("a<b>"));
+        assertEquals("a",withoutTypeArgs("a<b<c>>"));
     }
 
     @Test
     public void qualifiedTests() throws Exception {
-       assertEquals("",StringUtils.lastOf(""));
-       assertEquals("d",StringUtils.lastOf("a.b.c.d"));
-       assertEquals("d",StringUtils.lastOf("d"));
+       assertEquals("",lastOf(""));
+       assertEquals("d",lastOf("a.b.c.d"));
+       assertEquals("d",lastOf("d"));
 
-       assertEquals("",StringUtils.untill(""));
-       assertEquals("a.b.c",StringUtils.untill("a.b.c.d"));
-       assertEquals("",StringUtils.untill("d"));
+       assertEquals("",untill(""));
+       assertEquals("a.b.c",untill("a.b.c.d"));
+       assertEquals("",untill("d"));
     }
 
     @Test
     public void testDotToDash() throws Exception {
-       assertEquals("",StringUtils.dotToDash(""));
-       assertEquals("a-b",StringUtils.dotToDash("a.b"));
-       assertEquals("a-b-c",StringUtils.dotToDash("a.b.c"));
+       assertEquals("",dotToDash(""));
+       assertEquals("a-b",dotToDash("a.b"));
+       assertEquals("a-b-c",dotToDash("a.b.c"));
     }
 
     @Test
     public void testCamelCaseToDash() {
-        assertEquals("abc-abc",StringUtils.camelCaseToDash("abcAbc"));
+        assertEquals("abc-abc",camelCaseToDash("abcAbc"));
     }
 
     @Test
     public void testDotToCamelUpperCase() {
-        assertEquals("AbCd", StringUtils.dotToUpperCamelCase("ab.cd"));
-        assertEquals("Ab", StringUtils.dotToUpperCamelCase("ab"));
-        assertEquals("ABCD", StringUtils.dotToUpperCamelCase("a.b.c.d"));
+        assertEquals("AbCd", dotToUpperCamelCase("ab.cd"));
+        assertEquals("Ab", dotToUpperCamelCase("ab"));
+        assertEquals("ABCD", dotToUpperCamelCase("a.b.c.d"));
     }
 
     @Test
     public void testCheckPackageFriendly() {
-        assertTrue(StringUtils.isPackageFriendly("a.b"));
-        assertTrue(StringUtils.isPackageFriendly("a"));
-        assertTrue(StringUtils.isPackageFriendly("a.b.c"));
-        assertFalse(StringUtils.isPackageFriendly("a-b.c"));
-        assertFalse(StringUtils.isPackageFriendly("0a.b.c"));
+        assertTrue(isPackageFriendly("a.b"));
+        assertTrue(isPackageFriendly("a"));
+        assertTrue(isPackageFriendly("a.b.c"));
+        assertFalse(isPackageFriendly("a-b.c"));
+        assertFalse(isPackageFriendly("0a.b.c"));
     }
 }

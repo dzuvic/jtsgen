@@ -17,25 +17,12 @@
  * along with jtsgen.  If not, see http://www.gnu.org/licenses/
  *
  */
+package jts.modules.nsmap;
 
-package dz.jtsgen.processor.model;
+import dz.jtsgen.annotations.TypeScript;
 
-import dz.jtsgen.processor.model.rendering.TSTypeVisitor;
-
-import javax.lang.model.element.Element;
-
-public class TSEnum extends TSType {
-    public TSEnum(Element e, String namespace, String name) {
-        super(e, namespace, name);
-    }
-
-    @Override
-    public String getKeyword() {
-        return "enum";
-    }
-
-    @Override
-    public void accept(TSTypeVisitor visitor, int ident) {
-        visitor.visit(this, ident);
-    }
+// Must not be in output
+@TypeScript
+public interface InterFaceTestNameSpaceMapped {
+    String getMappedNamespace();
 }
