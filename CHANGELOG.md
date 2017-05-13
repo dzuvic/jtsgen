@@ -2,7 +2,14 @@
 
 ## [Unreleased](https://github.com/dzuvic/jtsgen/tree/HEAD)
 
-[Full Changelog](https://github.com/dzuvic/jtsgen/compare/jtsgen-0.1.0...HEAD)
+[Full Changelog](https://github.com/dzuvic/jtsgen/compare/jtsgen-0.1.1...HEAD)
+
+**Fixed bugs:**
+
+- compile time dependendcy to guava [\#13](https://github.com/dzuvic/jtsgen/issues/13)
+
+## [jtsgen-0.1.1](https://github.com/dzuvic/jtsgen/tree/jtsgen-0.1.1) (2017-05-13)
+[Full Changelog](https://github.com/dzuvic/jtsgen/compare/jtsgen-0.1.0...jtsgen-0.1.1)
 
 **Implemented enhancements:**
 
