@@ -46,8 +46,7 @@ public class CompileHelper {
         return compileForModule("jts/dev", JTS_DEV, JTS_DEV_D_TS, debugLog, warningCount, fileNames);
     }
 
-    /** small helper for compiling several java files in an unified way for a specific module */
-    public static Compilation compileForModule(String packageDir, String folderName, String tdsFilename, boolean debugLog, int warningCount, String... fileNames) {
+    public static Compilation compileForNoModule(String packageDir, String folderName, String tdsFilename, boolean debugLog, int warningCount, String... fileNames) {
         assert fileNames != null;
         JavaFileObject[] files = Arrays.stream(fileNames).map((x) -> JavaFileObjects.forResource(packageDir + "/" +x)).toArray(JavaFileObject[]::new);
         Compilation c =  javac()
@@ -64,6 +63,20 @@ public class CompileHelper {
             c.warnings().forEach(System.err::println);
             fail("Warnings count differ "+warningCount+" (expected) !="+c.warnings().size());
         }
+
+        if (! c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, tdsFilename).isPresent()) {
+            c.generatedFiles().forEach(System.out::println);
+        }
+
+        assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, tdsFilename).isPresent());
+
+        return c;
+    }
+
+
+    /** small helper for compiling several java files in an unified way for a specific module */
+    public static Compilation compileForModule(String packageDir, String folderName, String tdsFilename, boolean debugLog, int warningCount, String... fileNames) {
+        Compilation c = compileForNoModule(packageDir, folderName, tdsFilename, debugLog, warningCount, fileNames);
 
         if (! c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName , PACKAGE_JSON).isPresent() || ! c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, tdsFilename).isPresent()) {
             c.generatedFiles().forEach(System.out::println);

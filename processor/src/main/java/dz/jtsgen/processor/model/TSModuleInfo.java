@@ -20,10 +20,13 @@
 
 package dz.jtsgen.processor.model;
 
+import dz.jtsgen.annotations.OutputType;
 import dz.jtsgen.processor.util.StringUtils;
 
 import java.util.*;
 import java.util.regex.Pattern;
+
+import static dz.jtsgen.processor.util.StringUtils.camelCaseToDash;
 
 /**
  * Describes a JavaScript Module.
@@ -43,11 +46,12 @@ public final class TSModuleInfo {
     private Map<String,TSTargetType> customMappings;
     private List<Pattern> excludes;
     private List<NameSpaceMapping> nameSpaceMappings;
+    private final OutputType outputType;
 
 
     public TSModuleInfo(String moduleName, String javaPackage
     ) {
-        this(moduleName, javaPackage, null, null, null, null, null, null, null, null, null);
+        this(moduleName, javaPackage, null, null, null, null, null, null, null, null, null, null);
     }
 
     // copy constructor
@@ -63,7 +67,8 @@ public final class TSModuleInfo {
                 module.umdVariableName,
                 module.customMappings,
                 module.excludes,
-                module.nameSpaceMappings
+                module.nameSpaceMappings,
+                module.outputType
         );
     }
 
@@ -85,6 +90,7 @@ public final class TSModuleInfo {
             , String moduleLicense
             , String moduleAuthorUrl
             , String moduleName
+            , OutputType outputType
     ) {
         return new TSModuleInfo(
                 moduleName == null ? this.moduleName : moduleName ,
@@ -94,13 +100,14 @@ public final class TSModuleInfo {
                 moduleAuthor== null ? this.moduleAuthor : moduleAuthor ,
                 moduleLicense== null ? this.moduleLicense : moduleLicense ,
                 moduleAuthorUrl== null ? this.moduleAuthorUrl : moduleAuthorUrl ,
-                this.umdVariableName, this.customMappings, this.excludes, this.nameSpaceMappings);
+                this.umdVariableName, this.customMappings, this.excludes, this.nameSpaceMappings, outputType
+        );
     }
 
     public TSModuleInfo withTypeMappingInfo(Map<String, TSTargetType> mapping, List<Pattern> excludes, List<NameSpaceMapping> nameSpaceMappings) {
         return new TSModuleInfo(this.moduleName, this.javaPackage,
                        this.moduleVersion, this.moduleDescription, this.moduleAuthor, this.moduleLicense, this.moduleAuthorUrl,
-                       this.umdVariableName, mapping, excludes, nameSpaceMappings);
+                       this.umdVariableName, mapping, excludes, nameSpaceMappings, this.outputType);
     }
 
     /**
@@ -126,6 +133,8 @@ public final class TSModuleInfo {
             , Map<String,TSTargetType> customMappings
             , List<Pattern> excludes
             , List<NameSpaceMapping> nameSpaceMappings
+            , OutputType outputType
+
     ) {
         assert StringUtils.isPackageFriendly(moduleName);
         this.moduleName = moduleName;
@@ -139,6 +148,7 @@ public final class TSModuleInfo {
         this.moduleAuthor = moduleAuthor == null ? "unknown" : moduleAuthor;
         this.moduleLicense = moduleLicense == null ? "unknown" : moduleLicense;
         this.moduleAuthorUrl = moduleAuthorUrl == null ? "unknown" : moduleAuthorUrl;
+        this.outputType = outputType == null ? OutputType.TS_MODULE_DECLARED_NAMESPACE : outputType;
 
         final Map<String,TSTargetType> customMappingsCopy=new LinkedHashMap<>();
         final List<Pattern> excludesCopy = new ArrayList<>();
@@ -207,7 +217,7 @@ public final class TSModuleInfo {
      * @return the filename of the typings file.
      */
     public String getModuleTyingsFile() {
-        return StringUtils.camelCaseToDash(moduleName) + ".d.ts";
+        return camelCaseToDash(moduleName) + ".d.ts";
     }
 
     public String getModuleAuthorUrl() {
@@ -226,6 +236,10 @@ public final class TSModuleInfo {
         return nameSpaceMappings;
     }
 
+    public OutputType getOutputType() {
+        return outputType;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -238,11 +252,12 @@ public final class TSModuleInfo {
                 Objects.equals(getModuleAuthor(), that.getModuleAuthor()) &&
                 Objects.equals(getModuleLicense(), that.getModuleLicense()) &&
                 Objects.equals(getModuleAuthorUrl(), that.getModuleAuthorUrl()) &&
+                Objects.equals(getOutputType(), that.getOutputType()) &&
                 Objects.equals(getUmdVariableName(), that.getUmdVariableName());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getModuleName(), getJavaPackage(), getModuleVersion(), getModuleDescription(), getModuleAuthor(), getModuleLicense(), getModuleAuthorUrl(), getUmdVariableName());
+        return Objects.hash(getModuleName(), getJavaPackage(), getModuleVersion(), getModuleDescription(), getModuleAuthor(), getModuleLicense(), getModuleAuthorUrl(), getUmdVariableName(), getOutputType());
     }
 }

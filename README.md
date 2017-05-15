@@ -96,6 +96,7 @@ The following annotation parameters are supported:
 *  **customTypeMappings**: Custom Type Mapping for the module, the default is `{}`
 *  **excludes**: regular expression to exclude type conversion, default is: `{"^sun", "^jdk.internal"}`
 *  **nameSpaceMapping**: The name space mapping, the default is `{}`
+*  **outputType**: The type of the output. Default is `OutputType.TS_MODULE_DECLARED_NAMESPACE`
 
 
 
@@ -137,6 +138,15 @@ Some examples:
 
 * `a.b.c -> `: Maps a.b.c to root
 * `a.b.c -> a.b`: Maps a.b.c to namespace a
+
+#### Configuring the output
+
+The type of the output can be configured by the outputType parameter of
+the TSModule annotation:
+
+* `TS_MODULE_DECLARED_NAMESPACE`: exports a module (d.ts and package.json)
+  with a declared name space
+* `DECLARED_NAMESPACE`: only the declared namespace in a single d.ts file
 
 
 ### Annotation Processor Params

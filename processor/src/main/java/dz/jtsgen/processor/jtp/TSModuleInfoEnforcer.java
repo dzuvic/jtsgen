@@ -69,7 +69,7 @@ public class TSModuleInfoEnforcer {
         String moduleLicense = env.getOptions().get(JTSGEN_OUTPUT_OPTION_MODULELICENSE);
         String moduleAuthorUrl = env.getOptions().get(JTSGEN_OUTPUT_OPTION_MODULEAUTHORURL);
         return new TSModuleInfo(this.model.getModuleInfo())
-                .withModuleData(moduleVersion, moduleDescription, moduleAuthor, moduleLicense, moduleAuthorUrl, moduleName)
+                .withModuleData(moduleVersion, moduleDescription, moduleAuthor, moduleLicense, moduleAuthorUrl, moduleName, this.model.getModuleInfo().getOutputType())
                 .withNameSpaceMapping(nsMapping);
     }
 

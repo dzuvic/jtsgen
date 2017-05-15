@@ -98,5 +98,11 @@ public @interface TSModule {
      *
      */
     String[] nameSpaceMapping() default {};
-    
+
+
+    /**
+     *  defines the output format
+     */
+    OutputType outputType() default OutputType.TS_MODULE_DECLARED_NAMESPACE;
+
 }

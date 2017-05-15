@@ -20,6 +20,7 @@
 
 package dz.jtsgen.processor.renderer.module;
 
+import dz.jtsgen.annotations.OutputType;
 import dz.jtsgen.processor.model.TSModuleInfo;
 import dz.jtsgen.processor.renderer.helper.ModuleResourceHelper;
 import dz.jtsgen.processor.renderer.helper.PrintWriterWithLogging;
@@ -57,7 +58,7 @@ public final class ModuleGenerator {
 
     public void writeModule(TSModuleInfo moduleInfo) {
         try {
-            writePackageJson(moduleInfo);
+            if (moduleInfo.getOutputType() == OutputType.TS_MODULE_DECLARED_NAMESPACE) writePackageJson(moduleInfo);
             tsdGenerator.writeTypes(moduleInfo);
         } catch (IOException e) {
             LOG.log(Level.SEVERE, "Caught Exception", e);
