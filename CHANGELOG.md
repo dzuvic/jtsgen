@@ -2,7 +2,18 @@
 
 ## [Unreleased](https://github.com/dzuvic/jtsgen/tree/HEAD)
 
-[Full Changelog](https://github.com/dzuvic/jtsgen/compare/jtsgen-0.1.1...HEAD)
+[Full Changelog](https://github.com/dzuvic/jtsgen/compare/jtsgen-0.1.2...HEAD)
+
+**Fixed bugs:**
+
+- remove jtsgen directory in the output. only use the modulename as directory [\#14](https://github.com/dzuvic/jtsgen/issues/14)
+
+## [jtsgen-0.1.2](https://github.com/dzuvic/jtsgen/tree/jtsgen-0.1.2) (2017-05-15)
+[Full Changelog](https://github.com/dzuvic/jtsgen/compare/jtsgen-0.1.1...jtsgen-0.1.2)
+
+**Implemented enhancements:**
+
+- support exporting only the d.ts file [\#16](https://github.com/dzuvic/jtsgen/issues/16)
 
 **Fixed bugs:**
 
