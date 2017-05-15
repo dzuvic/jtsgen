@@ -186,7 +186,7 @@ public class TsGenProcessorTest {
 
     @Test
     public void test_custom_exclusion() throws IOException {
-        final String folderName = "jtsgen.exclusion_test";
+        final String folderName = "exclusion_test";
         final String tdsFilename = "exclusion_test.d.ts";
         Compilation c = CompileHelper.compileForModule("jts/modules/exclude", folderName, tdsFilename, DUMP_FILES, 0, "InterFaceTestSelfExclusion.java", "package-info.java");
 
@@ -197,7 +197,7 @@ public class TsGenProcessorTest {
 
     @Test
     public void test_custom_namespace_map() throws IOException {
-        final String folderName = "jtsgen.namespace_test";
+        final String folderName = "namespace_test";
         final String tdsFilename = "namespace_test.d.ts";
         Compilation c = CompileHelper.compileForModule("jts/modules/nsmap", folderName, tdsFilename, DUMP_FILES, 0, "InterFaceTestNameSpaceMapped.java", "package-info.java");
 
@@ -207,7 +207,7 @@ public class TsGenProcessorTest {
 
     @Test
     public void test_namespace_clash() throws IOException {
-        final String folderName = "jtsgen.unknown";
+        final String folderName = "unknown";
         final String tdsFilename = "unknown.d.ts";
         Compilation c = CompileHelper.compileForModule("jts/modules/nsmap_clash", folderName, tdsFilename, DUMP_FILES, 1, "a/InterFaceClash.java", "b/InterFaceClash.java");
 
@@ -223,7 +223,7 @@ public class TsGenProcessorTest {
      */
     @Test
     public void test_namespace_noclash() throws IOException {
-        final String folderName = "jtsgen.unknown";
+        final String folderName = "unknown";
         final String tdsFilename = "unknown.d.ts";
         Compilation c = CompileHelper.compileForModule("jts/modules/nsmap_noclash", folderName, tdsFilename, DUMP_FILES, 1, "a/InterFaceNoClashA.java", "b/InterFaceNoClashB.java");
 
@@ -256,7 +256,7 @@ public class TsGenProcessorTest {
 
     @Test
     public void test_output_type_d_ts_only() throws IOException {
-        final String folderName = "jtsgen.no_module";
+        final String folderName = "no_module";
         final String tdsFilename = "no_module.d.ts";
         Compilation c = CompileHelper.compileForNoModule("jts/modules/outputNoModule", folderName, tdsFilename,DUMP_FILES,0, "InterFaceTestNameSpaceMapped.java", "package-info.java");
         assertFalse("must not contain package.json", c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName , PACKAGE_JSON).isPresent());
@@ -265,7 +265,7 @@ public class TsGenProcessorTest {
 
     @Test
     public void members_with_module_definitions() throws IOException {
-        final String folderName = "jtsgen.testm1";
+        final String folderName = "testm1";
         final String tdsFilename = "test-m1.d.ts";
         Compilation c = CompileHelper.compileForModule("jts/modules/testM1", folderName, tdsFilename, DUMP_FILES, 0, "MemberWithModuleDef.java", "package-info.java");
         assertEquals("must have author Me Myself And I", 1, findSourceLine(c, folderName, PACKAGE_JSON, Pattern.compile("^\\s+\"author\":\\s+\"Me Myself And I\"")).size());

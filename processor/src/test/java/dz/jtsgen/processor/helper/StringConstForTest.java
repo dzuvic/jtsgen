@@ -22,10 +22,10 @@ package dz.jtsgen.processor.helper;
 
 /** Some String constants used in the tests */
 public class StringConstForTest {
-    public static final String JTSGEN_MYMODULE = "jtsgen.mymodule";
+    public static final String JTSGEN_MYMODULE = "mymodule";
     public static final String PACKAGE_JSON = "package.json";
-    public static final String JTSGEN_UNKNOWN = "jtsgen.unknown";
+    public static final String JTSGEN_UNKNOWN = "unknown";
     public static final String MY_MODULE_D_TS = "my-module.d.ts";
-    public static final String JTS_DEV = "jtsgen.jtsdev";
+    public static final String JTS_DEV = "jtsdev";
     public static final String JTS_DEV_D_TS = "jts-dev.d.ts";
 }

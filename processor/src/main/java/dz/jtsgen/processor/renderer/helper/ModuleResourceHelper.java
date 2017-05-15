@@ -33,6 +33,6 @@ public final class ModuleResourceHelper {
     public static FileObject createResource(ProcessingEnvironment env, TSModuleInfo moduleName, String fileName) throws IOException {
         return env
                 .getFiler()
-                .createResource(StandardLocation.SOURCE_OUTPUT, "jtsgen." + moduleName.getModuleDirectoryName().toLowerCase(), fileName);
+                .createResource(StandardLocation.SOURCE_OUTPUT, moduleName.getModuleDirectoryName().toLowerCase(), fileName);
     }
 }

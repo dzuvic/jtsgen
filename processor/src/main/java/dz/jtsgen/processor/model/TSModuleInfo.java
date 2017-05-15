@@ -194,7 +194,7 @@ public final class TSModuleInfo {
      * only accepts packages names for sub dirs (as ressource)
      */
     public String getModuleDirectoryName() {
-        return moduleName;
+        return StringUtils.lastOf(moduleName,"/");
     }
 
     public String getModuleVersion() {
