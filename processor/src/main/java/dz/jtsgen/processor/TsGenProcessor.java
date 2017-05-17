@@ -34,6 +34,7 @@ import dz.jtsgen.processor.visitors.TSAVisitorParam;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
@@ -116,10 +117,13 @@ public class TsGenProcessor extends AbstractProcessorWithLogging {
 
     // process TypeScript Annotation
     private void processTypeScriptAnnotation(TypeElement annotation, RoundEnvironment roundEnv) {
-        Set<? extends Element> annotatedElements = roundEnv.getElementsAnnotatedWith(TypeScript.class).stream().filter(
-                (ignoring) -> ignoring.getAnnotationMirrors().stream().noneMatch((y) -> {
-                    return TSIgnore.class.getSimpleName().equals(y.getAnnotationType().asElement().getSimpleName().toString());
-                })).collect(Collectors.toSet());
+        final String tsIgnoreSimpleName = TSIgnore.class.getSimpleName();
+        Set<Element> annotatedElements = roundEnv.getElementsAnnotatedWith(TypeScript.class).<Element>stream()
+                .filter(
+                        (ignoring) -> ignoring.getAnnotationMirrors().<AnnotationMirror>stream().noneMatch(
+                                (y) -> tsIgnoreSimpleName.equals(y.getAnnotationType().asElement().getSimpleName().toString())))
+                .collect(Collectors.toSet());
+
         // this is needed for: updating data from CLI and calculating a name space mapping, if needed
         new TSModuleInfoEnforcer(this.processingEnv,this.typeScriptModel).createUpdatedTSModuleInfo(annotatedElements).ifPresent( x -> {
             typeScriptModel.addModuleInfo(x);
