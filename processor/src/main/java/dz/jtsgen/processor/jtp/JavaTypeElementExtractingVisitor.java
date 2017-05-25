@@ -45,7 +45,6 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
 
     private static Logger LOG = Logger.getLogger(JavaTypeElementExtractingVisitor.class.getName());
 
-    private final TSMemberVisitor tsMemberVisitor;
 
     private final Map<String, TSMember> members = new HashMap<>();
 
@@ -63,17 +62,11 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
         assert element != null && visitorParam != null;
         this.element = element;
         this.tsaVisitorParam = visitorParam;
-        this.tsMemberVisitor = new TSMemberVisitor();
     }
 
     @Override
     public Void visitType(TypeElement e, Void notcalled) {
-        LOG.log(Level.FINEST, () -> String.format("JTExV visiting type %s", e.toString()));
-        Optional<TSMember> member = Optional.ofNullable(tsMemberVisitor.visit(e.asType(), this.tsaVisitorParam));
-        member.ifPresent(x->this.members.put(x.getName(), x));
-        if (!member.isPresent()) {
-            LOG.info( () -> "could not the type '" + e + "' to a TSMember");
-        }
+        LOG.warning(() -> String.format("JTExV visiting type %s not used, but called", e.toString()));
         return null;
     }
 

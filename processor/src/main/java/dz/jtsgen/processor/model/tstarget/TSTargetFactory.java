@@ -30,7 +30,6 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static dz.jtsgen.processor.util.StringUtils.splitIntoTwo;
 import static dz.jtsgen.processor.util.StringUtils.withoutTypeArgs;
 
 /**
@@ -46,7 +45,7 @@ public final class TSTargetFactory {
      */
     public static Optional<TSTargetType> createTSTargetByMapping(String mappingString) {
 
-        return splitIntoTwo(mappingString).flatMap(x -> {
+        return TypeMappingExpression.splitIntoTwo(mappingString).flatMap( (TypeMappingExpression x) -> {
 
                     if ("".equals(x.getFirst()) || "".equals(x.getSecond())) return Optional.empty();
 
@@ -57,10 +56,8 @@ public final class TSTargetFactory {
                         LOG.info(() -> "TSTar: type variables disjoint: " + jTypeVars + " / " + tsTypeVars + " from " + mappingString);
                         return Optional.empty();
                     }
-                    return Optional.of(
-                            jTypeVars.isEmpty() ?
-                                    new TSTargetSimpleType(x.getFirst(), x.getSecond())
-                                    : new TSTargetDeclType(withoutTypeArgs(x.getFirst()), withoutTypeArgs(x.getSecond()), jTypeVars, null)
+            return Optional.of(
+                            new TSTargetDeclType(withoutTypeArgs(x.getFirst()), withoutTypeArgs(x.getSecond()), jTypeVars, null, x.getConversionCoverage())
                     );
                 }
         );
@@ -95,6 +92,7 @@ public final class TSTargetFactory {
                 tstype.getJavaType(),
                 tsTargetInternal.map(TSTargetInternal::tsTargetType).orElse("none"),
                 tstype.typeParameters(),
-                typeParamMap);
+                typeParamMap,
+                tstype.conversionCoverage());
     }
 }

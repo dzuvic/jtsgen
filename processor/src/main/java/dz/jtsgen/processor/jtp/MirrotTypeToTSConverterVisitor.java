@@ -76,7 +76,7 @@ public class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTarge
     }
 
     private List<TSTargetType> createDefaultDeclaredTypeConversion() {
-        return Stream.of(STRING, INTEGER, DOUBLE, NUMBER, LONG, SHORT, COLLECTION, MAPS).collect(Collectors.toList());
+        return Stream.of(STRING, CHARACTER, NUMBER, COLLECTION, MAPS, OBJECT).collect(Collectors.toList());
 
     }
 
@@ -90,7 +90,7 @@ public class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTarge
     public TSTargetType visitPrimitive(PrimitiveType t, Void x) {
         if (TypeKind.BOOLEAN == t.getKind()) return TSTargets.BOOLEAN;
         else if (TypeKind.CHAR == t.getKind()) return STRING;
-        else return DOUBLE;
+        else return NUMBER;
     }
 
     @Override

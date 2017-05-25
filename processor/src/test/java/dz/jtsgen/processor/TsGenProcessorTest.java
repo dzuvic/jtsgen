@@ -216,6 +216,17 @@ public class TsGenProcessorTest {
         assertEquals("must have namespace b", 1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+namespace\\s+b\\s*\\{")).size());
     }
 
+    @Test
+    public void test_MemberDefaultMappingTest() throws IOException {
+        Compilation c = CompileHelper.compileJtsDev(true, 0,"MemberDefaultMappingTest.java");
+
+        ReferenceHelper.assertEquals(
+                c.generatedFile(StandardLocation.SOURCE_OUTPUT, JTS_DEV, JTS_DEV_D_TS).orElse(null)
+                , "default_type_mappings.d.ts");
+
+    }
+
+
     /**
      * Two types in different packages
      * - has NS mapped

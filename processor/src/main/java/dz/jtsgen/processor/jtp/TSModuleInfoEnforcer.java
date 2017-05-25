@@ -35,7 +35,6 @@ import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import static dz.jtsgen.processor.constants.AnnotationOptionsConst.*;
 import static dz.jtsgen.processor.jtp.NameSpaceMapperCalculator.computeNameSpaceMapping;
 import static dz.jtsgen.processor.util.NameSpaceHelper.topPackages;
 import static dz.jtsgen.processor.util.StringUtils.dotToUpperCamelCase;
@@ -45,6 +44,13 @@ import static dz.jtsgen.processor.util.StringUtils.isPackageFriendly;
  * This Helper generates a TSModuleInfo enriched by the information added in later stages
  */
 public class TSModuleInfoEnforcer {
+
+    private static final String JTSGEN_OUTPUT_OPTION_MODULENAME = "jtsgenModuleName";
+    private static final String JTSGEN_OUTPUT_OPTION_MODULEVERSION =  "jtsgenModuleVersion";
+    private static final String JTSGEN_OUTPUT_OPTION_MODULEDESCRIPTION =  "jtsgenModuleDescription";
+    private static final String JTSGEN_OUTPUT_OPTION_MODULEAUTHOR =  "jtsgenModuleAuthor";
+    private static final String JTSGEN_OUTPUT_OPTION_MODULELICENSE =  "jtsgenModuleLicense";
+    private static final String JTSGEN_OUTPUT_OPTION_MODULEAUTHORURL =  "jtsgenModuleAuthorUrl";
 
     private static Logger LOG = Logger.getLogger(TSModuleInfoEnforcer.class.getName());
 

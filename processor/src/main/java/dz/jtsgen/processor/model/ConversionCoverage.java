@@ -18,13 +18,27 @@
  *
  */
 
-package dz.jtsgen.processor.constants;
+package dz.jtsgen.processor.model;
 
-public final class AnnotationOptionsConst {
-    public static final String JTSGEN_OUTPUT_OPTION_MODULENAME = "jtsgenModuleName";
-    public static final String JTSGEN_OUTPUT_OPTION_MODULEVERSION =  "jtsgenModuleVersion";
-    public static final String JTSGEN_OUTPUT_OPTION_MODULEDESCRIPTION =  "jtsgenModuleDescription";
-    public static final String JTSGEN_OUTPUT_OPTION_MODULEAUTHOR =  "jtsgenModuleAuthor";
-    public static final String JTSGEN_OUTPUT_OPTION_MODULELICENSE =  "jtsgenModuleLicense";
-    public static final String JTSGEN_OUTPUT_OPTION_MODULEAUTHORURL =  "jtsgenModuleAuthorUrl";
+/**
+ * The conversion can be triggered by a type mapping from a super type, e.g. {@code java.lang.Number -> number }
+ *
+ */
+public enum ConversionCoverage {
+
+    DIRECT("->"),
+    /** include all subtypes of*/
+
+    SUBTYPES(">->");
+    /** direct mapping only*/
+
+    private final String arrowLiteral;
+
+    ConversionCoverage(String arrowLiteral) {
+        this.arrowLiteral = arrowLiteral;
+    }
+
+    public String arrowLiteral() {
+        return arrowLiteral;
+    }
 }

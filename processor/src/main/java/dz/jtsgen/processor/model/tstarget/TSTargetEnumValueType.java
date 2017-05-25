@@ -20,6 +20,7 @@
 
 package dz.jtsgen.processor.model.tstarget;
 
+import dz.jtsgen.processor.model.ConversionCoverage;
 import dz.jtsgen.processor.model.TSTargetType;
 
 import java.util.*;
@@ -31,6 +32,11 @@ public class TSTargetEnumValueType implements TSTargetType {
     @Override
     public String getJavaType() {
         return "";
+    }
+
+    @Override
+    public ConversionCoverage conversionCoverage() {
+        return ConversionCoverage.DIRECT;
     }
 
     @Override

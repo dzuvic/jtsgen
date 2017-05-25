@@ -20,22 +20,17 @@
 
 package dz.jtsgen.processor.model.tstarget;
 
+import dz.jtsgen.processor.model.ConversionCoverage;
 import dz.jtsgen.processor.model.TSTargetType;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- *  represents a simple type direct conversion.
+ *  represents a simple type direct conversion for declaration types
  */
 final class TSTargetDeclType implements TSTargetType, TSTargetInternal {
 
-    /**
-     * the type the processor should look for (without any type params or nested types.
-     */
     private  final String javaType;
 
     /**
@@ -44,16 +39,23 @@ final class TSTargetDeclType implements TSTargetType, TSTargetInternal {
     private  final String tsTargetType;
     private final List<String> typeParameters;
     private  final Map<String,TSTargetType> typeParametersTypes;
+    private final ConversionCoverage conversionCoverage;
 
-    TSTargetDeclType(String javaType, String tsTargetType, List<String> typeParameters, Map<String, TSTargetType> typeParametersTypes) {
+    TSTargetDeclType(String javaType, String tsTargetType, List<String> typeParameters, Map<String, TSTargetType> typeParametersTypes, ConversionCoverage conversionCoverage) {
         this.javaType = javaType;
         this.tsTargetType = tsTargetType;
-        this.typeParameters = typeParameters;
+        this.typeParameters = typeParameters == null ? Collections.EMPTY_LIST : typeParameters;
+        this.conversionCoverage = conversionCoverage == null ? ConversionCoverage.DIRECT : conversionCoverage;
         this.typeParametersTypes = typeParametersTypes == null ? new HashMap<>() : typeParametersTypes;
     }
 
     public String getJavaType() {
         return javaType;
+    }
+
+    @Override
+    public ConversionCoverage conversionCoverage() {
+        return this.conversionCoverage;
     }
 
     /**

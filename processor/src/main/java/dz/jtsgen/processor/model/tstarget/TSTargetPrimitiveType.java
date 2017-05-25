@@ -20,6 +20,7 @@
 
 package dz.jtsgen.processor.model.tstarget;
 
+import dz.jtsgen.processor.model.ConversionCoverage;
 import dz.jtsgen.processor.model.TSTargetType;
 
 import java.util.Collections;
@@ -49,6 +50,11 @@ final class TSTargetPrimitiveType implements TSTargetType, TSTargetInternal{
 
     public String getJavaType() {
         return javaType;
+    }
+
+    @Override
+    public ConversionCoverage conversionCoverage() {
+        return ConversionCoverage.DIRECT;
     }
 
     /**

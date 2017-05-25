@@ -30,15 +30,13 @@ import static dz.jtsgen.processor.model.tstarget.TSTargetFactory.createTSTargetB
 public final class TSTargets {
     public static final TSTargetType NONE = new TSTargetPrimitiveType("", "Never");
     public static final TSTargetType NULL = new TSTargetPrimitiveType("null","null");
-    public static final TSTargetType ANY = createTSTargetByMapping("java.lang.Object -> any").orElse(NONE);
+    public static final TSTargetType ANY = createTSTargetByMapping(" any -> any").orElse(NONE);
     public static final TSTargetType VOID = createTSTargetByMapping("java.lang.Void -> Void").orElse(NONE);
 
+    public static final TSTargetType OBJECT = createTSTargetByMapping(" java.lang.Object -> Object").orElse(NONE);
     public static final TSTargetType STRING = createTSTargetByMapping("java.lang.String -> string").orElse(NONE);
-    public static final TSTargetType INTEGER = createTSTargetByMapping("java.lang.Integer -> number").orElse(NONE);
-    public static final TSTargetType DOUBLE = createTSTargetByMapping("java.lang.Double -> number").orElse(NONE);
-    public static final TSTargetType NUMBER = createTSTargetByMapping("java.lang.Number -> number").orElse(NONE);
-    public static final TSTargetType LONG = createTSTargetByMapping("java.lang.Long -> number").orElse(NONE);
-    public static final TSTargetType SHORT = createTSTargetByMapping("java.lang.Short -> number").orElse(NONE);
+    public static final TSTargetType CHARACTER = createTSTargetByMapping("java.lang.Character -> string").orElse(NONE);
+    public static final TSTargetType NUMBER = createTSTargetByMapping("java.lang.Number >-> number").orElse(NONE);
     public static final TSTargetType BOOLEAN =  createTSTargetByMapping("java.lang.Boolean -> boolean").orElse(NONE);
 
     public static final TSTargetType COLLECTION = createTSTargetByMapping("java.util.Collection<T> -> Array<T>").orElse(NONE);

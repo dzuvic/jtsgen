@@ -88,7 +88,10 @@ public class TsGenProcessor extends AbstractProcessorWithLogging {
             } else {
                 PROCESSING_ORDER.forEach(
                         (x) -> {
-                            final Optional<? extends TypeElement> annotation = annotations.stream().filter((y) -> y.getSimpleName().contentEquals(x.getSimpleName())).findFirst();
+                            final Optional<? extends TypeElement> annotation = annotations
+                                    .stream()
+                                    .filter((y) -> y.getSimpleName().contentEquals(x.getSimpleName()))
+                                    .findFirst();
                             LOG.finest(() -> String.format("P: Annotation %s member %s", x, annotation.isPresent()));
                             annotation.ifPresent(typeElement -> processElements(typeElement, roundEnv));
                         }
@@ -110,8 +113,13 @@ public class TsGenProcessor extends AbstractProcessorWithLogging {
             processTypeScriptAnnotation(annotation, roundEnv);
         } else if (annotation.getSimpleName().contentEquals(TSModule.class.getSimpleName())) {
             Set<? extends Element> annotatedElements = roundEnv.getElementsAnnotatedWith(TSModule.class);
-            if (annotatedElements.size() > 1) annotatedElements.forEach( x -> this.processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING,"Multiple TSModule not supported. Multiple Modules with same ", x));
-            new TSModuleHandler(this.processingEnv).process(annotatedElements).stream().findFirst().ifPresent(this.typeScriptModel::addModuleInfo);
+            if (annotatedElements.size() > 1) annotatedElements.forEach(
+                    x -> this.processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING,"Multiple TSModule not supported. Multiple Modules with same ", x));
+            new TSModuleHandler(this.processingEnv)
+                    .process(annotatedElements)
+                    .stream()
+                    .findFirst()
+                    .ifPresent(this.typeScriptModel::addModuleInfo);
         }
     }
 
@@ -133,10 +141,6 @@ public class TsGenProcessor extends AbstractProcessorWithLogging {
                 typeScriptModel.addTSTypes(typeScriptAnnotationVisitor.visit(e));
             }
         });
-    }
-
-    private String computeModuleName(List<NameSpaceMapping> nameSpaceMappings) {
-        return null;
     }
 
     public SourceVersion getSupportedSourceVersion() {

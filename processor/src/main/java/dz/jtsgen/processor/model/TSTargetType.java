@@ -29,13 +29,18 @@ import java.util.Map;
 public interface TSTargetType {
 
     /**
-     * TODO: doc
+     * @return the type the processor should look for (without any type params or nested types.
      */
     String getJavaType();
 
+    /*
+     * @return the coverage of the type mapping
+     */
+    ConversionCoverage conversionCoverage();
+
 
     /**
-     * this toString is meant as an textual representation for the renderer
+     * @return this toString is meant as an textual representation for the renderer
      */
     @Override
     String toString();
