@@ -5,6 +5,8 @@
 Annotations: [ ![Download](https://api.bintray.com/packages/dzuvic/jtsgen/annotations/images/download.svg) ](https://bintray.com/dzuvic/jtsgen/annotations/_latestVersion)
  Processor: [ ![Download](https://api.bintray.com/packages/dzuvic/jtsgen/processor/images/download.svg) ](https://bintray.com/dzuvic/jtsgen/processor/_latestVersion)
  [ ![Download](https://travis-ci.org/dzuvic/jtsgen.svg?branch=master) ](https://travis-ci.org/dzuvic/jtsgen)
+ [![Coverage Status](https://coveralls.io/repos/github/dzuvic/jtsgen/badge.svg?branch=master)](https://coveralls.io/github/dzuvic/jtsgen?branch=master)
+
 ## Features
 
 This project emits TypeScript ambient types from Java sources.

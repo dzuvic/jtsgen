@@ -10,7 +10,7 @@ jdk:
   - oraclejdk8
 
 after_success:
-  - ./gradlew jacocoTestReport
+  - ./gradlew jacocoTestReport coveralls
 
 addons:
   apt:
