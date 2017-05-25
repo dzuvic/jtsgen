@@ -74,7 +74,6 @@ public final class TSModuleHandler {
                                     if ("version".equals(simpleName)) version = entry.getValue();
                                     else if ("moduleName".equals(simpleName)) moduleName = entry.getValue();
                                     else if ("author".equals(simpleName)) author = entry.getValue();
-                                    else if ("authorUrl".equals(simpleName)) author = entry.getValue();
                                     else if ("description".equals(simpleName)) description = entry.getValue();
                                     else if ("authorUrl".equals(simpleName)) authorUrl = entry.getValue();
                                     else if ("license".equals(simpleName)) license = entry.getValue();
@@ -100,7 +99,7 @@ public final class TSModuleHandler {
                                 List<NameSpaceMapping> nameSpaceMappings = convertToNameSpaceMappings(nameSpaceMappingAnnotationValue, x);
                                 OutputType outputType = convertOutputType(outputTypeValue);
                                 return new TSModuleInfo(moduleNameString, packageName)
-                                        .withModuleData(versionString, descriptionString, authorString, authorUrlString, licenseString, moduleNameString, outputType)
+                                        .withModuleData(versionString, descriptionString, authorString, licenseString, authorUrlString, moduleNameString, outputType)
                                         .withTypeMappingInfo(customTypeMappingMap, exclusionList, nameSpaceMappings);
                             }
                     );

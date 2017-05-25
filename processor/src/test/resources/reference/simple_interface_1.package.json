@@ -4,6 +4,7 @@
   "description": "unknown",
   "main": "",
   "author": "unknown",
+  "authorUrl": "unknown",
   "license": "unknown",
   "typings": "my-module.d.ts",
   "dependencies": {},

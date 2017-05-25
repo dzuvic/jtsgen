@@ -44,7 +44,7 @@ final class TSTargetDeclType implements TSTargetType, TSTargetInternal {
     TSTargetDeclType(String javaType, String tsTargetType, List<String> typeParameters, Map<String, TSTargetType> typeParametersTypes, ConversionCoverage conversionCoverage) {
         this.javaType = javaType;
         this.tsTargetType = tsTargetType;
-        this.typeParameters = typeParameters == null ? Collections.EMPTY_LIST : typeParameters;
+        this.typeParameters = typeParameters == null ? Collections.emptyList() : typeParameters;
         this.conversionCoverage = conversionCoverage == null ? ConversionCoverage.DIRECT : conversionCoverage;
         this.typeParametersTypes = typeParametersTypes == null ? new HashMap<>() : typeParametersTypes;
     }

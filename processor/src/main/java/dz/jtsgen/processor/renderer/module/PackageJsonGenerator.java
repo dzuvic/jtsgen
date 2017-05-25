@@ -35,6 +35,7 @@ final class PackageJsonGenerator {
         addline(builder,"description",module.getModuleDescription());
         addline(builder,"main","");
         addline(builder,"author",module.getModuleAuthor());
+        addline(builder,"authorUrl",module.getModuleAuthorUrl());
         addline(builder,"license",module.getModuleLicense());
         addline(builder,"typings",module.getModuleTyingsFile());
         addObject(builder,"dependencies", "", true);

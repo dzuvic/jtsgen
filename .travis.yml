@@ -9,6 +9,9 @@ cache:
 jdk:
   - oraclejdk8
 
+after_success:
+  - ./gradlew jacocoTestReport
+
 addons:
   apt:
     packages:

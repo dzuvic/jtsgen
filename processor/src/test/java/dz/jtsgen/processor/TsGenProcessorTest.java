@@ -218,7 +218,7 @@ public class TsGenProcessorTest {
 
     @Test
     public void test_MemberDefaultMappingTest() throws IOException {
-        Compilation c = CompileHelper.compileJtsDev(true, 0,"MemberDefaultMappingTest.java");
+        Compilation c = CompileHelper.compileJtsDev(DUMP_FILES, 0,"MemberDefaultMappingTest.java");
 
         ReferenceHelper.assertEquals(
                 c.generatedFile(StandardLocation.SOURCE_OUTPUT, JTS_DEV, JTS_DEV_D_TS).orElse(null)
@@ -280,6 +280,10 @@ public class TsGenProcessorTest {
         final String tdsFilename = "test-m1.d.ts";
         Compilation c = CompileHelper.compileForModule("jts/modules/testM1", folderName, tdsFilename, DUMP_FILES, 0, "MemberWithModuleDef.java", "package-info.java");
         assertEquals("must have author Me Myself And I", 1, findSourceLine(c, folderName, PACKAGE_JSON, Pattern.compile("^\\s+\"author\":\\s+\"Me Myself And I\"")).size());
+        assertEquals("must have authorUrl some authorUrl", 1, findSourceLine(c, folderName, PACKAGE_JSON, Pattern.compile("^\\s+\"authorUrl\":\\s+\"SomeAuthorUrl\"")).size());
+        assertEquals("must have description some description", 1, findSourceLine(c, folderName, PACKAGE_JSON, Pattern.compile("^\\s+\"description\":\\s+\"some description\"")).size());
+        assertEquals("must have license some license", 1, findSourceLine(c, folderName, PACKAGE_JSON, Pattern.compile("^\\s+\"license\":\\s+\"some license\"")).size());
+
         assertEquals("must have Type MemberWithModuleDef", 1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+interface\\s+MemberWithModuleDef\\s*\\{")).size());
         assertEquals("java.util.Date must be converted to string", 1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+date_string:\\s+string;")).size());
     }
