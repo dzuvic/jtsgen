@@ -132,7 +132,8 @@ public class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTarge
         if (declType.getTypeArguments() != null && declType.getTypeArguments().size() > 0) {
             LOG.finest(() -> "TCSV decl type type params:" + declType.getTypeArguments());
             if (tstype.typeParameters().size() != declType.getTypeArguments().size()) this.env().getMessager().printMessage(WARNING, "type params of origin and target type differ", currentElement);
-            Map<String,TSTargetType> typeParamMap = StreamUtils.zip(declType.getTypeArguments().stream(), tstype.typeParameters().stream())
+            Map<String,TSTargetType> typeParamMap = StreamUtils
+                    .zip(declType.getTypeArguments().stream(), tstype.typeParameters().stream())
                     .map(it -> {
                                     TSTargetType tsTargetType =  Optional.ofNullable(this.visit(it.getFirst())).orElse(TSTargets.ANY);
                                     return new Tuple<>(it.getSecond(), tsTargetType);
@@ -150,7 +151,7 @@ public class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTarge
     private Optional<TSTargetType> typeNotInModel(DeclaredType t, String nameOfType) {
         Element javaElement = env().getTypeUtils().asElement(t);
         LOG.finest(() -> "TCSV: not in Model " + javaElement);
-        //FIXME: change the following line by extending the model and refactoring
+        //add a dummy type, to stop endless recursive calls
         createTSTargetByMapping("" + nameOfType + "->" + "any").ifPresent(x -> model().addTSTarget(x));
         final Optional<TypeElement> typeElement = Optional.ofNullable( (javaElement instanceof TypeElement) ? (TypeElement) javaElement :null);
         final Optional<TSType> tsType = typeElement.flatMap( x -> new JavaTypeHandler(tsaVisitorParam).createTsModelWithEmbeddedTypes(x));
@@ -159,6 +160,11 @@ public class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTarge
             return createTSTargetByMapping("" + nameOfType + "->" + ("".equals(x.getNamespace())? "" : x.getNamespace()+".") +x.getName());
         });
         LOG.finest(() -> "TCSV: converted " + t + " to " + tsType );
+        // afterwards change the created mapping info accordingly
+        if (result.isPresent()) {
+            LOG.finest((""));
+            model().addTSTarget(result.get());
+        }
         return result;
     }
 

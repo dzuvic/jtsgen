@@ -174,6 +174,25 @@ public class TsGenProcessorTest {
     }
 
     @Test
+    public void person_examplApi_test() throws Exception {
+        final String folderName = "exampleapi";
+        final String tdsFilename = "example-api.d.ts";
+        Compilation c = CompileHelper.compileForNoModule("jts/modules/person", folderName, tdsFilename, DUMP_FILES, 0, "Item.java", "Order.java", "package-info.java", "Person.java", "Sex.java");
+
+        assertEquals("must have Type Sex", 1,    findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+enum\\s+Sex\\s*\\{")).size());
+        assertEquals("must have Type Item",  1,  findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+interface\\s+Item\\s*\\{")).size());
+        assertEquals("must have Type Order",  1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+interface\\s+Order\\s*\\{")).size());
+        assertEquals("must have Type Person", 1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+interface\\s+Person\\s*\\{")).size());
+
+        assertEquals("must be mapped to number", 1,      findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+price:\\s+number;")).size());
+        assertEquals("must be mapped to Array<Item>", 1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+items:\\s+Array<Item>;")).size());
+        assertEquals("must be mapped to Person", 1,      findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+customer:\\s+Person;")).size());
+        assertEquals("must be mapped to string", 1,      findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+birthdate:\\s+string;")).size());
+        assertEquals("must be mapped to Sex", 1,         findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+sex:\\s+Sex;")).size());
+        
+    }
+
+    @Test
     public void test_default_exclusion() throws IOException {
         Compilation c = CompileHelper.compileJtsDev(DUMP_FILES, 1,"InterFaceTestWithSunInternal.java");
 
