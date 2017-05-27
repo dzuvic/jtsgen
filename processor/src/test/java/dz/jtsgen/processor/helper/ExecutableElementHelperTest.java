@@ -45,6 +45,18 @@ public class ExecutableElementHelperTest {
         assertTrue(ExecutableElementHelper.isGetterOrSetter(createDummy("getA")));
     }
 
+    @Test
+    public void isSetter_tests() throws Exception {
+        assertTrue(ExecutableElementHelper.isSetter(createDummy("setA")));
+        assertFalse(ExecutableElementHelper.isSetter(createDummy("set")));
+    }
+
+    @Test
+    public void isGetter_tests() throws Exception {
+        assertTrue(ExecutableElementHelper.isGetter(createDummy("getA")));
+        assertFalse(ExecutableElementHelper.isGetter(createDummy("get")));
+    }
+
     private ExecutableElement createDummy(final String simpleName) {
         final ExecutableElement mock = mock(ExecutableElement.class);
         final Name nameMock = mock(Name.class);
