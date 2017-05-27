@@ -18,26 +18,27 @@
  *
  */
 
-package dz.jtsgen.processor.util;
+package dz.jtsgen.processor;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import javax.annotation.processing.Messager;
+import javax.annotation.processing.ProcessingEnvironment;
+import java.util.HashSet;
 
-public class TupleTest {
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+public class TsGenProcessorNoAbortTest {
     @Test
-    public void test_Tuple_equals() throws Exception {
-        Tuple same=new Tuple<>("a", "b");
-        assertTrue(same.equals(same));
-        assertFalse(same.equals(new Integer(0)));
-        assertEquals(new Tuple<>("a", "b"), new Tuple<>("a", "b"));
-        assertNotEquals(new Tuple<>("B", "b"), new Tuple<>("a", "b"));
-        assertNotEquals(new Tuple<>("a", "B"), new Tuple<>("a", "b"));
+    public void test_Exception_process() throws Exception {
+        TsGenProcessor testee=new TsGenProcessor();
+        ProcessingEnvironment processingEnvMock = mock(ProcessingEnvironment.class);
+        Messager messenger = mock(Messager.class);
+        when(processingEnvMock.getMessager()).thenReturn(messenger);
+        testee.init(processingEnvMock);
+        testee.process(new HashSet<>(),null);
+        verify(messenger).printMessage(any(),any());
     }
 
-    @Test
-    public void tuple_hashCode() throws Exception {
-        assertEquals(new Tuple<>("a", "b").hashCode(),new Tuple<>("a", "b").hashCode());
-        assertNotEquals(new Tuple<>("a", "b").hashCode(),new Tuple<>("a", "c").hashCode());
-    }
 }

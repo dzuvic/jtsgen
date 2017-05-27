@@ -31,11 +31,8 @@ import java.util.stream.Stream;
  * Collection of stream related utility functions.
  */
 public final class StreamUtils {
-        private StreamUtils() {
-        }
 
     private static <X, Y, Z> Stream<Z> zip(Stream<X> x, Stream<Y> y, BiFunction<X, Y, Z> f) {
-        assert x != null && y != null;
         final Iterator<Y> iter = y.iterator();
         return x.filter( it -> iter.hasNext()).map(it -> f.apply(it, iter.next()));
     }

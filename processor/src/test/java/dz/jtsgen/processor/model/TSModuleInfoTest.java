@@ -29,12 +29,19 @@ public class TSModuleInfoTest {
 
     @Test
     public void tsmodule_equals() throws Exception {
+        TSModuleInfo same=new TSModuleInfo("a","b");
+        assertTrue(same.equals(same));
+        assertFalse(same.equals(new Integer(1)));
         assertEquals(new TSModuleInfo("a","p"), new TSModuleInfo("a","p"));
         assertEquals(new TSModuleInfo("a","p").withModuleData("a","b","c","c","d","f", OutputType.DECLARED_NAMESPACE)
                 , new TSModuleInfo("a","p").withModuleData("a","b","c","c","d","f", OutputType.DECLARED_NAMESPACE));
 
         assertNotEquals(new TSModuleInfo("a","p").withModuleData("a","b","c","c","d","f", OutputType.DECLARED_NAMESPACE)
                 , new TSModuleInfo("a","p").withModuleData("a","b","c","c","d","f", OutputType.TS_MODULE_DECLARED_NAMESPACE));
+    }
 
+    @Test(expected = AssertionError.class)
+    public void check_packagefriendly_assertion() throws Exception {
+        new TSModuleInfo("-a","-b");
     }
 }

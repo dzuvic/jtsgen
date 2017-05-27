@@ -27,9 +27,6 @@ import javax.lang.model.element.Element;
  */
 public final class ExecutableElementHelper {
 
-
-    private ExecutableElementHelper() { /* no instance*/ }
-
     public static boolean isGetterOrSetter(Element x) {
         return isGetter(x) || isSetter(x);
     }

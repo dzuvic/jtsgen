@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class StreamUtilsTest {
     @Test
@@ -66,5 +66,13 @@ public class StreamUtilsTest {
         assertEquals(testee.get(2).intValue(),4);
     }
 
+    @Test(expected = AssertionError.class)
+    public void checkAssertionA() throws Exception {
+        StreamUtils.zip(null,null);
+    }
 
+    @Test(expected = AssertionError.class)
+    public void checkAssertionB() throws Exception {
+        StreamUtils.zip(IntStream.range(0, 4).boxed(),null);
+    }
 }

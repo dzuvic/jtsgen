@@ -53,6 +53,7 @@ public class ExecutableElementHelperTest {
         assertTrue(isSetter(createDummy("setA")));
         assertFalse(isSetter(createDummy("set")));
         assertFalse(isSetter(createDummy(null)));
+        assertFalse(isSetter(createDummySimpleNameIsNull()));
     }
 
     @Test
@@ -60,6 +61,7 @@ public class ExecutableElementHelperTest {
         assertFalse(isGetter((Element) null));
         assertTrue(isGetter(createDummy("getA")));
         assertFalse(isGetter(createDummy(null)));
+        assertFalse(isGetter(createDummySimpleNameIsNull()));
         assertFalse(isGetter(createDummy("get")));
     }
 
@@ -68,6 +70,12 @@ public class ExecutableElementHelperTest {
         final Name nameMock = mock(Name.class);
         when(nameMock.toString()).thenReturn(simpleName);
         when(mock.getSimpleName()).thenReturn(nameMock);
+        return mock;
+    }
+
+    private ExecutableElement createDummySimpleNameIsNull() {
+        final ExecutableElement mock = mock(ExecutableElement.class);
+        when(mock.getSimpleName()).thenReturn(null);
         return mock;
     }
 
