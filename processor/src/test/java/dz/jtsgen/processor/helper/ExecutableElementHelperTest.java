@@ -26,6 +26,8 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Name;
 
+import static dz.jtsgen.processor.helper.ExecutableElementHelper.isGetter;
+import static dz.jtsgen.processor.helper.ExecutableElementHelper.isSetter;
 import static dz.jtsgen.processor.helper.ExecutableElementHelper.nameFromMethod;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -47,14 +49,18 @@ public class ExecutableElementHelperTest {
 
     @Test
     public void isSetter_tests() throws Exception {
-        assertTrue(ExecutableElementHelper.isSetter(createDummy("setA")));
-        assertFalse(ExecutableElementHelper.isSetter(createDummy("set")));
+        assertFalse(isSetter(null));
+        assertTrue(isSetter(createDummy("setA")));
+        assertFalse(isSetter(createDummy("set")));
+        assertFalse(isSetter(createDummy(null)));
     }
 
     @Test
     public void isGetter_tests() throws Exception {
-        assertTrue(ExecutableElementHelper.isGetter(createDummy("getA")));
-        assertFalse(ExecutableElementHelper.isGetter(createDummy("get")));
+        assertFalse(isGetter((Element) null));
+        assertTrue(isGetter(createDummy("getA")));
+        assertFalse(isGetter(createDummy(null)));
+        assertFalse(isGetter(createDummy("get")));
     }
 
     private ExecutableElement createDummy(final String simpleName) {
