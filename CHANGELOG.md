@@ -4,9 +4,19 @@
 
 [Full Changelog](https://github.com/dzuvic/jtsgen/compare/jtsgen-0.1.2...HEAD)
 
+**Implemented enhancements:**
+
+- export java.lang.Object to Object instead of any [\#21](https://github.com/dzuvic/jtsgen/issues/21)
+
 **Fixed bugs:**
 
+- enum not used, but converted, when namespac mapping removes the package [\#19](https://github.com/dzuvic/jtsgen/issues/19)
+- java.lang.Number -\> number is not conveted [\#18](https://github.com/dzuvic/jtsgen/issues/18)
 - remove jtsgen directory in the output. only use the modulename as directory [\#14](https://github.com/dzuvic/jtsgen/issues/14)
+
+**Closed issues:**
+
+- enable coverage using jacoco [\#22](https://github.com/dzuvic/jtsgen/issues/22)
 
 ## [jtsgen-0.1.2](https://github.com/dzuvic/jtsgen/tree/jtsgen-0.1.2) (2017-05-15)
 [Full Changelog](https://github.com/dzuvic/jtsgen/compare/jtsgen-0.1.1...jtsgen-0.1.2)
