@@ -307,4 +307,15 @@ public class TsGenProcessorTest {
         assertEquals("java.util.Date must be converted to string", 1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+date_string:\\s+string;")).size());
     }
 
+    @Test
+    public void test_output_type_external_module() throws IOException {
+        final String folderName = "external_module";
+        final String tdsFilename = "external_module.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/outputExternalModule", folderName, tdsFilename,DUMP_FILES,0, "InterFaceTestExportModule.java", "package-info.java");
+
+        assertEquals("must have module defined in main", 1, findSourceLine(c, folderName, PACKAGE_JSON, Pattern.compile("^\\s+\"main\":\\s+\"external_module.ts\"")).size());
+        assertEquals("must not have module defined as ambient type", 1, findSourceLine(c, folderName, PACKAGE_JSON, Pattern.compile("^\\s+\"typings\":\\s+\"\"")).size());
+        assertEquals("must be a module", 1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s*declare\\s+module\\s+\"external_module\"\\s+\\{")).size());
+    }
+
 }

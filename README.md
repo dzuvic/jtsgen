@@ -146,9 +146,13 @@ Some examples:
 The type of the output can be configured by the outputType parameter of
 the TSModule annotation:
 
-* `TS_MODULE_DECLARED_NAMESPACE`: exports a module (d.ts and package.json)
-  with a declared name space
-* `DECLARED_NAMESPACE`: only the declared namespace in a single d.ts file
+* `EXTERNAL_NAMESPACE_AMBIENT_TYPE` : exports a module with ambient types
+  (d.ts and package.json) with a declared name space
+* `EXTERNAL_NAMESPACE_FILE` : only the ambient types with namespaces
+  in a single d.ts file
+* `EXTERNAL_MODULE` : exports a declared module, e.g. using
+  `declare module` at the top without ambient types
+
 
 
 ### Annotation Processor Params
@@ -185,8 +189,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly "jtsgen:jtsgen-annotations:0.1.3"
-    compileOnly "jtsgen:jtsgen-processor:0.1.3"
+    compileOnly "jtsgen:jtsgen-annotations:0.1.4"
+    compileOnly "jtsgen:jtsgen-processor:0.1.4"
 }
 ````
 

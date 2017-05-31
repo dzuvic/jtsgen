@@ -31,13 +31,48 @@ public class TSModuleInfoTest {
     public void tsmodule_equals() throws Exception {
         TSModuleInfo same=new TSModuleInfo("a","b");
         assertTrue(same.equals(same));
-        assertFalse(same.equals(new Integer(1)));
+        assertFalse(same.equals("hello"));
         assertEquals(new TSModuleInfo("a","p"), new TSModuleInfo("a","p"));
-        assertEquals(new TSModuleInfo("a","p").withModuleData("a","b","c","c","d","f", OutputType.DECLARED_NAMESPACE)
-                , new TSModuleInfo("a","p").withModuleData("a","b","c","c","d","f", OutputType.DECLARED_NAMESPACE));
+        assertNotEquals(new TSModuleInfo("a","p"), new TSModuleInfo("x","p"));
+        assertNotEquals(new TSModuleInfo("a","p"), new TSModuleInfo("a","x"));
 
-        assertNotEquals(new TSModuleInfo("a","p").withModuleData("a","b","c","c","d","f", OutputType.DECLARED_NAMESPACE)
-                , new TSModuleInfo("a","p").withModuleData("a","b","c","c","d","f", OutputType.TS_MODULE_DECLARED_NAMESPACE));
+        final TSModuleInfo apModule = new TSModuleInfo("a", "p");
+        assertEquals(apModule.withModuleData("a","b","c","c","d","f", OutputType.EXTERNAL_NAMESPACE_FILE)
+                , apModule.withModuleData("a","b","c","c","d","f", OutputType.EXTERNAL_NAMESPACE_FILE));
+
+        assertNotEquals(apModule.withModuleData("a","b","c","c","d","f", OutputType.EXTERNAL_NAMESPACE_FILE)
+                      , apModule.withModuleData("x","b","c","c","d","f", OutputType.EXTERNAL_NAMESPACE_FILE));
+
+        assertNotEquals(apModule.withModuleData("a","b","c","c","d","f", OutputType.EXTERNAL_NAMESPACE_FILE)
+                      , apModule.withModuleData("a","x","c","c","d","f", OutputType.EXTERNAL_NAMESPACE_FILE));
+
+        assertNotEquals(apModule.withModuleData("a","b","c","c","d","f", OutputType.EXTERNAL_NAMESPACE_FILE)
+                      , apModule.withModuleData("a","b","x","c","d","f", OutputType.EXTERNAL_NAMESPACE_FILE));
+
+        assertNotEquals(apModule.withModuleData("a","b","c","c","d","f", OutputType.EXTERNAL_NAMESPACE_FILE)
+                      , apModule.withModuleData("a","b","c","x","d","f", OutputType.EXTERNAL_NAMESPACE_FILE));
+
+        assertNotEquals(apModule.withModuleData("a","b","c","c","d","f", OutputType.EXTERNAL_NAMESPACE_FILE)
+                      , apModule.withModuleData("a","b","c","c","x","x", OutputType.EXTERNAL_NAMESPACE_FILE));
+        
+
+        assertNotEquals(apModule.withModuleData("a","b","c","c","d","f", OutputType.EXTERNAL_NAMESPACE_FILE)
+                , apModule.withModuleData("a","b","c","c","d","f", OutputType.EXTERNAL_NAMESPACE_AMBIENT_TYPE));
+    }
+
+    @Test
+    public void tsmoduleNullables() throws Exception {
+        TSModuleInfo testee=new TSModuleInfo("a","b").withModuleData(null,null,null,null,null,null,null);
+        assertEquals("unknown", testee.getModuleAuthor());
+        assertEquals("unknown", testee.getModuleAuthorUrl());
+        assertEquals("unknown", testee.getModuleLicense());
+        assertEquals("1.0.0", testee.getModuleVersion());
+    }
+
+    @Test(expected = AssertionError.class)
+    public void tsPackageFriendly() throws Exception {
+        new TSModuleInfo("-a","-a");
+
     }
 
     @Test(expected = AssertionError.class)

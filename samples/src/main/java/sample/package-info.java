@@ -18,13 +18,11 @@
  *
  */
 
-// Test excludion of itself, so no output should be generated
-@TSModule(
-        moduleName = "no_module",
-        outputType = OutputType.EXTERNAL_NAMESPACE_FILE
-
+@TSModule(moduleName = "sampleModule"
+        ,outputType = OutputType.EXTERNAL_MODULE
 )
-package jts.modules.outputNoModule;
+package sample;
 
 import dz.jtsgen.annotations.OutputType;
 import dz.jtsgen.annotations.TSModule;
+import dz.jtsgen.annotations.TypeScript;

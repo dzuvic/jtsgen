@@ -22,6 +22,6 @@ public final class TSRenderer {
 
 
     public void writeFiles() {
-        this.model.moduleList().stream().forEach(moduleGenerator::writeModule);
+        this.moduleGenerator.writeModule();
     }
 }

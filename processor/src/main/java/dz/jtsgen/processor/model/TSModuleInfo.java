@@ -148,7 +148,7 @@ public final class TSModuleInfo {
         this.moduleAuthor = moduleAuthor == null ? "unknown" : moduleAuthor;
         this.moduleLicense = moduleLicense == null ? "unknown" : moduleLicense;
         this.moduleAuthorUrl = moduleAuthorUrl == null ? "unknown" : moduleAuthorUrl;
-        this.outputType = outputType == null ? OutputType.TS_MODULE_DECLARED_NAMESPACE : outputType;
+        this.outputType = outputType == null ? OutputType.EXTERNAL_NAMESPACE_AMBIENT_TYPE : outputType;
 
         final Map<String,TSTargetType> customMappingsCopy=new LinkedHashMap<>();
         final List<Pattern> excludesCopy = new ArrayList<>();
@@ -211,13 +211,6 @@ public final class TSModuleInfo {
 
     public String getModuleLicense() {
         return moduleLicense;
-    }
-
-    /**
-     * @return the filename of the typings file.
-     */
-    public String getModuleTyingsFile() {
-        return camelCaseToDash(moduleName) + ".d.ts";
     }
 
     public String getModuleAuthorUrl() {

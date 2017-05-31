@@ -33,11 +33,11 @@ final class PackageJsonGenerator {
         addline(builder,"name",module.getModuleName());
         addline(builder,"version",module.getModuleVersion());
         addline(builder,"description",module.getModuleDescription());
-        addline(builder,"main","");
+        addline(builder,"main", model.externalModuleNameByOutputType());
         addline(builder,"author",module.getModuleAuthor());
         addline(builder,"authorUrl",module.getModuleAuthorUrl());
         addline(builder,"license",module.getModuleLicense());
-        addline(builder,"typings",module.getModuleTyingsFile());
+        addline(builder,"typings", model.ambientFileNameByOutputType());
         addObject(builder,"dependencies", "", true);
         addObject(builder,"scripts", "", false);
         

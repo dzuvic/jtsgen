@@ -17,14 +17,11 @@
  * along with jtsgen.  If not, see http://www.gnu.org/licenses/
  *
  */
+package jts.modules.outputExternalModule;
 
-// Test excludion of itself, so no output should be generated
-@TSModule(
-        moduleName = "no_module",
-        outputType = OutputType.EXTERNAL_NAMESPACE_FILE
+import dz.jtsgen.annotations.TypeScript;
 
-)
-package jts.modules.outputNoModule;
-
-import dz.jtsgen.annotations.OutputType;
-import dz.jtsgen.annotations.TSModule;
+@TypeScript
+public interface InterFaceTestExportModule {
+    String getOutputExportModule();
+}

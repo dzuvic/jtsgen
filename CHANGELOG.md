@@ -1,8 +1,7 @@
 # Change Log
 
-## [Unreleased](https://github.com/dzuvic/jtsgen/tree/HEAD)
-
-[Full Changelog](https://github.com/dzuvic/jtsgen/compare/jtsgen-0.1.2...HEAD)
+## [jtsgen-0.1.3](https://github.com/dzuvic/jtsgen/tree/jtsgen-0.1.3) (2017-05-27)
+[Full Changelog](https://github.com/dzuvic/jtsgen/compare/jtsgen-0.1.2...jtsgen-0.1.3)
 
 **Implemented enhancements:**
 

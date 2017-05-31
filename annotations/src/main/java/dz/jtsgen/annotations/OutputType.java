@@ -24,9 +24,12 @@ package dz.jtsgen.annotations;
  */
 public enum OutputType {
 
-    /** exports a module (d.ts and package.json) with a declared name space */
-    TS_MODULE_DECLARED_NAMESPACE,
+    /** exports a namespace module (d.ts and package.json) with a declared name space, e.g. declare namespace */
+    EXTERNAL_NAMESPACE_AMBIENT_TYPE,
 
     /** only the declared namespace in a single d.ts file */
-    DECLARED_NAMESPACE
+    EXTERNAL_NAMESPACE_FILE,
+
+    /** exports a external declared module, e.g. using declare module at top*/
+    EXTERNAL_MODULE
 }

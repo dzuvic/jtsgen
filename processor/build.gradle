@@ -29,6 +29,10 @@ apply plugin: 'com.jfrog.bintray'
 
 description="The jtsgen annotation processor"
 
+configurations {
+    apt
+}
+
 dependencies {
     api project(':annotations')
 
@@ -39,10 +43,20 @@ dependencies {
     testCompile 'com.google.guava:guava:21.0'
 
 
-    compileOnly "com.google.auto.service:auto-service:1.0-rc3"
+    apt "com.google.auto.service:auto-service:1.0-rc3"
+    implementation ("com.google.auto.service:auto-service:1.0-rc3") {transitive=false}
+
+    apt "org.immutables:value:2.5.1" // for annotation processor
+    implementation "org.immutables:value:2.5.1" // for annotations
+    implementation "org.immutables:builder:2.5.1" // for annotations
+    
     compileOnly  files(Jvm.current().toolsJar)
 
     runtime files(Jvm.current().toolsJar)
+}
+
+compileJava {
+    options.annotationProcessorPath = configurations.apt
 }
 
 task sourceJar(type: Jar) {

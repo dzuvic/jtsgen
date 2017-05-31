@@ -35,6 +35,9 @@ import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static dz.jtsgen.annotations.OutputType.EXTERNAL_MODULE;
+import static dz.jtsgen.annotations.OutputType.EXTERNAL_NAMESPACE_AMBIENT_TYPE;
+
 /**
  * exports a  module
  * <p>
@@ -56,10 +59,10 @@ public final class ModuleGenerator {
         this.tsdGenerator = new TSDGenerator(model, env);
     }
 
-    public void writeModule(TSModuleInfo moduleInfo) {
+    public void writeModule() {
         try {
-            if (moduleInfo.getOutputType() == OutputType.TS_MODULE_DECLARED_NAMESPACE) writePackageJson(moduleInfo);
-            tsdGenerator.writeTypes(moduleInfo);
+            if (model.getOutputType() == EXTERNAL_NAMESPACE_AMBIENT_TYPE || model.getOutputType() == EXTERNAL_MODULE ) writePackageJson();
+            tsdGenerator.writeTypes();
         } catch (IOException e) {
             LOG.log(Level.SEVERE, "Caught Exception", e);
             this.env.getMessager().printMessage(Diagnostic.Kind.ERROR, "Could not write output file(s) " + e.getMessage());
@@ -69,9 +72,9 @@ public final class ModuleGenerator {
 
 
 
-    private void writePackageJson(TSModuleInfo module) throws IOException {
-        String packageJson = PackageJsonGenerator.packageJsonFor(module, model);
-        FileObject package_json_file_object = ModuleResourceHelper.createResource(env, module, "package.json");
+    private void writePackageJson() throws IOException {
+        String packageJson = PackageJsonGenerator.packageJsonFor(model.getModuleInfo(), model);
+        FileObject package_json_file_object = ModuleResourceHelper.createResource(env, model.getModuleInfo(), "package.json");
 
         try (PrintWriter out = new PrintWriterWithLogging(package_json_file_object.openWriter(), "package.json")) {
             out.println(packageJson);

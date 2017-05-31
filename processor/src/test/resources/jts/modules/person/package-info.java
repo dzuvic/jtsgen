@@ -18,7 +18,7 @@
  *
  */
 
-@TSModule(moduleName = "exampleApi", author = "Bulgur Bürger", outputType = OutputType.DECLARED_NAMESPACE,
+@TSModule(moduleName = "exampleApi", author = "Bulgur Bürger", outputType = OutputType.EXTERNAL_NAMESPACE_FILE,
         customTypeMappings = {
         "java.time.LocalDate -> string",
 })

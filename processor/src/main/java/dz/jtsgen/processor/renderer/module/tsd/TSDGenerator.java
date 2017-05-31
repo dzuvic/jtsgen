@@ -50,11 +50,12 @@ public final class TSDGenerator {
     }
 
 
-    public void writeTypes(TSModuleInfo module) throws IOException {
+    public void writeTypes() throws IOException {
+        TSModuleInfo module=model.getModuleInfo();
         TSNameSpace nameSpace = convertToNameSpace(model.getTsTypesByModule(module));
-        FileObject dts_file_object = ModuleResourceHelper.createResource(env, module, module.getModuleTyingsFile());
+        FileObject dts_file_object = ModuleResourceHelper.createResource(env, module, model.fileByOutputType());
 
-        try (PrintWriter out = new PrintWriterWithLogging(dts_file_object.openWriter(), module.getModuleTyingsFile())) {
+        try (PrintWriter out = new PrintWriterWithLogging(dts_file_object.openWriter(), model.fileByOutputType())) {
             writeHeader(module, out);
             writeUMD(module, out);
             writeNamespace(module, nameSpace, out);
@@ -79,9 +80,7 @@ public final class TSDGenerator {
 
     private void writeNameSpaces(TSModuleInfo module, TSNameSpace ns, int ident, PrintWriter out) {
         if (ns.isRoot()) {
-            out.print("declare namespace ");
-            out.print(module.getModuleName());
-            out.println(" {");
+            out.println(this.model.moduleDeclaration());
             outputTypes(module,  1, ns.getTypes(), out);
             ns.getSubNamespaces().forEach(x -> writeNameSpaces(module, ns.getSubNameSapce(x), 1, out));
             out.println(" }");

@@ -20,13 +20,17 @@
 
 package dz.jtsgen.processor.renderer.model;
 
+import dz.jtsgen.annotations.OutputType;
 import dz.jtsgen.processor.model.TSModuleInfo;
 import dz.jtsgen.processor.model.TSType;
 import dz.jtsgen.processor.model.TypeScriptModel;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
+
+import static dz.jtsgen.annotations.OutputType.EXTERNAL_MODULE;
+import static dz.jtsgen.annotations.OutputType.EXTERNAL_NAMESPACE_AMBIENT_TYPE;
+import static dz.jtsgen.annotations.OutputType.EXTERNAL_NAMESPACE_FILE;
+import static dz.jtsgen.processor.util.StringUtils.camelCaseToDash;
 
 /**
  * render specific operations and queries of the model
@@ -34,6 +38,8 @@ import java.util.List;
  * Created by zuvic on 14.02.17.
  */
 public class TypeScriptRenderModel extends TypeScriptModel {
+
+    private static final String EMPTY_FILE_NAME = "";
 
     public TypeScriptRenderModel(TypeScriptModel model) {
         super(model);
@@ -43,7 +49,39 @@ public class TypeScriptRenderModel extends TypeScriptModel {
         return super.getTsTypes();
     }
 
-    public Collection<TSModuleInfo> moduleList() {
-        return Collections.singletonList(this.getModuleInfo());
+    public OutputType getOutputType() {
+        return this.getModuleInfo().getOutputType();
+    }
+
+    /**
+     * @return the filename of the typings file if output type is sufficient
+     */
+    public String ambientFileNameByOutputType() {
+        return ( this.getOutputType() == EXTERNAL_NAMESPACE_AMBIENT_TYPE
+                 || this.getOutputType() == EXTERNAL_NAMESPACE_FILE )
+                ? camelCaseToDash(this.getModuleInfo().getModuleName()) + ".d.ts"
+                : EMPTY_FILE_NAME;
+    }
+
+    /**
+     * @return the filename of the external module file if output type is sufficient
+     */
+    public String externalModuleNameByOutputType() {
+        return ( this.getOutputType() == EXTERNAL_MODULE )
+                ? camelCaseToDash(this.getModuleInfo().getModuleName()) + ".ts"
+                : EMPTY_FILE_NAME;
+    }
+
+    public String fileByOutputType() {
+        return EMPTY_FILE_NAME.equals(ambientFileNameByOutputType()) ? externalModuleNameByOutputType() : ambientFileNameByOutputType();
+    }
+
+    public String moduleDeclaration() {
+        StringBuilder builder = new StringBuilder();
+        return builder.append("declare ").append( this.getOutputType()==EXTERNAL_MODULE? "module":"namespace").append(" ")
+                .append( this.getOutputType()==EXTERNAL_MODULE? "\"":"")
+                .append(this.getModuleInfo().getModuleName())
+                .append( this.getOutputType()==EXTERNAL_MODULE? "\"":"")
+                .append(" {").toString();
     }
 }

@@ -3,10 +3,8 @@ package dz.jtsgen.processor.model;
 import dz.jtsgen.processor.model.rendering.TSTypeElement;
 
 import javax.lang.model.element.Element;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class TSType implements TSTypeElement {
     private final String namespace;
@@ -52,7 +50,9 @@ public abstract class TSType implements TSTypeElement {
     protected StringBuilder toStringBuilder() {
         StringBuilder builder = new StringBuilder();
         builder.append(this.getClass().getSimpleName()).append("{");
-        if (!superTypes.isEmpty()) builder.append("superTypes=").append(this.getSuperTypes().toString()).append("; ");
+        if (!superTypes.isEmpty()) builder.append("superTypes=")
+                .append(this.getSuperTypes().stream().map( x -> x!=this ? x.toString() : "self").collect(Collectors.joining(",")))
+                .append("; ");
         if (!members.isEmpty()) builder.append("members=").append(this.members.toString()).append("; ");
         return builder;
     }
@@ -67,6 +67,11 @@ public abstract class TSType implements TSTypeElement {
 
     public TSType addMembers(Collection<? extends TSMember> members) {
         this.getMembers().addAll(members);
+        return this;
+    }
+
+    public TSType addSuperTypes(Collection<TSType> supertypes) {
+        this.getSuperTypes().addAll(supertypes.stream().filter(Objects::nonNull).collect(Collectors.toList()));
         return this;
     }
 }
