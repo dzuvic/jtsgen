@@ -21,7 +21,7 @@
 // Test excludion of itself, so no output should be generated
 @TSModule(
         moduleName = "external_module",
-        outputType = OutputType.EXTERNAL_MODULE
+        outputType = OutputType.MODULE
 
 )
 package jts.modules.outputExternalModule;

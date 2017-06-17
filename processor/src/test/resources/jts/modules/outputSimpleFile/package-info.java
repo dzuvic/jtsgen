@@ -18,11 +18,13 @@
  *
  */
 
-@TSModule(moduleName = "exampleApi", author = "Bulgur Bürger", outputType = OutputType.NAMESPACE_FILE,
-        customTypeMappings = {
-        "java.time.LocalDate -> string",
-})
-package jts.modules.person;
+// Test excludion of itself, so no output should be generated
+@TSModule(
+        moduleName = "simple_file",
+        outputType = OutputType.NO_MODULE
+
+)
+package jts.modules.outputSimpleFile;
 
 import dz.jtsgen.annotations.OutputType;
 import dz.jtsgen.annotations.TSModule;

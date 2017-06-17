@@ -20,8 +20,6 @@
 
 package dz.jtsgen.processor.renderer.module;
 
-import dz.jtsgen.annotations.OutputType;
-import dz.jtsgen.processor.model.TSModuleInfo;
 import dz.jtsgen.processor.renderer.helper.ModuleResourceHelper;
 import dz.jtsgen.processor.renderer.helper.PrintWriterWithLogging;
 import dz.jtsgen.processor.renderer.model.TypeScriptRenderModel;
@@ -35,8 +33,8 @@ import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static dz.jtsgen.annotations.OutputType.EXTERNAL_MODULE;
-import static dz.jtsgen.annotations.OutputType.EXTERNAL_NAMESPACE_AMBIENT_TYPE;
+import static dz.jtsgen.annotations.OutputType.MODULE;
+import static dz.jtsgen.annotations.OutputType.NAMESPACE_AMBIENT_TYPE;
 
 /**
  * exports a  module
@@ -61,7 +59,7 @@ public final class ModuleGenerator {
 
     public void writeModule() {
         try {
-            if (model.getOutputType() == EXTERNAL_NAMESPACE_AMBIENT_TYPE || model.getOutputType() == EXTERNAL_MODULE ) writePackageJson();
+            if (model.getOutputType() == NAMESPACE_AMBIENT_TYPE || model.getOutputType() == MODULE) writePackageJson();
             tsdGenerator.writeTypes();
         } catch (IOException e) {
             LOG.log(Level.SEVERE, "Caught Exception", e);

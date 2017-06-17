@@ -37,27 +37,27 @@ public class TSModuleInfoTest {
         assertNotEquals(new TSModuleInfo("a","p"), new TSModuleInfo("a","x"));
 
         final TSModuleInfo apModule = new TSModuleInfo("a", "p");
-        assertEquals(apModule.withModuleData("a","b","c","c","d","f", OutputType.EXTERNAL_NAMESPACE_FILE)
-                , apModule.withModuleData("a","b","c","c","d","f", OutputType.EXTERNAL_NAMESPACE_FILE));
+        assertEquals(apModule.withModuleData("a","b","c","c","d","f", OutputType.NAMESPACE_FILE)
+                , apModule.withModuleData("a","b","c","c","d","f", OutputType.NAMESPACE_FILE));
 
-        assertNotEquals(apModule.withModuleData("a","b","c","c","d","f", OutputType.EXTERNAL_NAMESPACE_FILE)
-                      , apModule.withModuleData("x","b","c","c","d","f", OutputType.EXTERNAL_NAMESPACE_FILE));
+        assertNotEquals(apModule.withModuleData("a","b","c","c","d","f", OutputType.NAMESPACE_FILE)
+                      , apModule.withModuleData("x","b","c","c","d","f", OutputType.NAMESPACE_FILE));
 
-        assertNotEquals(apModule.withModuleData("a","b","c","c","d","f", OutputType.EXTERNAL_NAMESPACE_FILE)
-                      , apModule.withModuleData("a","x","c","c","d","f", OutputType.EXTERNAL_NAMESPACE_FILE));
+        assertNotEquals(apModule.withModuleData("a","b","c","c","d","f", OutputType.NAMESPACE_FILE)
+                      , apModule.withModuleData("a","x","c","c","d","f", OutputType.NAMESPACE_FILE));
 
-        assertNotEquals(apModule.withModuleData("a","b","c","c","d","f", OutputType.EXTERNAL_NAMESPACE_FILE)
-                      , apModule.withModuleData("a","b","x","c","d","f", OutputType.EXTERNAL_NAMESPACE_FILE));
+        assertNotEquals(apModule.withModuleData("a","b","c","c","d","f", OutputType.NAMESPACE_FILE)
+                      , apModule.withModuleData("a","b","x","c","d","f", OutputType.NAMESPACE_FILE));
 
-        assertNotEquals(apModule.withModuleData("a","b","c","c","d","f", OutputType.EXTERNAL_NAMESPACE_FILE)
-                      , apModule.withModuleData("a","b","c","x","d","f", OutputType.EXTERNAL_NAMESPACE_FILE));
+        assertNotEquals(apModule.withModuleData("a","b","c","c","d","f", OutputType.NAMESPACE_FILE)
+                      , apModule.withModuleData("a","b","c","x","d","f", OutputType.NAMESPACE_FILE));
 
-        assertNotEquals(apModule.withModuleData("a","b","c","c","d","f", OutputType.EXTERNAL_NAMESPACE_FILE)
-                      , apModule.withModuleData("a","b","c","c","x","x", OutputType.EXTERNAL_NAMESPACE_FILE));
+        assertNotEquals(apModule.withModuleData("a","b","c","c","d","f", OutputType.NAMESPACE_FILE)
+                      , apModule.withModuleData("a","b","c","c","x","x", OutputType.NAMESPACE_FILE));
         
 
-        assertNotEquals(apModule.withModuleData("a","b","c","c","d","f", OutputType.EXTERNAL_NAMESPACE_FILE)
-                , apModule.withModuleData("a","b","c","c","d","f", OutputType.EXTERNAL_NAMESPACE_AMBIENT_TYPE));
+        assertNotEquals(apModule.withModuleData("a","b","c","c","d","f", OutputType.NAMESPACE_FILE)
+                , apModule.withModuleData("a","b","c","c","d","f", OutputType.NAMESPACE_AMBIENT_TYPE));
     }
 
     @Test

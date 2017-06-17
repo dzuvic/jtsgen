@@ -94,10 +94,13 @@ public final class StringUtils {
     }
 
     public static String lastOf(String qualifiedName, String... sep) {
-        String realSep = separator(sep);
-        int lastIndexOf = qualifiedName.lastIndexOf(realSep);
-        if (lastIndexOf < qualifiedName.length()) return qualifiedName.substring(lastIndexOf + 1);
-        return "";
+        final String realSep = separator(sep);
+        final String nullSafeName = qualifiedName == null ? "" : qualifiedName;
+        final int idx = nullSafeName.lastIndexOf(realSep);
+        if (idx < nullSafeName.length())
+            return nullSafeName.substring(idx + 1);
+        else
+            return qualifiedName;
     }
 
     public static String untill(String qualifiedName, String... sep) {
@@ -149,8 +152,8 @@ public final class StringUtils {
         return input.replaceAll("([a-z])([A-Z]+)", "$1-$2").toLowerCase();
     }
 
-    private static String separator(String... sep) {
-        if (sep != null && sep.length > 1 && sep[0] != null) return sep[0];
+    static String separator(String... sep) {
+        if (sep != null && sep.length > 0 && sep[0] != null) return sep[0];
         return ".";
     }
 

@@ -26,8 +26,6 @@ import dz.jtsgen.processor.util.StringUtils;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import static dz.jtsgen.processor.util.StringUtils.camelCaseToDash;
-
 /**
  * Describes a JavaScript Module.
  * <p>
@@ -148,7 +146,7 @@ public final class TSModuleInfo {
         this.moduleAuthor = moduleAuthor == null ? "unknown" : moduleAuthor;
         this.moduleLicense = moduleLicense == null ? "unknown" : moduleLicense;
         this.moduleAuthorUrl = moduleAuthorUrl == null ? "unknown" : moduleAuthorUrl;
-        this.outputType = outputType == null ? OutputType.EXTERNAL_NAMESPACE_AMBIENT_TYPE : outputType;
+        this.outputType = outputType == null ? OutputType.NAMESPACE_AMBIENT_TYPE : outputType;
 
         final Map<String,TSTargetType> customMappingsCopy=new LinkedHashMap<>();
         final List<Pattern> excludesCopy = new ArrayList<>();

@@ -92,6 +92,23 @@ public class StringUtilsTest {
     }
 
     @Test
+    public void lastOf_boundary_tests() {
+        assertEquals("a,b",lastOf("a,b",(String[]) null));
+        assertEquals("a,b",lastOf("a,b",""));
+        assertEquals("b",lastOf("a,b",","));
+        assertEquals("a,b",lastOf("a,b",(String) null));
+        assertEquals("", lastOf("a."));
+        assertEquals("a",lastOf(".a"));
+        assertEquals("", lastOf(null));
+    }
+
+    @Test
+    public void separator_null_test() throws Exception {
+        assertEquals(".",separator());
+    }
+
+
+    @Test
     public void testDotToDash() throws Exception {
        assertEquals("",dotToDash(""));
        assertEquals("a-b",dotToDash("a.b"));
@@ -101,6 +118,32 @@ public class StringUtilsTest {
     @Test
     public void testCamelCaseToDash() {
         assertEquals("abc-abc",camelCaseToDash("abcAbc"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCamelCaseToDash_Fail() {
+        camelCaseToDash(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testdotDash_Fail() {
+        dotToDash(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testdotToUpperCamelCase_Fail() {
+        dotToUpperCamelCase(null);
+    }
+
+
+    @Test
+    public void isPackageFriendly_boundary_cases() throws Exception {
+        assertFalse(isPackageFriendly(null));
+    }
+
+    @Test
+    public void notEmptyTrimmed_boundary_cases() throws Exception {
+        assertEquals("",notEmptytrimmed(null));
     }
 
     @Test

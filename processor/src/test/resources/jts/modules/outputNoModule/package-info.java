@@ -21,7 +21,7 @@
 // Test excludion of itself, so no output should be generated
 @TSModule(
         moduleName = "no_module",
-        outputType = OutputType.EXTERNAL_NAMESPACE_FILE
+        outputType = OutputType.NAMESPACE_FILE
 
 )
 package jts.modules.outputNoModule;

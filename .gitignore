@@ -7,10 +7,10 @@ build/
 */out/
 
 # java/jvm output
-*.class
 *.jar
 hs_err_pid*
 
 # during development
 /processor/src/test/java/jts
 /tmp
+

@@ -27,9 +27,7 @@ import dz.jtsgen.processor.model.TypeScriptModel;
 
 import java.util.List;
 
-import static dz.jtsgen.annotations.OutputType.EXTERNAL_MODULE;
-import static dz.jtsgen.annotations.OutputType.EXTERNAL_NAMESPACE_AMBIENT_TYPE;
-import static dz.jtsgen.annotations.OutputType.EXTERNAL_NAMESPACE_FILE;
+import static dz.jtsgen.annotations.OutputType.*;
 import static dz.jtsgen.processor.util.StringUtils.camelCaseToDash;
 
 /**
@@ -57,8 +55,8 @@ public class TypeScriptRenderModel extends TypeScriptModel {
      * @return the filename of the typings file if output type is sufficient
      */
     public String ambientFileNameByOutputType() {
-        return ( this.getOutputType() == EXTERNAL_NAMESPACE_AMBIENT_TYPE
-                 || this.getOutputType() == EXTERNAL_NAMESPACE_FILE )
+        return ( this.getOutputType() == NAMESPACE_AMBIENT_TYPE
+                 || this.getOutputType() == NAMESPACE_FILE)
                 ? camelCaseToDash(this.getModuleInfo().getModuleName()) + ".d.ts"
                 : EMPTY_FILE_NAME;
     }
@@ -67,7 +65,7 @@ public class TypeScriptRenderModel extends TypeScriptModel {
      * @return the filename of the external module file if output type is sufficient
      */
     public String externalModuleNameByOutputType() {
-        return ( this.getOutputType() == EXTERNAL_MODULE )
+        return ( this.getOutputType() == MODULE || this.getOutputType() == NO_MODULE)
                 ? camelCaseToDash(this.getModuleInfo().getModuleName()) + ".ts"
                 : EMPTY_FILE_NAME;
     }
@@ -76,12 +74,17 @@ public class TypeScriptRenderModel extends TypeScriptModel {
         return EMPTY_FILE_NAME.equals(ambientFileNameByOutputType()) ? externalModuleNameByOutputType() : ambientFileNameByOutputType();
     }
 
-    public String moduleDeclaration() {
+    public String moduleDeclarationStart() {
         StringBuilder builder = new StringBuilder();
-        return builder.append("declare ").append( this.getOutputType()==EXTERNAL_MODULE? "module":"namespace").append(" ")
-                .append( this.getOutputType()==EXTERNAL_MODULE? "\"":"")
+        return this.getOutputType()==NO_MODULE ? "" :
+                builder.append("declare ").append( this.getOutputType()== MODULE ? "module":"namespace").append(" ")
+                .append( this.getOutputType()== MODULE ? "\"":"")
                 .append(this.getModuleInfo().getModuleName())
-                .append( this.getOutputType()==EXTERNAL_MODULE? "\"":"")
+                .append( this.getOutputType()== MODULE ? "\"":"")
                 .append(" {").toString();
+    }
+
+    public String moduleDeclarationEnd() {
+        return this.getOutputType()==NO_MODULE ? "" : " }";
     }
 }

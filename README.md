@@ -98,7 +98,7 @@ The following annotation parameters are supported:
 *  **customTypeMappings**: Custom Type Mapping for the module, the default is `{}`
 *  **excludes**: regular expression to exclude type conversion, default is: `{"^sun", "^jdk.internal"}`
 *  **nameSpaceMapping**: The name space mapping, the default is `{}`
-*  **outputType**: The type of the output. Default is `OutputType.TS_MODULE_DECLARED_NAMESPACE`
+*  **outputType**: The type of the output. Default is `OutputType.NAMESPACE_AMBIENT_TYPE`
 
 
 
@@ -146,12 +146,14 @@ Some examples:
 The type of the output can be configured by the outputType parameter of
 the TSModule annotation:
 
-* `EXTERNAL_NAMESPACE_AMBIENT_TYPE` : exports a module with ambient types
+* `NAMESPACE_AMBIENT_TYPE` : exports a module with ambient types
   (d.ts and package.json) with a declared name space
-* `EXTERNAL_NAMESPACE_FILE` : only the ambient types with namespaces
+* `NAMESPACE_FILE` : only the ambient types with namespaces
   in a single d.ts file
-* `EXTERNAL_MODULE` : exports a declared module, e.g. using
+* `MODULE` : exports a declared module, e.g. using
   `declare module` at the top without ambient types
+* `NO_MODULE` : exports a single file containing all converted types
+  without any surrounding namespace or module declaration
 
 
 

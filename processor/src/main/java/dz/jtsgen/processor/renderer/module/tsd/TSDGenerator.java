@@ -80,10 +80,10 @@ public final class TSDGenerator {
 
     private void writeNameSpaces(TSModuleInfo module, TSNameSpace ns, int ident, PrintWriter out) {
         if (ns.isRoot()) {
-            out.println(this.model.moduleDeclaration());
+            out.println(this.model.moduleDeclarationStart());
             outputTypes(module,  1, ns.getTypes(), out);
             ns.getSubNamespaces().forEach(x -> writeNameSpaces(module, ns.getSubNameSapce(x), 1, out));
-            out.println(" }");
+            out.println(this.model.moduleDeclarationEnd());
         } else {
             final String prefix = IdentHelper.identPrefix(ident);
             out.print(prefix);

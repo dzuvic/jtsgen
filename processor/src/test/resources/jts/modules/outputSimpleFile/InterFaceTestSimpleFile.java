@@ -17,12 +17,11 @@
  * along with jtsgen.  If not, see http://www.gnu.org/licenses/
  *
  */
+package jts.modules.outputSimpleFile;
 
-@TSModule(moduleName = "exampleApi", author = "Bulgur Bürger", outputType = OutputType.NAMESPACE_FILE,
-        customTypeMappings = {
-        "java.time.LocalDate -> string",
-})
-package jts.modules.person;
+import dz.jtsgen.annotations.TypeScript;
 
-import dz.jtsgen.annotations.OutputType;
-import dz.jtsgen.annotations.TSModule;
+@TypeScript
+public interface InterFaceTestSimpleFile {
+    String getOutputSimpleFile();
+}

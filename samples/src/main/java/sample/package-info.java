@@ -19,10 +19,9 @@
  */
 
 @TSModule(moduleName = "sampleModule"
-        ,outputType = OutputType.EXTERNAL_MODULE
+        ,outputType = OutputType.MODULE
 )
 package sample;
 
 import dz.jtsgen.annotations.OutputType;
 import dz.jtsgen.annotations.TSModule;
-import dz.jtsgen.annotations.TypeScript;

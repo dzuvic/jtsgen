@@ -103,6 +103,6 @@ public @interface TSModule {
     /**
      *  defines the output format
      */
-    OutputType outputType() default OutputType.EXTERNAL_NAMESPACE_AMBIENT_TYPE;
+    OutputType outputType() default OutputType.NAMESPACE_AMBIENT_TYPE;
 
 }

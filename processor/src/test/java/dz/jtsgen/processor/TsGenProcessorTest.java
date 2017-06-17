@@ -23,10 +23,8 @@ package dz.jtsgen.processor;
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
 import dz.jtsgen.processor.helper.CompileHelper;
-import dz.jtsgen.processor.helper.OutputHelper;
 import dz.jtsgen.processor.helper.ReferenceHelper;
 import dz.jtsgen.processor.helper.StringConstForTest;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -43,9 +41,7 @@ import static com.google.testing.compile.Compiler.javac;
 import static dz.jtsgen.processor.helper.OutputHelper.countPatterns;
 import static dz.jtsgen.processor.helper.OutputHelper.findSourceLine;
 import static dz.jtsgen.processor.helper.StringConstForTest.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 
 @RunWith(JUnit4.class)
@@ -305,6 +301,17 @@ public class TsGenProcessorTest {
 
         assertEquals("must have Type MemberWithModuleDef", 1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+interface\\s+MemberWithModuleDef\\s*\\{")).size());
         assertEquals("java.util.Date must be converted to string", 1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+date_string:\\s+string;")).size());
+    }
+
+    @Test
+    public void test_output_type_no_module() throws IOException {
+        final String folderName = "simple_file";
+        final String tdsFilename = "simple_file.ts";
+        Compilation c = CompileHelper.compileForNoModule("jts/modules/outputSimpleFile", folderName, tdsFilename, DUMP_FILES,0, "InterFaceTestSimpleFile.java", "package-info.java");
+
+        ReferenceHelper.assertEquals(
+                c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, tdsFilename).get()
+                , "no_module.simple_file.ts");
     }
 
     @Test
