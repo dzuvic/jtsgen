@@ -120,6 +120,13 @@ public class TsGenProcessorTest {
     }
 
     @Test
+    public void test_simple_interface_with_inheritance() throws IOException {
+        Compilation c = CompileHelper.compileJtsDev(true,  0, "InterFaceInheritance1Test.java");
+        assertEquals("must have Type InterFaceInheritance1Test", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceInheritance1Test\\s+\\{")).size());
+        assertEquals("must have Type InterFaceInheritance1Test", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceInheritance1TestParent\\s+\\{")).size());
+    }
+
+    @Test
     public void test_two_simple_interface_with_one_ignored_partially() throws IOException {
         Compilation c = CompileHelper.compileJtsDev(DUMP_FILES,  0, "InterFaceTest.java", "InterFaceTestWithOneIgnoredMethod.java");
         assertEquals("must have Type InterFaceTest", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTest\\s+\\{")).size());

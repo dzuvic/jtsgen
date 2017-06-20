@@ -39,6 +39,7 @@ public abstract class TSType implements TSTypeElement {
         return documentString;
     }
 
+
     public List<TSType> getSuperTypes() {
         return superTypes;
     }
