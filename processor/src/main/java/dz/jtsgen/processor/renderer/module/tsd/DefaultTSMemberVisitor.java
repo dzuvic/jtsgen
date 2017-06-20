@@ -24,7 +24,6 @@ import dz.jtsgen.processor.model.TSEnumMember;
 import dz.jtsgen.processor.model.TSMember;
 import dz.jtsgen.processor.model.rendering.TSMemberVisitor;
 
-
 import java.io.PrintWriter;
 
 

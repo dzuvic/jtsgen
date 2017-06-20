@@ -25,6 +25,7 @@ apply plugin: 'java-library'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
 apply plugin: 'jacoco'
+apply plugin: 'idea'
 apply plugin: 'com.jfrog.bintray'
 
 description="The jtsgen annotation processor"
@@ -46,9 +47,9 @@ dependencies {
     apt "com.google.auto.service:auto-service:1.0-rc3"
     implementation ("com.google.auto.service:auto-service:1.0-rc3") {transitive=false}
 
-    apt "org.immutables:value:2.5.1" // for annotation processor
-    implementation "org.immutables:value:2.5.1" // for annotations
-    implementation "org.immutables:builder:2.5.1" // for annotations
+    apt "org.immutables:value:2.5.3" // for annotation processor
+    implementation "org.immutables:value:2.5.3" // for annotations
+    implementation "org.immutables:builder:2.5.3" // for annotations
     
     compileOnly  files(Jvm.current().toolsJar)
 

@@ -106,7 +106,10 @@ public class TSModuleInfoEnforcer {
         return Optional.of(dotToUpperCamelCase(moduleName));
     }
 
+    // TODO: change this, in a later iteration the namespaces must be mapped by the renderer. It is not possible
+    // TODO: to calculate the namespace mapping, when adding super/embedded types.all types must be converted to calculate the name space mapping
     public Optional<TSModuleInfo> createUpdatedTSModuleInfo(Set<? extends Element> annotatedElements) {
+
         final List<NameSpaceMapping> nameSpaceMappings = (this.model.usesDefaultNameSpaceMapping()) ?
                 computeNameSpaceMapping(annotatedElements)
                 : new ArrayList<>();

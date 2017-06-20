@@ -18,13 +18,14 @@
  *
  */
 
-package dz.jtsgen.processor.model.rendering;
+package dz.jtsgen.processor.jtp;
 
+import javax.annotation.processing.RoundEnvironment;
 
-import dz.jtsgen.processor.model.TSEnum;
-import dz.jtsgen.processor.model.TSInterface;
-
-public interface TSTypeVisitor {
-    void visit(TSInterface x, int ident);
-    void visit(TSEnum x, int ident);
+/**
+ * The handler for a specific (main) annotation cuurently on TypeScript is supported, but in the future other might be,
+ * e.g. XmlRootElement
+ */
+public interface JavaTypeProcessor {
+    void processAnnotations(RoundEnvironment roundEnv);
 }

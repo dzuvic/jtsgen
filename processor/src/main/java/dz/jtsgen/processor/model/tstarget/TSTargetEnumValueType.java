@@ -23,7 +23,10 @@ package dz.jtsgen.processor.model.tstarget;
 import dz.jtsgen.processor.model.ConversionCoverage;
 import dz.jtsgen.processor.model.TSTargetType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This Target Type represents a single enum value, used only internally for enum values

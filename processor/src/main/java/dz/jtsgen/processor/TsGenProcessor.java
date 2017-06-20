@@ -21,20 +21,18 @@
 package dz.jtsgen.processor;
 
 import com.google.auto.service.AutoService;
-import dz.jtsgen.annotations.TSIgnore;
 import dz.jtsgen.annotations.TSModule;
 import dz.jtsgen.annotations.TypeScript;
+import dz.jtsgen.processor.jtp.JavaTypeProcessor;
 import dz.jtsgen.processor.jtp.TSModuleHandler;
 import dz.jtsgen.processor.jtp.TSModuleInfoEnforcer;
-import dz.jtsgen.processor.model.NameSpaceMapping;
+import dz.jtsgen.processor.jtp.TypeScriptAnnotationProcessor;
+import dz.jtsgen.processor.jtp.visitors.TSAVisitorParam;
 import dz.jtsgen.processor.model.TypeScriptModel;
 import dz.jtsgen.processor.renderer.TSRenderer;
-import dz.jtsgen.processor.visitors.TSAVisitor;
-import dz.jtsgen.processor.visitors.TSAVisitorParam;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
-import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
@@ -43,8 +41,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
+import static dz.jtsgen.processor.jtp.helper.RoundEnvHelper.filteredTypeSriptElements;
 import static dz.jtsgen.processor.model.TypeScriptModel.newModelWithDefaultModule;
 import static java.util.logging.Level.INFO;
 
@@ -125,23 +123,20 @@ public class TsGenProcessor extends AbstractProcessorWithLogging {
 
     // process TypeScript Annotation
     private void processTypeScriptAnnotation(TypeElement annotation, RoundEnvironment roundEnv) {
-        final String tsIgnoreSimpleName = TSIgnore.class.getSimpleName();
-        Set<Element> annotatedElements = roundEnv.getElementsAnnotatedWith(TypeScript.class).<Element>stream()
-                .filter(
-                        (ignoring) -> ignoring.getAnnotationMirrors().<AnnotationMirror>stream().noneMatch(
-                                (y) -> tsIgnoreSimpleName.equals(y.getAnnotationType().asElement().getSimpleName().toString())))
-                .collect(Collectors.toSet());
+
+        // TODO remove this after calculating name space mapping in renderer
+        Set<Element> annotatedElements = filteredTypeSriptElements(roundEnv);
 
         // this is needed for: updating data from CLI and calculating a name space mapping, if needed
         new TSModuleInfoEnforcer(this.processingEnv,this.typeScriptModel).createUpdatedTSModuleInfo(annotatedElements).ifPresent( x -> {
             typeScriptModel.addModuleInfo(x);
             final TSAVisitorParam tsaVisitorParam = new TSAVisitorParam(annotation, this.processingEnv, typeScriptModel);
-            final TSAVisitor typeScriptAnnotationVisitor = new TSAVisitor(tsaVisitorParam);
-            for (Element e : annotatedElements) {
-                typeScriptModel.addTSTypes(typeScriptAnnotationVisitor.visit(e));
-            }
+            final JavaTypeProcessor handler = new TypeScriptAnnotationProcessor(tsaVisitorParam);
+            handler.processAnnotations(roundEnv);
         });
     }
+
+
 
     public SourceVersion getSupportedSourceVersion() {
         return SourceVersion.latestSupported();

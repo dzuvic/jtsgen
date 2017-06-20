@@ -19,53 +19,62 @@
  */
 package dz.jtsgen.processor.jtp;
 
+import dz.jtsgen.processor.jtp.visitors.JavaTypeConverter;
+import dz.jtsgen.processor.jtp.visitors.TSAVisitor;
+import dz.jtsgen.processor.jtp.visitors.TSAVisitorParam;
 import dz.jtsgen.processor.model.*;
-import dz.jtsgen.processor.visitors.TSAVisitorParam;
 
+import javax.annotation.processing.RoundEnvironment;
+import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import static dz.jtsgen.processor.jtp.helper.RoundEnvHelper.filteredTypeSriptElements;
 import static dz.jtsgen.processor.util.StringUtils.lastOf;
 import static dz.jtsgen.processor.util.StringUtils.untill;
+import static java.util.Collections.singletonList;
 import static javax.lang.model.element.ElementKind.ENUM_CONSTANT;
 
 /**
  * creates interface models for each java interface or class.
  *
  * @author dzuvic initial
+ * @author dzuvic renamed to TypeScriptAnnotationProcessor
  */
-public class JavaTypeHandler {
+public class TypeScriptAnnotationProcessor implements JavaTypeProcessor, JavaTypeConverter {
 
-    private static Logger LOG = Logger.getLogger(JavaTypeHandler.class.getName());
+    private static Logger LOG = Logger.getLogger(TypeScriptAnnotationProcessor.class.getName());
 
     private final TSAVisitorParam tsaVisitorParam;
 
     private final SimpleNameSpaceMapper namespaceMapper;
 
-    public JavaTypeHandler(TSAVisitorParam tsaVisitorParam) {
+    public TypeScriptAnnotationProcessor(TSAVisitorParam tsaVisitorParam) {
         this.tsaVisitorParam = tsaVisitorParam;
         this.namespaceMapper = new SimpleNameSpaceMapper(tsaVisitorParam.getTsModel());
     }
 
-    public List<TSType> createTsModels(TypeElement e) {
-        final List<TSType> result = new ArrayList<>();
-        Optional<TSType> tsi = handleJavaType(e);
-        LOG.log(Level.FINEST, () -> String.format("JTH tsi created %s", tsi.toString()));
-        tsi.ifPresent(result::add);
-        return result;
+    @Override
+    public void processAnnotations(RoundEnvironment roundEnv) {
+        TSAVisitor tsaVisitor = new TSAVisitor();
+        for (Element e : filteredTypeSriptElements(roundEnv)) {
+            tsaVisitor.visit(e,this).ifPresent(     x -> {
+                tsaVisitorParam.getTsModel().addTSTypes(singletonList(x));
+                LOG.log(Level.FINEST, () -> String.format("TSAP added %s to model", x.toString()));
+                    }
+            );
+        }
     }
 
-    Optional<TSType> createTsModelWithEmbeddedTypes(TypeElement e) {
-        Optional<TSType> tsi = handleJavaType(e);
-        LOG.log(Level.FINEST, () -> String.format("JTH single tsi created %s", tsi.toString()));
-        return tsi;
+    @Override
+    public Optional<TSType> convertJavaType(TypeElement e) {
+        LOG.log(Level.FINEST, () -> String.format("TSAP converting java type %s", e.toString()));
+        return handleJavaType(e);
     }
 
     private Optional<TSType> handleJavaType(TypeElement element) {
@@ -77,6 +86,7 @@ public class JavaTypeHandler {
         }
         TSType result = null;
         final String name = lastOf(element.toString());
+        //TODO move this to renderer and keep the original name space
         final String namespace = this.namespaceMapper.mapNameSpace(untill(element.toString()));
         switch (element.getKind()) {
             case CLASS:

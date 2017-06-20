@@ -18,7 +18,7 @@
  *
  */
 
-package dz.jtsgen.processor.visitors;
+package dz.jtsgen.processor.jtp.visitors;
 
 import dz.jtsgen.processor.model.TypeScriptModel;
 

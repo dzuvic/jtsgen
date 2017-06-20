@@ -18,13 +18,16 @@
  *
  */
 
-package dz.jtsgen.processor.model.rendering;
+package dz.jtsgen.processor.jtp.visitors;
 
+import dz.jtsgen.processor.model.TSType;
 
-import dz.jtsgen.processor.model.TSEnum;
-import dz.jtsgen.processor.model.TSInterface;
+import javax.lang.model.element.TypeElement;
+import java.util.Optional;
 
-public interface TSTypeVisitor {
-    void visit(TSInterface x, int ident);
-    void visit(TSEnum x, int ident);
+/**
+ * Converts a java type to TS Type
+ */
+public interface JavaTypeConverter {
+    Optional<TSType> convertJavaType(TypeElement e);
 }

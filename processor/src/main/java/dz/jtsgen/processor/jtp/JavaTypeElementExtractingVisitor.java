@@ -21,12 +21,11 @@
 package dz.jtsgen.processor.jtp;
 
 import dz.jtsgen.annotations.TSIgnore;
+import dz.jtsgen.processor.jtp.visitors.TSAVisitorParam;
 import dz.jtsgen.processor.model.TSMember;
 import dz.jtsgen.processor.model.TSTargetType;
-import dz.jtsgen.processor.visitors.TSAVisitorParam;
 
 import javax.lang.model.element.*;
-import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.SimpleElementVisitor8;
 import java.util.*;
 import java.util.logging.Level;
