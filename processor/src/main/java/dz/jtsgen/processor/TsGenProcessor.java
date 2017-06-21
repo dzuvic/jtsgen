@@ -27,7 +27,9 @@ import dz.jtsgen.processor.jtp.JavaTypeProcessor;
 import dz.jtsgen.processor.jtp.TSModuleHandler;
 import dz.jtsgen.processor.jtp.TSModuleInfoEnforcer;
 import dz.jtsgen.processor.jtp.TypeScriptAnnotationProcessor;
-import dz.jtsgen.processor.jtp.visitors.TSAVisitorParam;
+import dz.jtsgen.processor.jtp.processors.ImmutableTSProcessingInfo;
+import dz.jtsgen.processor.jtp.processors.TSProcessingInfo;
+import dz.jtsgen.processor.jtp.visitors.*;
 import dz.jtsgen.processor.model.TypeScriptModel;
 import dz.jtsgen.processor.renderer.TSRenderer;
 
@@ -130,8 +132,8 @@ public class TsGenProcessor extends AbstractProcessorWithLogging {
         // this is needed for: updating data from CLI and calculating a name space mapping, if needed
         new TSModuleInfoEnforcer(this.processingEnv,this.typeScriptModel).createUpdatedTSModuleInfo(annotatedElements).ifPresent( x -> {
             typeScriptModel.addModuleInfo(x);
-            final TSAVisitorParam tsaVisitorParam = new TSAVisitorParam(annotation, this.processingEnv, typeScriptModel);
-            final JavaTypeProcessor handler = new TypeScriptAnnotationProcessor(tsaVisitorParam);
+            final TSProcessingInfo TSProcessingInfo = ImmutableTSProcessingInfo.of(annotation, this.processingEnv, typeScriptModel) ;// new TSProcessingInfoImpl(annotation, this.processingEnv, typeScriptModel);
+            final JavaTypeProcessor handler = new TypeScriptAnnotationProcessor(TSProcessingInfo);
             handler.processAnnotations(roundEnv);
         });
     }

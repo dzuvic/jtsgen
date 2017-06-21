@@ -18,40 +18,26 @@
  *
  */
 
-package dz.jtsgen.processor.jtp.visitors;
+package dz.jtsgen.processor.jtp.processors;
 
 import dz.jtsgen.processor.model.TypeScriptModel;
+import org.immutables.value.Value;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.TypeElement;
 
+/**
+ * holds information needed acessing the model when traversing the AST
+ */
+@Value.Immutable
+public interface TSProcessingInfo {
 
-public class TSAVisitorParam {
-    // the annotation, that is being processed
-    private final TypeElement annotation;
+    @Value.Parameter
+    TypeElement getAnnotation();
 
-    // for convenience, so the Visitors don't need any constructors.
-    private final ProcessingEnvironment pEnv;
+    @Value.Parameter
+    ProcessingEnvironment getpEnv();
 
-    // the actual TypeScript Model
-    private final TypeScriptModel tsModel;
-
-    public TSAVisitorParam(TypeElement annotation, ProcessingEnvironment pEnv, TypeScriptModel tsModel) {
-        this.annotation = annotation;
-        this.pEnv = pEnv;
-        this.tsModel = tsModel;
-    }
-
-    public TypeElement getAnnotation() {
-        return annotation;
-    }
-
-    public ProcessingEnvironment getpEnv() {
-        return pEnv;
-    }
-
-    public TypeScriptModel getTsModel() {
-        return tsModel;
-    }
-
+    @Value.Parameter
+    TypeScriptModel getTsModel();
 }

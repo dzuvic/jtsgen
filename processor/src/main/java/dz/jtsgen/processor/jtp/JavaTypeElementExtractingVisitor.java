@@ -21,7 +21,7 @@
 package dz.jtsgen.processor.jtp;
 
 import dz.jtsgen.annotations.TSIgnore;
-import dz.jtsgen.processor.jtp.visitors.TSAVisitorParam;
+import dz.jtsgen.processor.jtp.processors.TSProcessingInfo;
 import dz.jtsgen.processor.model.TSMember;
 import dz.jtsgen.processor.model.TSTargetType;
 
@@ -54,13 +54,13 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
     private final TypeElement element;
 
     // the environment
-    private TSAVisitorParam tsaVisitorParam;
+    private TSProcessingInfo TSProcessingInfo;
 
 
-    JavaTypeElementExtractingVisitor(TypeElement element, TSAVisitorParam visitorParam) {
+    JavaTypeElementExtractingVisitor(TypeElement element, TSProcessingInfo visitorParam) {
         assert element != null && visitorParam != null;
         this.element = element;
-        this.tsaVisitorParam = visitorParam;
+        this.TSProcessingInfo = visitorParam;
     }
 
     @Override
@@ -76,7 +76,7 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
         final boolean isIgnored = isIgnored(e);
         LOG.log(Level.FINEST, () -> String.format("JTExV visiting variable %s%s", name, isIgnored?" (ignored)":""));
         if (isPublic && !members.containsKey(name)) {
-            final TSTargetType tsTypeOfExecutable = convertTypeMirrorOfMemberToTsType(e, tsaVisitorParam);
+            final TSTargetType tsTypeOfExecutable = convertTypeMirrorOfMemberToTsType(e, TSProcessingInfo);
             members.put(name, new TSMember(name, tsTypeOfExecutable, false));
             if (! isIgnored) extractableMembers.add(name);
         }
@@ -91,7 +91,7 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
             final boolean isPublic = e.getModifiers().contains(Modifier.PUBLIC);
             final boolean isIgnored = isIgnored(e);
             if (isGetter(e) && ( !isPublic ||  isIgnored )) return null; // return early for not converting private types
-            final TSTargetType tsTypeOfExecutable = convertTypeMirrorToTsType(e, tsaVisitorParam);
+            final TSTargetType tsTypeOfExecutable = convertTypeMirrorToTsType(e, TSProcessingInfo);
             LOG.fine(() -> "is getter or setter: " + (isPublic ? "public " : " ") + e.getSimpleName() + " -> " + name + ":" + tsTypeOfExecutable + " " +(isIgnored?"(ignored)":""));
             if (members.containsKey(name)) {
                 // can't be read only anymore
@@ -109,12 +109,12 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
     }
 
 
-    private TSTargetType convertTypeMirrorToTsType(ExecutableElement theElement, TSAVisitorParam tsaVisitorParam) {
-        return new MirrotTypeToTSConverterVisitor(theElement,tsaVisitorParam).visit(theElement.getReturnType());
+    private TSTargetType convertTypeMirrorToTsType(ExecutableElement theElement, TSProcessingInfo TSProcessingInfo) {
+        return new MirrotTypeToTSConverterVisitor(theElement, TSProcessingInfo).visit(theElement.getReturnType());
     }
 
-    private TSTargetType convertTypeMirrorOfMemberToTsType(VariableElement theElement, TSAVisitorParam tsaVisitorParam) {
-        return new MirrotTypeToTSConverterVisitor(theElement, tsaVisitorParam).visit(theElement.asType());
+    private TSTargetType convertTypeMirrorOfMemberToTsType(VariableElement theElement, TSProcessingInfo TSProcessingInfo) {
+        return new MirrotTypeToTSConverterVisitor(theElement, TSProcessingInfo).visit(theElement.asType());
     }
 
     List<TSMember> getMembers() {

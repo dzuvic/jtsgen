@@ -21,7 +21,7 @@ package dz.jtsgen.processor.jtp;
 
 import dz.jtsgen.processor.jtp.visitors.JavaTypeConverter;
 import dz.jtsgen.processor.jtp.visitors.TSAVisitor;
-import dz.jtsgen.processor.jtp.visitors.TSAVisitorParam;
+import dz.jtsgen.processor.jtp.processors.TSProcessingInfo;
 import dz.jtsgen.processor.model.*;
 
 import javax.annotation.processing.RoundEnvironment;
@@ -50,13 +50,13 @@ public class TypeScriptAnnotationProcessor implements JavaTypeProcessor, JavaTyp
 
     private static Logger LOG = Logger.getLogger(TypeScriptAnnotationProcessor.class.getName());
 
-    private final TSAVisitorParam tsaVisitorParam;
+    private final TSProcessingInfo TSProcessingInfo;
 
     private final SimpleNameSpaceMapper namespaceMapper;
 
-    public TypeScriptAnnotationProcessor(TSAVisitorParam tsaVisitorParam) {
-        this.tsaVisitorParam = tsaVisitorParam;
-        this.namespaceMapper = new SimpleNameSpaceMapper(tsaVisitorParam.getTsModel());
+    public TypeScriptAnnotationProcessor(TSProcessingInfo TSProcessingInfo) {
+        this.TSProcessingInfo = TSProcessingInfo;
+        this.namespaceMapper = new SimpleNameSpaceMapper(TSProcessingInfo.getTsModel());
     }
 
     @Override
@@ -64,7 +64,7 @@ public class TypeScriptAnnotationProcessor implements JavaTypeProcessor, JavaTyp
         TSAVisitor tsaVisitor = new TSAVisitor();
         for (Element e : filteredTypeSriptElements(roundEnv)) {
             tsaVisitor.visit(e,this).ifPresent(     x -> {
-                tsaVisitorParam.getTsModel().addTSTypes(singletonList(x));
+                TSProcessingInfo.getTsModel().addTSTypes(singletonList(x));
                 LOG.log(Level.FINEST, () -> String.format("TSAP added %s to model", x.toString()));
                     }
             );
@@ -109,7 +109,7 @@ public class TypeScriptAnnotationProcessor implements JavaTypeProcessor, JavaTyp
 
     private boolean checkExclusion(TypeElement element) {
         final String typeName=element.toString();
-        return this.tsaVisitorParam.getTsModel().getModuleInfo().getExcludes().stream().anyMatch(
+        return this.TSProcessingInfo.getTsModel().getModuleInfo().getExcludes().stream().anyMatch(
                 x -> x.matcher(typeName).find()
         );
     }
@@ -122,7 +122,7 @@ public class TypeScriptAnnotationProcessor implements JavaTypeProcessor, JavaTyp
     }
 
     private Collection<? extends TSMember> findMembers(TypeElement e) {
-        JavaTypeElementExtractingVisitor visitor = new JavaTypeElementExtractingVisitor(e, tsaVisitorParam);
+        JavaTypeElementExtractingVisitor visitor = new JavaTypeElementExtractingVisitor(e, TSProcessingInfo);
         e.getEnclosedElements().stream()
                 .filter(x -> x.getKind()== ElementKind.FIELD || x.getKind()==ElementKind.METHOD)
                 .forEach(visitor::visit);

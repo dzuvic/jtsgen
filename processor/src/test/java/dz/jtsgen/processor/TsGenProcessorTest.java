@@ -25,6 +25,7 @@ import com.google.testing.compile.JavaFileObjects;
 import dz.jtsgen.processor.helper.CompileHelper;
 import dz.jtsgen.processor.helper.ReferenceHelper;
 import dz.jtsgen.processor.helper.StringConstForTest;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -120,6 +121,7 @@ public class TsGenProcessorTest {
     }
 
     @Test
+    @Ignore
     public void test_simple_interface_with_inheritance() throws IOException {
         Compilation c = CompileHelper.compileJtsDev(true,  0, "InterFaceInheritance1Test.java");
         assertEquals("must have Type InterFaceInheritance1Test", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceInheritance1Test\\s+\\{")).size());
