@@ -18,10 +18,9 @@
  *
  */
 
-package dz.jtsgen.processor.jtp;
+package dz.jtsgen.processor.jtp.conv;
 
 
-import dz.jtsgen.processor.jtp.processors.TSProcessingInfo;
 import dz.jtsgen.processor.model.TSTargetType;
 import dz.jtsgen.processor.model.TSType;
 import dz.jtsgen.processor.model.TypeScriptModel;
@@ -52,7 +51,7 @@ import static javax.tools.Diagnostic.Kind.WARNING;
  * This Visitor is used to convert a Java Type to an TS type
  * Created by zuvic on 04.04.17.
  */
-public class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTargetType, Void> {
+class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTargetType, Void> {
 
     private static Logger LOG = Logger.getLogger(MirrotTypeToTSConverterVisitor.class.getName());
 

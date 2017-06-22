@@ -18,21 +18,21 @@
  *
  */
 
-package dz.jtsgen.processor.jtp;
+package dz.jtsgen.processor.nsmap;
 
 import dz.jtsgen.processor.model.TypeScriptModel;
 
 /**
  * Simple name space mapper. Currently string based to keep things simple
  */
-final class SimpleNameSpaceMapper {
-    final TypeScriptModel model;
+final public class SimpleNameSpaceMapper {
+    private final TypeScriptModel model;
 
-    SimpleNameSpaceMapper(TypeScriptModel model) {
+    public SimpleNameSpaceMapper(TypeScriptModel model) {
         this.model = model;
     }
 
-    String mapNameSpace(String originNameSpace) {
+    public String mapNameSpace(String originNameSpace) {
         assert originNameSpace != null;
         return model.getModuleInfo().getNameSpaceMappings().stream()
                 .filter(x -> originNameSpace.startsWith(x.originNameSpace()))

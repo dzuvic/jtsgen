@@ -45,12 +45,7 @@ dependencies {
     testCompile "org.mockito:mockito-core:2.7.21"
     testCompile "commons-io:commons-io:2.5"
     testCompile 'com.google.guava:guava:21.0'
-
-
-    apt "com.google.auto.service:auto-service:1.0-rc3"
-//    apt "com.google.guava:guava:21.0"
-//    apt "com.google.auto:auto-common:0.3"
-    implementation ("com.google.auto.service:auto-service:1.0-rc3") {transitive=false}
+    
 
     apt "org.immutables:value:2.5.3" // for annotation processor
 //    apt 'org.immutables:value-processor:2.5.3'

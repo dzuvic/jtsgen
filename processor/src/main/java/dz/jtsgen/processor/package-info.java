@@ -18,16 +18,10 @@
  *
  */
 
-package dz.jtsgen.processor.jtp.visitors;
+@Value.Style(
+        typeImmutable = "*Builder"
+        , jdkOnly = true
+)
+package dz.jtsgen.processor;
 
-import dz.jtsgen.processor.model.TSType;
-
-import javax.lang.model.element.TypeElement;
-import java.util.Optional;
-
-/**
- * Converts a java type to TS Type
- */
-public interface JavaTypeConverter {
-    Optional<TSType> convertJavaType(TypeElement e);
-}
+import org.immutables.value.Value;

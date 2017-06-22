@@ -18,7 +18,7 @@
  *
  */
 
-package dz.jtsgen.processor.jtp.visitors;
+package dz.jtsgen.processor.jtp.conv.visitors;
 
 import dz.jtsgen.processor.model.TSType;
 

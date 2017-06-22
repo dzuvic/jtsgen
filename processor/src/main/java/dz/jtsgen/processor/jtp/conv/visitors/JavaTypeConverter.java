@@ -18,26 +18,16 @@
  *
  */
 
-package dz.jtsgen.processor.jtp.processors;
+package dz.jtsgen.processor.jtp.conv.visitors;
 
-import dz.jtsgen.processor.model.TypeScriptModel;
-import org.immutables.value.Value;
+import dz.jtsgen.processor.model.TSType;
 
-import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.TypeElement;
+import java.util.Optional;
 
 /**
- * holds information needed acessing the model when traversing the AST
+ * Converts a java type to TS Type
  */
-@Value.Immutable
-public interface TSProcessingInfo {
-
-    @Value.Parameter
-    TypeElement getAnnotation();
-
-    @Value.Parameter
-    ProcessingEnvironment getpEnv();
-
-    @Value.Parameter
-    TypeScriptModel getTsModel();
+public interface JavaTypeConverter {
+    Optional<TSType> convertJavaType(TypeElement e);
 }

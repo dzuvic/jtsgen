@@ -21,10 +21,8 @@
 package dz.jtsgen.processor.jtp;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import dz.jtsgen.processor.model.NameSpaceMapping;
 import org.junit.Test;
-import org.junit.runners.Parameterized;
 
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
@@ -32,7 +30,7 @@ import java.lang.annotation.Annotation;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static dz.jtsgen.processor.jtp.NameSpaceMapperCalculator.computeNameSpaceMapping;
+import static dz.jtsgen.processor.nsmap.NameSpaceMapperCalculator.computeNameSpaceMapping;
 import static org.junit.Assert.*;
 
 public class NameSpaceMapperCalculatorTest {

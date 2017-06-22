@@ -18,10 +18,9 @@
  *
  */
 
-package dz.jtsgen.processor.jtp;
+package dz.jtsgen.processor.jtp.conv;
 
 import dz.jtsgen.annotations.TSIgnore;
-import dz.jtsgen.processor.jtp.processors.TSProcessingInfo;
 import dz.jtsgen.processor.model.TSMember;
 import dz.jtsgen.processor.model.TSTargetType;
 

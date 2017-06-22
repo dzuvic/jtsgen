@@ -23,6 +23,7 @@ package dz.jtsgen.processor.jtp;
 import dz.jtsgen.processor.model.NameSpaceMapping;
 import dz.jtsgen.processor.model.TSModuleInfo;
 import dz.jtsgen.processor.model.TypeScriptModel;
+import dz.jtsgen.processor.nsmap.SimpleNameSpaceMapper;
 import org.junit.Test;
 
 import java.util.*;

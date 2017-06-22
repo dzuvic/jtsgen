@@ -20,20 +20,21 @@
 
 package dz.jtsgen.processor;
 
-import com.google.auto.service.AutoService;
 import dz.jtsgen.annotations.TSModule;
 import dz.jtsgen.annotations.TypeScript;
-import dz.jtsgen.processor.jtp.JavaTypeProcessor;
 import dz.jtsgen.processor.jtp.TSModuleHandler;
 import dz.jtsgen.processor.jtp.TSModuleInfoEnforcer;
-import dz.jtsgen.processor.jtp.TypeScriptAnnotationProcessor;
-import dz.jtsgen.processor.jtp.processors.ImmutableTSProcessingInfo;
-import dz.jtsgen.processor.jtp.processors.TSProcessingInfo;
-import dz.jtsgen.processor.jtp.visitors.*;
+import dz.jtsgen.processor.jtp.conv.JavaTypeProcessor;
+import dz.jtsgen.processor.jtp.conv.TSProcessingInfo;
+import dz.jtsgen.processor.jtp.conv.TSProcessingInfoBuilder;
+import dz.jtsgen.processor.jtp.conv.TypeScriptAnnotationProcessor;
 import dz.jtsgen.processor.model.TypeScriptModel;
 import dz.jtsgen.processor.renderer.TSRenderer;
 
-import javax.annotation.processing.*;
+import javax.annotation.processing.ProcessingEnvironment;
+import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.SupportedAnnotationTypes;
+import javax.annotation.processing.SupportedOptions;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
@@ -53,7 +54,6 @@ import static java.util.logging.Level.INFO;
  *
  * @author dzuvic
  */
-@AutoService(Processor.class)
 @SupportedAnnotationTypes(value = {"dz.jtsgen.annotations.*"})
 @SupportedOptions({
         "jtsgenLogLevel",
@@ -132,7 +132,7 @@ public class TsGenProcessor extends AbstractProcessorWithLogging {
         // this is needed for: updating data from CLI and calculating a name space mapping, if needed
         new TSModuleInfoEnforcer(this.processingEnv,this.typeScriptModel).createUpdatedTSModuleInfo(annotatedElements).ifPresent( x -> {
             typeScriptModel.addModuleInfo(x);
-            final TSProcessingInfo TSProcessingInfo = ImmutableTSProcessingInfo.of(annotation, this.processingEnv, typeScriptModel) ;// new TSProcessingInfoImpl(annotation, this.processingEnv, typeScriptModel);
+            final TSProcessingInfo TSProcessingInfo = TSProcessingInfoBuilder.of(annotation, this.processingEnv, typeScriptModel) ;// new TSProcessingInfoImpl(annotation, this.processingEnv, typeScriptModel);
             final JavaTypeProcessor handler = new TypeScriptAnnotationProcessor(TSProcessingInfo);
             handler.processAnnotations(roundEnv);
         });

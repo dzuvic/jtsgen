@@ -23,6 +23,7 @@ package dz.jtsgen.processor.jtp;
 import dz.jtsgen.processor.model.NameSpaceMapping;
 import dz.jtsgen.processor.model.TSModuleInfo;
 import dz.jtsgen.processor.model.TypeScriptModel;
+import dz.jtsgen.processor.nsmap.NameSpaceMapperCalculator;
 import dz.jtsgen.processor.util.Tuple;
 
 import javax.annotation.processing.ProcessingEnvironment;
@@ -35,7 +36,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import static dz.jtsgen.processor.jtp.NameSpaceMapperCalculator.computeNameSpaceMapping;
+import static dz.jtsgen.processor.nsmap.NameSpaceMapperCalculator.computeNameSpaceMapping;
 import static dz.jtsgen.processor.util.NameSpaceHelper.topPackages;
 import static dz.jtsgen.processor.util.StringUtils.dotToUpperCamelCase;
 import static dz.jtsgen.processor.util.StringUtils.isPackageFriendly;

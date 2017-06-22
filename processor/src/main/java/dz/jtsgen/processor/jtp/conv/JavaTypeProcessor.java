@@ -18,7 +18,7 @@
  *
  */
 
-package dz.jtsgen.processor.jtp;
+package dz.jtsgen.processor.jtp.conv;
 
 import javax.annotation.processing.RoundEnvironment;
 
