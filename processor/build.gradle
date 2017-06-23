@@ -35,7 +35,7 @@ configurations {
 }
 
 def aptOutDir="${projectDir}/src/main/generated"
-def aptOutTestDir="${buildDir}/apt/test/java"
+def aptOutTestDir="${projectDir}/src/test/generated"
 
 dependencies {
     api project(':annotations')
@@ -69,10 +69,13 @@ idea {
 compileJava {
     options.annotationProcessorPath = configurations.apt
     options.compilerArgs << "-s" << aptOutDir
+    options.verbose = true
     doFirst {
+        delete aptOutDir  // workaround for Bug https://github.com/immutables/immutables/issues/134
         mkdir(aptOutDir)
     }
 }
+
 
 clean {
     delete aptOutDir
@@ -81,6 +84,17 @@ clean {
 task sourceJar(type: Jar) {
   from sourceSets.main.allJava
   classifier "sources"
+}
+
+jacocoTestReport {
+    afterEvaluate {
+        classDirectories = files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    // exclude generated sources
+                    '/dz/jtsgen/processor/jtp/conv/TSProcessingInfoBuilder*'
+            ] )
+        })
+    }
 }
 
 def pomConfig = {
