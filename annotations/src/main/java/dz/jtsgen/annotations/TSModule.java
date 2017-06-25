@@ -86,7 +86,7 @@ public @interface TSModule {
     /**
      * regular expression to exclude type conversion.
      */
-    String[] excludes() default {"^sun", "^jdk.internal"};
+    String[] excludes() default {"^sun", "^jdk.internal", "^java.lang.Comparable"};
 
 
     /**

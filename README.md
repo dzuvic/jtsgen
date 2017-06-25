@@ -36,6 +36,7 @@ Currently the following features are supported:
 * `readonly` if no setter is found
 * Name Space mapping to minimize the TypeScript name spaces. It can be
   configured or calculated.
+* Inheritance (since 0.2.0)
 
 Requirements: The annotation processor only depends on the JDK. Only JDK 8
 is currently supported.
@@ -96,7 +97,7 @@ The following annotation parameters are supported:
 *  **license**: The license for the package.json file
 *  **description**: he description for the package.json file
 *  **customTypeMappings**: Custom Type Mapping for the module, the default is `{}`
-*  **excludes**: regular expression to exclude type conversion, default is: `{"^sun", "^jdk.internal"}`
+*  **excludes**: regular expression to exclude type conversion, default is: `{"^sun", "^jdk.internal", "^java.lang.Comparable"}`
 *  **nameSpaceMapping**: The name space mapping, the default is `{}`
 *  **outputType**: The type of the output. Default is `OutputType.NAMESPACE_AMBIENT_TYPE`
 

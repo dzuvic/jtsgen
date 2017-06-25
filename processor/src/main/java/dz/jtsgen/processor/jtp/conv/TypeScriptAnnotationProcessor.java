@@ -19,6 +19,7 @@
  */
 package dz.jtsgen.processor.jtp.conv;
 
+import dz.jtsgen.processor.helper.DeclTypeHelper;
 import dz.jtsgen.processor.jtp.conv.visitors.JavaTypeConverter;
 import dz.jtsgen.processor.jtp.conv.visitors.TSAVisitor;
 import dz.jtsgen.processor.model.*;
@@ -28,7 +29,9 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeMirror;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,13 +53,18 @@ public class TypeScriptAnnotationProcessor implements JavaTypeProcessor, JavaTyp
 
     private static Logger LOG = Logger.getLogger(TypeScriptAnnotationProcessor.class.getName());
 
-    private final TSProcessingInfo TSProcessingInfo;
+    private final TSProcessingInfo processingInfo;
 
     private final SimpleNameSpaceMapper namespaceMapper;
 
-    public TypeScriptAnnotationProcessor(TSProcessingInfo TSProcessingInfo) {
-        this.TSProcessingInfo = TSProcessingInfo;
-        this.namespaceMapper = new SimpleNameSpaceMapper(TSProcessingInfo.getTsModel());
+    private final TypeElement javaLangObjectElement;
+    private final TypeElement javaLangEnumElement;
+
+    public TypeScriptAnnotationProcessor(TSProcessingInfo processingInfo) {
+        this.processingInfo = processingInfo;
+        this.namespaceMapper = new SimpleNameSpaceMapper(processingInfo.getTsModel());
+        this.javaLangObjectElement = this.processingInfo.getpEnv().getElementUtils().getTypeElement("java.lang.Object");
+        this.javaLangEnumElement = this.processingInfo.getpEnv().getElementUtils().getTypeElement("java.lang.Enum");
     }
 
     @Override
@@ -64,7 +72,7 @@ public class TypeScriptAnnotationProcessor implements JavaTypeProcessor, JavaTyp
         TSAVisitor tsaVisitor = new TSAVisitor();
         for (Element e : filteredTypeSriptElements(roundEnv)) {
             tsaVisitor.visit(e,this).ifPresent(     x -> {
-                TSProcessingInfo.getTsModel().addTSTypes(singletonList(x));
+                processingInfo.getTsModel().addTSTypes(singletonList(x));
                 LOG.log(Level.FINEST, () -> String.format("TSAP added %s to model", x.toString()));
                     }
             );
@@ -73,7 +81,7 @@ public class TypeScriptAnnotationProcessor implements JavaTypeProcessor, JavaTyp
 
     @Override
     public Optional<TSType> convertJavaType(TypeElement e) {
-        LOG.log(Level.FINEST, () -> String.format("TSAP converting java type %s", e.toString()));
+        LOG.log(Level.FINEST, () -> String.format("TSAP converting java type %s (cause @TypeScript)", e.toString()));
         return handleJavaType(e);
     }
 
@@ -84,6 +92,7 @@ public class TypeScriptAnnotationProcessor implements JavaTypeProcessor, JavaTyp
             LOG.info( () -> "Excluding " + element);
             return Optional.empty();
         }
+        List<TSType> supertypes = convertSuperTypes(element);
         TSType result = null;
         final String name = lastOf(element.toString());
         //TODO move this to renderer and keep the original name space
@@ -91,11 +100,11 @@ public class TypeScriptAnnotationProcessor implements JavaTypeProcessor, JavaTyp
         switch (element.getKind()) {
             case CLASS:
             {
-                result = new TSInterface(element, namespace, name).addMembers(findMembers(element));
+                result = new TSInterface(element, namespace, name).addMembers(findMembers(element)).addSuperTypes(supertypes);
                 break;
             }
             case INTERFACE: {
-                result = new TSInterface(element, namespace, name).addMembers(findMembers(element));
+                result = new TSInterface(element, namespace, name).addMembers(findMembers(element)).addSuperTypes(supertypes);
                 break;
             }
             case ENUM: {
@@ -107,11 +116,53 @@ public class TypeScriptAnnotationProcessor implements JavaTypeProcessor, JavaTyp
        return Optional.ofNullable(result);
     }
 
+    private List<TSType> convertSuperTypes(TypeElement element) {
+        final List<? extends TypeMirror> superTypes = this.processingInfo.getpEnv().getTypeUtils().directSupertypes(element.asType());
+        LOG.finest(() -> "TSAP direct supertypes of " + element + " are " + superTypes);
+        List<TypeElement> filteredSuperTypes = superTypes
+                .stream().map(DeclTypeHelper::declaredTypeToTypeElement)
+                .filter(Optional::isPresent).map(Optional::get)
+                .collect(Collectors.toList());
+
+        List<TSType> result = filteredSuperTypes.stream()
+                .filter( x -> !isMarkerInterface(x))
+                .filter( x -> !isTopType(x))
+                .filter( x -> ! checkExclusion(x))
+                .map(x -> {
+                    LOG.info("TSAP converting supertype " +x);
+                    return handleJavaType(x);
+                })
+                .filter(Optional::isPresent).map(Optional::get)
+                .collect(Collectors.toList());
+
+        this.processingInfo.getTsModel().addTSTypes(result);
+
+        return result;
+    }
+
+
+    private boolean isTopType(TypeElement typeElement) {
+        boolean r =
+                typeElement.getQualifiedName().equals(this.javaLangObjectElement.getQualifiedName())
+                        || typeElement.getQualifiedName().contentEquals(this.javaLangEnumElement.getQualifiedName().toString());
+        if (r) LOG.finest(() -> "TSAP " + typeElement + " is top type");
+        return r;
+    }
+
+    private boolean isMarkerInterface(TypeElement typeElement) {
+        boolean isMarker = typeElement.getKind() == ElementKind.INTERFACE
+                && typeElement.getEnclosedElements().size() == 0;
+        if (isMarker) LOG.finest(() -> "TSAP " + typeElement + " is marker interface");
+        return isMarker;
+    }
+
     private boolean checkExclusion(TypeElement element) {
         final String typeName=element.toString();
-        return this.TSProcessingInfo.getTsModel().getModuleInfo().getExcludes().stream().anyMatch(
+        boolean r= this.processingInfo.getTsModel().getModuleInfo().getExcludes().stream().anyMatch(
                 x -> x.matcher(typeName).find()
         );
+        if (r) LOG.finest(() -> "TSAP exclusion " + element);
+        return r;
     }
 
     private Collection<? extends TSMember> findEnumMembers(TypeElement element) {
@@ -122,7 +173,7 @@ public class TypeScriptAnnotationProcessor implements JavaTypeProcessor, JavaTyp
     }
 
     private Collection<? extends TSMember> findMembers(TypeElement e) {
-        JavaTypeElementExtractingVisitor visitor = new JavaTypeElementExtractingVisitor(e, TSProcessingInfo);
+        JavaTypeElementExtractingVisitor visitor = new JavaTypeElementExtractingVisitor(e, processingInfo);
         e.getEnclosedElements().stream()
                 .filter(x -> x.getKind()== ElementKind.FIELD || x.getKind()==ElementKind.METHOD)
                 .forEach(visitor::visit);

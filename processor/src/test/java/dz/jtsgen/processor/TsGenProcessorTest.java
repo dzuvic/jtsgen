@@ -121,11 +121,10 @@ public class TsGenProcessorTest {
     }
 
     @Test
-    @Ignore
     public void test_simple_interface_with_inheritance() throws IOException {
-        Compilation c = CompileHelper.compileJtsDev(true,  0, "InterFaceInheritance1Test.java");
-        assertEquals("must have Type InterFaceInheritance1Test", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceInheritance1Test\\s+\\{")).size());
-        assertEquals("must have Type InterFaceInheritance1Test", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceInheritance1TestParent\\s+\\{")).size());
+        Compilation c = CompileHelper.compileJtsDev(DUMP_FILES,  0, "InterFaceInheritance1Test.java");
+        assertEquals("must have Type InterFaceInheritance1Test extends InterFaceInheritance1TestParent", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceInheritance1Test\\s+extends\\s+InterFaceInheritance1TestParent\\s+\\{")).size());
+        assertEquals("must have Type InterFaceInheritance1TestParent", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceInheritance1TestParent\\s+\\{")).size());
     }
 
     @Test

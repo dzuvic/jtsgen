@@ -28,6 +28,7 @@ import dz.jtsgen.processor.model.rendering.TSMemberVisitor;
 import dz.jtsgen.processor.model.rendering.TSTypeVisitor;
 
 import java.io.PrintWriter;
+import java.util.stream.Collectors;
 
 /**
  * default renderer for TSTypes
@@ -83,6 +84,15 @@ class DefaultTSTypeVisitor implements TSTypeVisitor {
         out.print(x.getKeyword());
         out.print(" ");
         out.print(x.getName());
+        out.print(extendsSuperTypes(x));
         out.println(" {");
+    }
+
+    private String extendsSuperTypes(TSType x) {
+        if (x.getSuperTypes().size() == 0) return "";
+        StringBuilder s = new StringBuilder();
+        return s.append(" extends ").append( x.getSuperTypes().stream().map(TSType::getName).collect(Collectors.joining(",")))
+                .toString();
+
     }
 }

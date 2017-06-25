@@ -11,7 +11,7 @@ public class TypeScriptModel {
     private TSModuleInfo moduleInfo = new TSModuleInfo("unknown", null).withTypeMappingInfo(null, defaultExclusion(),null);
 
     private static List<Pattern> defaultExclusion() {
-        return Arrays.stream(new String[]{"^sun", "^jdk.internal"}).map(Pattern::compile).collect(Collectors.toList());
+        return Arrays.stream(new String[]{"^sun", "^jdk.internal","^java.lang.Comparable"}).map(Pattern::compile).collect(Collectors.toList());
     }
 
     // all converted TS Types
