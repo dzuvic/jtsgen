@@ -37,7 +37,7 @@ public class DefaultTSMemberVisitor implements TSMemberVisitor {
 
     @Override
     public void visit(TSMember x) {
-        if (x.isReadOnly()) out.print("readonly ");
+        if (x.getReadOnly()) out.print("readonly ");
         out.print(x.getName());
         out.print(": ");
         out.print(x.getType());

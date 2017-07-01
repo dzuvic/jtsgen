@@ -22,6 +22,7 @@ package dz.jtsgen.processor.jtp.conv;
 
 import dz.jtsgen.annotations.TSIgnore;
 import dz.jtsgen.processor.model.TSMember;
+import dz.jtsgen.processor.model.TSRegularMemberBuilder;
 import dz.jtsgen.processor.model.TSTargetType;
 
 import javax.lang.model.element.*;
@@ -76,7 +77,7 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
         LOG.log(Level.FINEST, () -> String.format("JTExV visiting variable %s%s", name, isIgnored?" (ignored)":""));
         if (isPublic && !members.containsKey(name)) {
             final TSTargetType tsTypeOfExecutable = convertTypeMirrorOfMemberToTsType(e, TSProcessingInfo);
-            members.put(name, new TSMember(name, tsTypeOfExecutable, false));
+            members.put(name, TSRegularMemberBuilder.of(name,tsTypeOfExecutable,false));
             if (! isIgnored) extractableMembers.add(name);
         }
         return null;
@@ -94,9 +95,9 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
             LOG.fine(() -> "is getter or setter: " + (isPublic ? "public " : " ") + e.getSimpleName() + " -> " + name + ":" + tsTypeOfExecutable + " " +(isIgnored?"(ignored)":""));
             if (members.containsKey(name)) {
                 // can't be read only anymore
-                members.put(name, new TSMember(name, isGetter(e) ? tsTypeOfExecutable : members.get(name).getType(), false));
+                members.put(name, TSRegularMemberBuilder.of(name, isGetter(e) ? tsTypeOfExecutable : members.get(name).getType(), false));
             } else {
-                members.put(name, new TSMember(name, tsTypeOfExecutable, isGetter(e)));
+                members.put(name, TSRegularMemberBuilder.of(name, tsTypeOfExecutable, isGetter(e)));
             }
             if (isGetter(e)) extractableMembers.add(name);
         }

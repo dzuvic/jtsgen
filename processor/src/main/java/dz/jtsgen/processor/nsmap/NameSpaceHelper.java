@@ -18,7 +18,9 @@
  *
  */
 
-package dz.jtsgen.processor.util;
+package dz.jtsgen.processor.nsmap;
+
+import dz.jtsgen.processor.util.Tuple;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -42,7 +44,7 @@ public final class NameSpaceHelper {
         Set<String> result = new HashSet<>();
         int min=Integer.MAX_VALUE;
 
-        List<Tuple<String,Integer>> nsPathLengths= packageNames.stream().map( x-> new Tuple<>(x, pathLength(x) )).collect(Collectors.toList());
+        List<Tuple<String,Integer>> nsPathLengths= packageNames.stream().map(x-> new Tuple<>(x, pathLength(x) )).collect(Collectors.toList());
 
         for (Tuple<String,Integer> i: nsPathLengths){
             if (i.getSecond() < min) {

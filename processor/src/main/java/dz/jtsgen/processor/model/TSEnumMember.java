@@ -21,19 +21,43 @@
 package dz.jtsgen.processor.model;
 
 
-import dz.jtsgen.processor.model.rendering.TSMemberElement;
 import dz.jtsgen.processor.model.rendering.TSMemberVisitor;
 import dz.jtsgen.processor.model.tstarget.TSTargetEnumValueType;
+import org.immutables.value.Value;
 
-public class TSEnumMember extends TSMember implements TSMemberElement {
+@Value.Immutable
+public abstract class TSEnumMember implements TSMember {
+    
     private static final TSTargetType ENUM_MEMBER = new TSTargetEnumValueType();
 
-    public TSEnumMember(String name) {
-        super(name, ENUM_MEMBER, false);
+    @Value.Parameter
+    public abstract String getName() ;
+
+
+    @Override
+    @Value.Derived
+    public TSTargetType getType() {
+        return ENUM_MEMBER;
     }
+
+    @Value.Default
+    public boolean getInvalid() {
+        return false;
+    }
+
+    @Value.Default
+    public boolean getReadOnly() {
+        return false;
+    }
+
 
     @Override
     public void accept(TSMemberVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public TSMember changedTSTarget(TSTargetType newTargetType) {
+        return this;
     }
 }

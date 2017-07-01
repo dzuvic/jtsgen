@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Dragan Zuvic
+ * Copyright 2016 Dragan Zuvic
  *
  * This file is part of jtsgen.
  *
@@ -7,7 +7,7 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * jtsgen is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -17,31 +17,35 @@
  * along with jtsgen.  If not, see http://www.gnu.org/licenses/
  *
  */
-
 package dz.jtsgen.processor.model;
 
-import dz.jtsgen.processor.model.rendering.TSTypeVisitor;
+import dz.jtsgen.processor.model.rendering.TSMemberVisitor;
 import org.immutables.value.Value;
 
-import java.util.List;
-
-
 @Value.Immutable
-public abstract class TSInterface extends TSType {
-    
-    @Override
-    @Value.Derived
-    public String getKeyword() {
-        return "interface";
+public abstract class TSRegularMember implements TSMember {
+
+    @Value.Parameter
+    public abstract String getName() ;
+
+    @Value.Parameter
+    public abstract TSTargetType getType();
+
+    @Value.Parameter
+    public abstract boolean getReadOnly();
+
+    @Value.Default
+    public boolean getInvalid() {
+        return false;
     }
 
     @Override
-    public void accept(TSTypeVisitor visitor, int ident) {
-        visitor.visit(this, ident);
+    public void accept(TSMemberVisitor visitor) {
+        visitor.visit(this);
     }
 
     @Override
-    public TSType changedNamespace(String namespace, List<TSMember> members) {
-        return TSInterfaceBuilder.copyOf(this).withNamespace(namespace).withMembers(members);
+    public TSMember changedTSTarget(TSTargetType newTargetType) {
+        return TSRegularMemberBuilder.copyOf(this).withType(newTargetType);
     }
 }

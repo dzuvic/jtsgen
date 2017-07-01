@@ -21,11 +21,9 @@
 package dz.jtsgen.processor.model.tstarget;
 
 import dz.jtsgen.processor.model.TSTargetType;
+import dz.jtsgen.processor.model.NameSpaceMapper;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,6 +36,7 @@ import static dz.jtsgen.processor.util.StringUtils.withoutTypeArgs;
 public final class TSTargetFactory {
     private final static Logger LOG = Logger.getLogger(TSTargetFactory.class.getName());
     private final static Pattern TYPE_PARAM_PATTERN = Pattern.compile("<\\s*(\\w+)\\s*(,\\s*\\w+\\s*)*>");
+    private final static NameSpaceMapper IDENTITY = x -> x;
 
     /**
      * @param mappingString the Mapping String
@@ -82,17 +81,49 @@ public final class TSTargetFactory {
     }
 
     /**
+     * copies a reference type. if name space mapper is given, the names spaces are converted, too
      * @param tstype the original TSTarget
      * @param typeParamMap the Type param map
      * @return a copy of TSTargetType with resolved Type Params
      */
-    public static TSTargetType copyWithTypeParams(TSTargetType tstype, Map<String, TSTargetType> typeParamMap) {
+    public static TSTargetType copyWithTypeParams(TSTargetType tstype, Map<String, TSTargetType> typeParamMap, NameSpaceMapper nameSpaceMapper) {
         Optional<TSTargetInternal> tsTargetInternal = Optional.ofNullable (tstype instanceof TSTargetInternal ? (TSTargetInternal) tstype : null);
+        NameSpaceMapper mapper = nameSpaceMapper == null ? IDENTITY : nameSpaceMapper;
         return new TSTargetDeclType(
                 tstype.getJavaType(),
-                tsTargetInternal.map(TSTargetInternal::tsTargetType).orElse("none"),
+                tsTargetInternal.map(x -> mapper.mapNameSpace(x.tsTargetType())).orElse("none"),
                 tstype.typeParameters(),
-                typeParamMap,
+                mapNamespace(typeParamMap, mapper),
                 tstype.conversionCoverage());
     }
+
+    private static Map<String, TSTargetType> mapNamespace(Map<String, TSTargetType> typeParamMap, NameSpaceMapper mapper) {
+        if (mapper == IDENTITY) return  typeParamMap;
+        Map<String, TSTargetType> result = new HashMap<>();
+        for (Map.Entry<String, TSTargetType> x : typeParamMap.entrySet()) {
+            Optional<TSTargetInternal> tsTargetInternal = Optional.ofNullable(x.getValue() instanceof TSTargetInternal ? (TSTargetInternal) x.getValue() : null);
+            if (tsTargetInternal.isPresent()) {
+              result.put(x.getKey(),
+                      new TSTargetDeclType(
+                                      x.getValue().getJavaType(),
+                                      tsTargetInternal.map(y -> mapper.mapNameSpace(y.tsTargetType())).orElse("none"),
+                                      x.getValue().typeParameters(),
+                                      mapNamespace(x.getValue().typeParameterTypes(), mapper),
+                                      x.getValue().conversionCoverage())
+                      );
+            } else result.put(x.getKey(), x.getValue());
+        }
+        return result;
+    }
+
+    /**
+     * converts the namespaces in the target type
+     * @param type  the type to convert
+     * @param mapper the mapper to use
+     * @return  the converted target type
+     */
+    public static TSTargetType changeNameSpace(TSTargetType type, NameSpaceMapper mapper) {
+        return type.isReferenceType() ?  copyWithTypeParams(type,type.typeParameterTypes(),mapper) : type;
+    }
+
 }

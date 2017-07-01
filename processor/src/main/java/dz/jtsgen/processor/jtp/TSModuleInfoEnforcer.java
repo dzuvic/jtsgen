@@ -36,8 +36,8 @@ import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import static dz.jtsgen.processor.nsmap.NameSpaceHelper.topPackages;
 import static dz.jtsgen.processor.nsmap.NameSpaceMapperCalculator.computeNameSpaceMapping;
-import static dz.jtsgen.processor.util.NameSpaceHelper.topPackages;
 import static dz.jtsgen.processor.util.StringUtils.dotToUpperCamelCase;
 import static dz.jtsgen.processor.util.StringUtils.isPackageFriendly;
 
@@ -68,7 +68,7 @@ public class TSModuleInfoEnforcer {
     /**
      * @return the module with generated/corrected name
      */
-    private TSModuleInfo correctModule(List<NameSpaceMapping> nsMapping, String notOverridenModuleName) {
+    private TSModuleInfo correctModule(String notOverridenModuleName) {
         String moduleName = Optional.ofNullable(env.getOptions().get(JTSGEN_OUTPUT_OPTION_MODULENAME)).orElse(notOverridenModuleName);
         String moduleVersion = env.getOptions().get(JTSGEN_OUTPUT_OPTION_MODULEVERSION);
         String moduleDescription = env.getOptions().get(JTSGEN_OUTPUT_OPTION_MODULEDESCRIPTION);
@@ -76,8 +76,7 @@ public class TSModuleInfoEnforcer {
         String moduleLicense = env.getOptions().get(JTSGEN_OUTPUT_OPTION_MODULELICENSE);
         String moduleAuthorUrl = env.getOptions().get(JTSGEN_OUTPUT_OPTION_MODULEAUTHORURL);
         return new TSModuleInfo(this.model.getModuleInfo())
-                .withModuleData(moduleVersion, moduleDescription, moduleAuthor, moduleLicense, moduleAuthorUrl, moduleName, this.model.getModuleInfo().getOutputType())
-                .withNameSpaceMapping(nsMapping);
+                .withModuleData(moduleVersion, moduleDescription, moduleAuthor, moduleLicense, moduleAuthorUrl, moduleName, this.model.getModuleInfo().getOutputType()) ;
     }
 
     /**
@@ -107,14 +106,12 @@ public class TSModuleInfoEnforcer {
         return Optional.of(dotToUpperCamelCase(moduleName));
     }
 
-    // TODO: change this, in a later iteration the namespaces must be mapped by the renderer. It is not possible
-    // TODO: to calculate the namespace mapping, when adding super/embedded types.all types must be converted to calculate the name space mapping
     public Optional<TSModuleInfo> createUpdatedTSModuleInfo(Set<? extends Element> annotatedElements) {
 
         final List<NameSpaceMapping> nameSpaceMappings = (this.model.usesDefaultNameSpaceMapping()) ?
                 computeNameSpaceMapping(annotatedElements)
                 : new ArrayList<>();
 
-        return mainModuleName(annotatedElements).flatMap( x -> Optional.of(correctModule(nameSpaceMappings,x)));
+        return mainModuleName(annotatedElements).flatMap( x -> Optional.of(correctModule(x)));
     }
 }

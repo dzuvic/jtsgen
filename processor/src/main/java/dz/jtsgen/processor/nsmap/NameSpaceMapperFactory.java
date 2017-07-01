@@ -18,30 +18,13 @@
  *
  */
 
-package dz.jtsgen.processor.model;
+package dz.jtsgen.processor.nsmap;
 
-import dz.jtsgen.processor.model.rendering.TSTypeVisitor;
-import org.immutables.value.Value;
+import dz.jtsgen.processor.model.TSModuleInfo;
 
-import java.util.List;
+public final class NameSpaceMapperFactory {
 
-
-@Value.Immutable
-public abstract class TSInterface extends TSType {
-    
-    @Override
-    @Value.Derived
-    public String getKeyword() {
-        return "interface";
-    }
-
-    @Override
-    public void accept(TSTypeVisitor visitor, int ident) {
-        visitor.visit(this, ident);
-    }
-
-    @Override
-    public TSType changedNamespace(String namespace, List<TSMember> members) {
-        return TSInterfaceBuilder.copyOf(this).withNamespace(namespace).withMembers(members);
+    public static NameSpaceModelMapper createNameSpaceMapper(TSModuleInfo moduleInfo) {
+        return new DefaultNameSpaceModelMapper(moduleInfo);
     }
 }

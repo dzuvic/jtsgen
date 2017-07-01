@@ -18,28 +18,24 @@
  *
  */
 
-package dz.jtsgen.processor.jtp;
+package dz.jtsgen.processor.nsmap;
 
 import dz.jtsgen.processor.model.NameSpaceMapping;
-import dz.jtsgen.processor.model.TSModuleInfo;
-import dz.jtsgen.processor.model.TypeScriptModel;
-import dz.jtsgen.processor.nsmap.SimpleNameSpaceMapper;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class SimpleNameSpaceMapperTest {
+    
     @Test
     public void mapNameSpace() throws Exception {
         NameSpaceMapping oneNsMapping = new NameSpaceMapping("a.b","");
         List<NameSpaceMapping> oneMapping = Collections.singletonList(oneNsMapping);
-        TypeScriptModel model=TypeScriptModel.newModelWithDefaultModule();
-        TSModuleInfo tsModuleInfo=new TSModuleInfo("moduleTest","somethingDifferent").withTypeMappingInfo(new HashMap<>(),new ArrayList<>(),oneMapping);
-        model.addModuleInfo(tsModuleInfo);
         
-        SimpleNameSpaceMapper snsm = new SimpleNameSpaceMapper(model);
+        SimpleNameSpaceMapper snsm = new SimpleNameSpaceMapper(oneMapping);
         assertEquals(snsm.mapNameSpace("a.b"),"");
         assertEquals(snsm.mapNameSpace("a.b.c"),"c");
         assertEquals(snsm.mapNameSpace("a.d"),"a.d");

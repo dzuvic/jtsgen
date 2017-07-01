@@ -21,7 +21,6 @@
 package dz.jtsgen.processor.nsmap;
 
 import dz.jtsgen.processor.model.NameSpaceMapping;
-import dz.jtsgen.processor.util.NameSpaceHelper;
 import dz.jtsgen.processor.util.Tuple;
 
 import javax.lang.model.element.Element;
@@ -58,9 +57,9 @@ import static dz.jtsgen.processor.util.StringUtils.untill;
 final public class NameSpaceMapperCalculator {
     private static Logger LOG = Logger.getLogger(NameSpaceMapperCalculator.class.getName());
 
-    public static List<NameSpaceMapping> computeNameSpaceMapping(Set<? extends Element> annotatedElements) {
+    public static List<NameSpaceMapping> computeNameSpaceMapping(Collection<? extends Element> elements) {
 
-        List<Tuple<String, String>> canonicalTypes = typesWithPackageNames(annotatedElements);
+        List<Tuple<String, String>> canonicalTypes = typesWithPackageNames(elements);
 
         LOG.fine(() -> "calculating namespaces for: " + canonicalTypes);
 
@@ -91,7 +90,7 @@ final public class NameSpaceMapperCalculator {
         return computedNamesSpaces;
     }
 
-    public static List<Tuple<String, String>> typesWithPackageNames(Set<? extends Element> annotatedElements) {
+    public static List<Tuple<String, String>> typesWithPackageNames(Collection<? extends Element> annotatedElements) {
         return annotatedElements.stream()
                     .map(x -> new Tuple<>(untill(x.toString()), lastOf(x.toString())))
                     .collect(Collectors.toList());

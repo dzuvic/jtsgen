@@ -1,78 +1,58 @@
+/*
+ * Copyright (c) 2017 Dragan Zuvic
+ *
+ * This file is part of jtsgen.
+ *
+ * jtsgen is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * jtsgen is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with jtsgen.  If not, see http://www.gnu.org/licenses/
+ *
+ */
+
 package dz.jtsgen.processor.model;
 
 import dz.jtsgen.processor.model.rendering.TSTypeElement;
+import org.immutables.value.Value;
 
 import javax.lang.model.element.Element;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Optional;
+
+import static dz.jtsgen.processor.util.StringUtils.lastOf;
+import static dz.jtsgen.processor.util.StringUtils.untill;
 
 public abstract class TSType implements TSTypeElement {
-    private final String namespace;
-    private final String name;
-    private final List<TSMember> members = new ArrayList<>();
-    private String documentString;
-    private List<TSType> superTypes = new ArrayList<>();
-    private Element element;
 
-    public TSType(Element e, String namespace, String name) {
-        assert namespace != null;
-        assert name != null;
 
-        this.element = e;
-        this.namespace = namespace;
-        this.name = name;
-    }
-
+    @Value.Default
     public String getNamespace() {
-        return namespace;
+        return untill(this.getElement().toString());
     }
 
+    @Value.Default
     public String getName() {
-        return name;
+        return lastOf(this.getElement().toString());
     }
 
-    public List<TSMember> getMembers() {
-        return members;
-    }
+    public abstract List<TSMember> getMembers();
 
-    public String getDocumentString() {
-        return documentString;
-    }
+    public abstract Optional<String> getDocumentString();
 
+    public abstract List<TSType> getSuperTypes();
 
-    public List<TSType> getSuperTypes() {
-        return superTypes;
-    }
-
-    public Optional<Element> getElement() {
-        return Optional.ofNullable(element);
-    }
-
-    protected StringBuilder toStringBuilder() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(this.getClass().getSimpleName()).append("{");
-        if (!superTypes.isEmpty()) builder.append("superTypes=")
-                .append(this.getSuperTypes().stream().map( x -> x!=this ? x.toString() : "self").collect(Collectors.joining(",")))
-                .append("; ");
-        if (!members.isEmpty()) builder.append("members=").append(this.members.toString()).append("; ");
-        return builder;
-    }
-
-
-    @Override
-    public String toString() {
-        return this.toStringBuilder().append("}").toString();
-    }
+    @Value.Parameter
+    public abstract Element getElement();
 
     public abstract String getKeyword();
-
-    public TSType addMembers(Collection<? extends TSMember> members) {
-        this.getMembers().addAll(members);
-        return this;
-    }
-
-    public TSType addSuperTypes(Collection<TSType> supertypes) {
-        this.getSuperTypes().addAll(supertypes.stream().filter(Objects::nonNull).collect(Collectors.toList()));
-        return this;
-    }
+    
+    public abstract TSType changedNamespace(String namespace, List<TSMember> members);
 }

@@ -61,7 +61,7 @@ public class TypeScriptModelTest {
         final Name mockedName = mock(Name.class);
         when(mockedName.toString()).thenReturn(canonicalName);
         when(mockedTypeElement.getQualifiedName()).thenReturn(mockedName);
-        return new TSInterface(mockedTypeElement, StringUtils.untill(canonicalName), StringUtils.lastOf(canonicalName));
+        return TSInterfaceBuilder.of(mockedTypeElement).withNamespace(StringUtils.untill(canonicalName)).withName(StringUtils.lastOf(canonicalName));
     }
 
 }

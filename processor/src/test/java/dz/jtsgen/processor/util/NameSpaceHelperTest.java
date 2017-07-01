@@ -22,6 +22,7 @@ package dz.jtsgen.processor.util;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import dz.jtsgen.processor.nsmap.NameSpaceHelper;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

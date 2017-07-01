@@ -23,7 +23,6 @@ import dz.jtsgen.processor.helper.DeclTypeHelper;
 import dz.jtsgen.processor.jtp.conv.visitors.JavaTypeConverter;
 import dz.jtsgen.processor.jtp.conv.visitors.TSAVisitor;
 import dz.jtsgen.processor.model.*;
-import dz.jtsgen.processor.nsmap.SimpleNameSpaceMapper;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
@@ -38,8 +37,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static dz.jtsgen.processor.jtp.helper.RoundEnvHelper.filteredTypeSriptElements;
-import static dz.jtsgen.processor.util.StringUtils.lastOf;
-import static dz.jtsgen.processor.util.StringUtils.untill;
 import static java.util.Collections.singletonList;
 import static javax.lang.model.element.ElementKind.ENUM_CONSTANT;
 
@@ -55,14 +52,11 @@ public class TypeScriptAnnotationProcessor implements JavaTypeProcessor, JavaTyp
 
     private final TSProcessingInfo processingInfo;
 
-    private final SimpleNameSpaceMapper namespaceMapper;
-
     private final TypeElement javaLangObjectElement;
     private final TypeElement javaLangEnumElement;
 
     public TypeScriptAnnotationProcessor(TSProcessingInfo processingInfo) {
         this.processingInfo = processingInfo;
-        this.namespaceMapper = new SimpleNameSpaceMapper(processingInfo.getTsModel());
         this.javaLangObjectElement = this.processingInfo.getpEnv().getElementUtils().getTypeElement("java.lang.Object");
         this.javaLangEnumElement = this.processingInfo.getpEnv().getElementUtils().getTypeElement("java.lang.Enum");
     }
@@ -94,21 +88,19 @@ public class TypeScriptAnnotationProcessor implements JavaTypeProcessor, JavaTyp
         }
         List<TSType> supertypes = convertSuperTypes(element);
         TSType result = null;
-        final String name = lastOf(element.toString());
-        //TODO move this to renderer and keep the original name space
-        final String namespace = this.namespaceMapper.mapNameSpace(untill(element.toString()));
+
         switch (element.getKind()) {
             case CLASS:
             {
-                result = new TSInterface(element, namespace, name).addMembers(findMembers(element)).addSuperTypes(supertypes);
+                result = TSInterfaceBuilder.of(element).withMembers(findMembers(element)).withSuperTypes(supertypes);
                 break;
             }
             case INTERFACE: {
-                result = new TSInterface(element, namespace, name).addMembers(findMembers(element)).addSuperTypes(supertypes);
+                result = TSInterfaceBuilder.of(element).withMembers(findMembers(element)).withSuperTypes(supertypes);
                 break;
             }
             case ENUM: {
-                result = new TSEnum(element, namespace, name).addMembers(findEnumMembers(element));
+                result = TSEnumBuilder.of(element).withMembers(findEnumMembers(element));
                 break;
             }
             default: break;
@@ -168,7 +160,7 @@ public class TypeScriptAnnotationProcessor implements JavaTypeProcessor, JavaTyp
     private Collection<? extends TSMember> findEnumMembers(TypeElement element) {
         return element.getEnclosedElements().stream()
                 .filter(x->x.getKind()==ENUM_CONSTANT)
-                .map ( x -> new TSEnumMember(x.getSimpleName().toString())
+                .map ( x -> TSEnumMemberBuilder.of(x.getSimpleName().toString())
                 ).collect(Collectors.toList());
     }
 

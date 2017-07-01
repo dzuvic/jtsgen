@@ -91,7 +91,11 @@ jacocoTestReport {
         classDirectories = files(classDirectories.files.collect {
             fileTree(dir: it, exclude: [
                     // exclude generated sources
-                    '/dz/jtsgen/processor/jtp/conv/TSProcessingInfoBuilder*'
+                    '/dz/jtsgen/processor/jtp/conv/TSProcessingInfoBuilder*',
+                    '/dz/jtsgen/processor/model/TSEnumBuilder*',
+                    '/dz/jtsgen/processor/model/TSEnumMemberBuilder*',
+                    '/dz/jtsgen/processor/model/TSInterfaceBuilder*',
+                    '/dz/jtsgen/processor/model/TSRegularMemberBuilder*'
             ] )
         })
     }

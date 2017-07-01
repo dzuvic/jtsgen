@@ -10,6 +10,7 @@ public class TypeScriptModel {
     // java package -> TSModuleInfo
     private TSModuleInfo moduleInfo = new TSModuleInfo("unknown", null).withTypeMappingInfo(null, defaultExclusion(),null);
 
+
     private static List<Pattern> defaultExclusion() {
         return Arrays.stream(new String[]{"^sun", "^jdk.internal","^java.lang.Comparable"}).map(Pattern::compile).collect(Collectors.toList());
     }
@@ -18,7 +19,7 @@ public class TypeScriptModel {
     private final List<TSType> tsTypes=new ArrayList<>();
 
     // a list of java types to ts mapping, that are added indirectly
-    private Map<String, TSTargetType> tsTargetTypes = new HashMap<>();
+    private final Map<String, TSTargetType> tsTargetTypes = new HashMap<>();
 
     private TypeScriptModel() {
 
@@ -36,8 +37,13 @@ public class TypeScriptModel {
      * copy constructor for renderer
      */
     protected TypeScriptModel(TypeScriptModel ts) {
-        this.tsTypes.addAll(ts.getTsTypes());
-        this.moduleInfo= ts.moduleInfo;
+        this(ts.getTsTypes(), ts.getTsTargetTypes(), ts.getModuleInfo());
+    }
+
+    private TypeScriptModel(List<TSType> tsTypes, Map<String, TSTargetType> tsTargetTypes, TSModuleInfo moduleInfo) {
+        this.tsTypes.addAll(tsTypes);
+        this.tsTargetTypes.putAll(tsTargetTypes);
+        this.moduleInfo= moduleInfo;
     }
 
     public void addModuleInfo(TSModuleInfo moduleInfo) {
@@ -59,6 +65,10 @@ public class TypeScriptModel {
         tsTypes.addAll(visitorResult);
     }
 
+    public TypeScriptModel withMappedData(List<TSType> mappedTSTypes) {
+        return new TypeScriptModel(mappedTSTypes,this.getTsTargetTypes(),this.moduleInfo);
+    }
+
 
     public List<TSType> getTsTypes() {
         return tsTypes;
@@ -76,11 +86,12 @@ public class TypeScriptModel {
         this.tsTargetTypes.put(tsTargetByMapping.getJavaType(),tsTargetByMapping);
     }
 
+    private Map<String, TSTargetType> getTsTargetTypes() {
+        return tsTargetTypes;
+    }
+
     public boolean usesDefaultNameSpaceMapping() {
         return moduleInfo.getNameSpaceMappings().size()==0;
     }
 
-    public void defineDefaultNamespaceMapping(List<NameSpaceMapping> nameSpaceMappings) {
-        this.moduleInfo=this.moduleInfo.withNameSpaceMapping(nameSpaceMappings);
-    }
 }

@@ -138,7 +138,7 @@ class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTargetType, 
                                     return new Tuple<>(it.getSecond(), tsTargetType);
                     })
                     .collect(Collectors.toMap(Tuple::getFirst, Tuple::getSecond));
-            return TSTargetFactory.copyWithTypeParams(tstype, typeParamMap);
+            return TSTargetFactory.copyWithTypeParams(tstype, typeParamMap, null);
         }
         return tstype;
     }

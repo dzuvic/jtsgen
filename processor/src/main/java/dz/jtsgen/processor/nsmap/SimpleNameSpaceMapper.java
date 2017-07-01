@@ -20,21 +20,25 @@
 
 package dz.jtsgen.processor.nsmap;
 
-import dz.jtsgen.processor.model.TypeScriptModel;
+import dz.jtsgen.processor.model.NameSpaceMapper;
+import dz.jtsgen.processor.model.NameSpaceMapping;
+
+import java.util.List;
 
 /**
  * Simple name space mapper. Currently string based to keep things simple
  */
-final public class SimpleNameSpaceMapper {
-    private final TypeScriptModel model;
+final class SimpleNameSpaceMapper implements NameSpaceMapper {
+    private final List<NameSpaceMapping> mappings;
 
-    public SimpleNameSpaceMapper(TypeScriptModel model) {
-        this.model = model;
+    SimpleNameSpaceMapper( List<NameSpaceMapping>  mappings) {
+        this.mappings = mappings;
     }
 
+    @Override
     public String mapNameSpace(String originNameSpace) {
         assert originNameSpace != null;
-        return model.getModuleInfo().getNameSpaceMappings().stream()
+        return mappings.stream()
                 .filter(x -> originNameSpace.startsWith(x.originNameSpace()))
                 .findFirst()
                 .map(x -> originNameSpace.replaceFirst("^" + x.originNameSpace(), x.targetNameSpace()).replaceFirst("^\\.", ""))

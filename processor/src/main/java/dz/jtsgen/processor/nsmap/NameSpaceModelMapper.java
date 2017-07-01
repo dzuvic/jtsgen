@@ -18,30 +18,16 @@
  *
  */
 
-package dz.jtsgen.processor.model;
+package dz.jtsgen.processor.nsmap;
 
-import dz.jtsgen.processor.model.rendering.TSTypeVisitor;
-import org.immutables.value.Value;
+import dz.jtsgen.processor.model.TypeScriptModel;
 
-import java.util.List;
+/** a name space mapper, that converts a typescript model to another name space */
+public interface NameSpaceModelMapper {
 
-
-@Value.Immutable
-public abstract class TSInterface extends TSType {
-    
-    @Override
-    @Value.Derived
-    public String getKeyword() {
-        return "interface";
-    }
-
-    @Override
-    public void accept(TSTypeVisitor visitor, int ident) {
-        visitor.visit(this, ident);
-    }
-
-    @Override
-    public TSType changedNamespace(String namespace, List<TSMember> members) {
-        return TSInterfaceBuilder.copyOf(this).withNamespace(namespace).withMembers(members);
-    }
+    /**
+     * @param model the model to convert
+     * @return a copy of the type script model with mapped name space
+     */
+    TypeScriptModel mapNameSpacesOfModel(TypeScriptModel model);
 }

@@ -21,15 +21,15 @@
 package dz.jtsgen.processor.model;
 
 import dz.jtsgen.processor.model.rendering.TSTypeVisitor;
+import org.immutables.value.Value;
 
-import javax.lang.model.element.Element;
+import java.util.List;
 
-public class TSEnum extends TSType {
-    public TSEnum(Element e, String namespace, String name) {
-        super(e, namespace, name);
-    }
+@Value.Immutable
+public abstract class TSEnum extends TSType {
 
     @Override
+    @Value.Derived
     public String getKeyword() {
         return "enum";
     }
@@ -37,5 +37,10 @@ public class TSEnum extends TSType {
     @Override
     public void accept(TSTypeVisitor visitor, int ident) {
         visitor.visit(this, ident);
+    }
+
+    @Override
+    public TSType changedNamespace(String namespace, List<TSMember> members) {
+        return TSEnumBuilder.copyOf(this).withNamespace(namespace).withMembers(members);
     }
 }

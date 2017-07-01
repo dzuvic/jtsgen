@@ -20,14 +20,16 @@
 
 package dz.jtsgen.processor.model;
 
-import org.junit.Test;
+/**
+ * A mapper that maps a namespace of string
+ */
+public interface NameSpaceMapper {
 
-import static org.junit.Assert.*;
-
-public class TSMemberTest {
-    @Test
-    public void test_toString() throws Exception {
-        assertEquals(TSMember.INVALD.toString(),"TSMember{invalid:Never}");
-    }
-
+    /**
+     * the first name space that matches the string, will be replaced with the mapped value, usually an empty string
+     *
+     * @param originNameSpace   the original string to be mapped
+     * @return a new string with name space mapped.
+     */
+    String mapNameSpace(String originNameSpace);
 }

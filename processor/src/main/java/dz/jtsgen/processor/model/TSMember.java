@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Dragan Zuvic
+ * Copyright (c) 2017 Dragan Zuvic
  *
  * This file is part of jtsgen.
  *
@@ -7,7 +7,7 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * jtsgen is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -20,53 +20,18 @@
 package dz.jtsgen.processor.model;
 
 import dz.jtsgen.processor.model.rendering.TSMemberElement;
-import dz.jtsgen.processor.model.rendering.TSMemberVisitor;
-import dz.jtsgen.processor.model.tstarget.TSTargets;
 
-public class TSMember implements TSMemberElement {
-    public static final TSMember INVALD = new TSMember("invalid", TSTargets.NONE, true,true);
+/** This super class is needed for immutables */
+public interface TSMember extends TSMemberElement {
 
-    private final String name;
-    private final TSTargetType type;
-    private final boolean readOnly;
-    private final boolean invalid;
+    String getName() ;
 
-    private TSMember(String name, TSTargetType type, boolean readOnly, boolean invalid) {
-        this.name = name;
-        this.type = type;
-        this.readOnly = readOnly;
-        this.invalid = invalid;
-    }
+    TSTargetType getType();
 
-    public TSMember(String name, TSTargetType type, boolean readOnly) {
-        this(name, type, readOnly, false);
-    }
+    boolean getReadOnly();
 
-    public String getName() {
-        return name;
-    }
+    boolean getInvalid();
 
-    public TSTargetType getType() {
-        return type;
-    }
+    TSMember changedTSTarget(TSTargetType newTargetType);
 
-    public boolean isReadOnly() {
-        return readOnly;
-    }
-
-    public boolean isInvalid() {
-        return invalid;
-    }
-
-    @Override
-    public String toString(){
-        StringBuilder builder=new StringBuilder();
-        builder.append("TSMember{").append(name).append(":").append(type).append("}");
-        return builder.toString();
-    }
-
-    @Override
-    public void accept(TSMemberVisitor visitor) {
-        visitor.visit(this);
-    }
 }

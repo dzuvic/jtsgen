@@ -62,7 +62,7 @@ public class TsGenProcessorTest {
         JavaFileObject[] files = {JavaFileObjects.forResource("jts/dev/InterFaceTest.java")};
         Compilation c = javac()
                 .withProcessors(new TsGenProcessor())
-                .withOptions(new Object[]{"-Agone=nowhere", "-AjtsgenLogLevel=DUMMY"})
+                .withOptions("-Agone=nowhere", "-AjtsgenLogLevel=DUMMY")
                 .compile(files);
 
         // check that any logging is disabled is disabled
@@ -74,7 +74,7 @@ public class TsGenProcessorTest {
         JavaFileObject[] files = {JavaFileObjects.forResource("jts/dev/InterFaceTest.java")};
         Compilation c = javac()
                 .withProcessors(new TsGenProcessor())
-                .withOptions(new Object[]{"-AjtsgenModuleName=MyModule"})
+                .withOptions("-AjtsgenModuleName=MyModule")
                 .compile(files);
 
         assertEquals(0, c.errors().size());
@@ -264,7 +264,7 @@ public class TsGenProcessorTest {
         assertEquals("must have Type InterFaceNoClashA", 1, countPatterns(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceNoClashA\\s*\\{")) );
         assertEquals("must have Type InterFaceNoClashB", 1, countPatterns(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceNoClashB\\s*\\{")) );
 
-        assertEquals("must not have namesapace", 0, countPatterns(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+namespace")) );
+        assertEquals("must not have namespace", 0, countPatterns(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+namespace")) );
     }
 
     @Test
@@ -274,8 +274,8 @@ public class TsGenProcessorTest {
         assertEquals("must have Type Date", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+Date\\s*\\{")).size());
 
         // namespave java.util
-        assertEquals("must have namespace java", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+namespace\\s+java\\s*\\{")).size());
-        assertEquals("must have namespace util", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+namespace\\s+util\\s*\\{")).size());
+        assertEquals("must not have namespace java", 0, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+namespace\\s+java\\s*\\{")).size());
+        assertEquals("must not have namespace util", 0, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+namespace\\s+util\\s*\\{")).size());
 
         // must have some Date attributes
         assertEquals("must attribute hours: number;", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+hours:\\s*number;")).size());
@@ -285,7 +285,7 @@ public class TsGenProcessorTest {
         assertEquals("must attribute minutes: number;", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+minutes:\\s*number;")).size());
 
         // must be mapped to java.util.Date
-        assertEquals("must be mapped to java.util.Date", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+someDate:\\s+java.util.Date;")).size());
+        assertEquals("must be mapped to Date", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+someDate:\\s+Date;")).size());
     }
 
     @Test
