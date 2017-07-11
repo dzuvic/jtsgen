@@ -81,8 +81,13 @@ final class TSTargetPrimitiveType implements TSTargetType, TSTargetInternal{
     }
 
     @Override
-    public String tsTargetType() {
+    public String tsTypeName() {
         return this.tsTargetType;
+    }
+
+    @Override
+    public String tsNameSpace() {
+        return "";
     }
 }
 

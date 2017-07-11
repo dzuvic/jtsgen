@@ -20,24 +20,20 @@
 
 package dz.jtsgen.processor.jtp;
 
-import dz.jtsgen.processor.model.NameSpaceMapping;
 import dz.jtsgen.processor.model.TSModuleInfo;
 import dz.jtsgen.processor.model.TypeScriptModel;
-import dz.jtsgen.processor.nsmap.NameSpaceMapperCalculator;
 import dz.jtsgen.processor.util.Tuple;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Element;
 import javax.tools.Diagnostic;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static dz.jtsgen.processor.nsmap.NameSpaceHelper.topPackages;
-import static dz.jtsgen.processor.nsmap.NameSpaceMapperCalculator.computeNameSpaceMapping;
+import static dz.jtsgen.processor.nsmap.NameSpaceHelper.typesWithPackageNames;
 import static dz.jtsgen.processor.util.StringUtils.dotToUpperCamelCase;
 import static dz.jtsgen.processor.util.StringUtils.isPackageFriendly;
 
@@ -92,7 +88,7 @@ public class TSModuleInfoEnforcer {
         if (! model.getModuleInfo().isDefault()) {
             return Optional.of(model.getModuleInfo().getModuleName());
         }
-        Set<String> commonOrTop = topPackages(NameSpaceMapperCalculator.typesWithPackageNames(annotatedElements).stream().map(Tuple::getFirst).collect(Collectors.toList()));
+        Set<String> commonOrTop = topPackages(typesWithPackageNames(annotatedElements).stream().map(Tuple::getFirst).collect(Collectors.toList()));
         LOG.finest(() -> "TSR common: " + (commonOrTop==null?"null": commonOrTop.toString() + ", size:"+commonOrTop.size()));
         if (commonOrTop == null || commonOrTop.size() != 1) {
             env.getMessager().printMessage(Diagnostic.Kind.WARNING,"module name could not be determined automatically, using 'UnknownModule'. Specify the name for the default module using (-ajtsgenModuleName) or create common super package");
@@ -107,11 +103,6 @@ public class TSModuleInfoEnforcer {
     }
 
     public Optional<TSModuleInfo> createUpdatedTSModuleInfo(Set<? extends Element> annotatedElements) {
-
-        final List<NameSpaceMapping> nameSpaceMappings = (this.model.usesDefaultNameSpaceMapping()) ?
-                computeNameSpaceMapping(annotatedElements)
-                : new ArrayList<>();
-
         return mainModuleName(annotatedElements).flatMap( x -> Optional.of(correctModule(x)));
     }
 }

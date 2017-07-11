@@ -25,5 +25,7 @@ package dz.jtsgen.processor.model.tstarget;
  */
 interface TSTargetInternal {
     
-    String tsTargetType();
+    String tsTypeName();
+
+    String tsNameSpace();
 }

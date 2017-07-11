@@ -105,4 +105,9 @@ public @interface TSModule {
      */
     OutputType outputType() default OutputType.NAMESPACE_AMBIENT_TYPE;
 
+    /**
+     * defines the name space mapping strategy
+     */
+    NameSpaceMappingStrategy nameSpaceMappingStrategy() default NameSpaceMappingStrategy.ALL_TO_ROOT;
+
 }

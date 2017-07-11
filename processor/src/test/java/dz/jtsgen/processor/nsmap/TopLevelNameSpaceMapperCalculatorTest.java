@@ -18,10 +18,11 @@
  *
  */
 
-package dz.jtsgen.processor.jtp;
+package dz.jtsgen.processor.nsmap;
 
 import com.google.common.collect.Lists;
 import dz.jtsgen.processor.model.NameSpaceMapping;
+import dz.jtsgen.processor.model.NameSpaceMappingBuilder;
 import org.junit.Test;
 
 import javax.lang.model.element.*;
@@ -30,16 +31,15 @@ import java.lang.annotation.Annotation;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static dz.jtsgen.processor.nsmap.NameSpaceMapperCalculator.computeNameSpaceMapping;
 import static org.junit.Assert.*;
 
-public class NameSpaceMapperCalculatorTest {
+public class TopLevelNameSpaceMapperCalculatorTest {
 
     @Test
     public void testOnePackage() throws Exception {
         assertEquals(
-                Collections.singletonList(new NameSpaceMapping("a.b", "")),
-                computeNameSpaceMapping(createDataSet("a.b.X", "a.b.Y"))
+                Collections.singletonList(NameSpaceMappingBuilder.of("a.b", "")),
+                new TopLevelNameSpaceMapperCalculator().computeNameSpaceMapping(createDataSet("a.b.X", "a.b.Y"))
         );
     }
 
@@ -47,7 +47,7 @@ public class NameSpaceMapperCalculatorTest {
     public void testTwoPackageClashing_NoMapping() throws Exception {
         assertEquals(
                 new ArrayList<>(),
-                computeNameSpaceMapping(createDataSet("a.b.X", "a.c.X"))
+                new TopLevelNameSpaceMapperCalculator().computeNameSpaceMapping(createDataSet("a.b.X", "a.c.X"))
         );
     }
 
@@ -55,10 +55,10 @@ public class NameSpaceMapperCalculatorTest {
     public void testTwoPackage() throws Exception {
         assertEquals(
                 Lists.newArrayList(
-                        new NameSpaceMapping("a.b",""),
-                        new NameSpaceMapping("a.c","")
+                        NameSpaceMappingBuilder.of("a.b",""),
+                        NameSpaceMappingBuilder.of("a.c","")
                 ),
-                computeNameSpaceMapping(createDataSet("a.b.X", "a.c.Y", "a.c.Z"))
+                new TopLevelNameSpaceMapperCalculator().computeNameSpaceMapping(createDataSet("a.b.X", "a.c.Y", "a.c.Z"))
         );
     }
 

@@ -39,7 +39,10 @@ final class SimpleNameSpaceMapper implements NameSpaceMapper {
     public String mapNameSpace(String originNameSpace) {
         assert originNameSpace != null;
         return mappings.stream()
-                .filter(x -> originNameSpace.startsWith(x.originNameSpace()))
+                .filter(x ->
+                        (originNameSpace.startsWith(x.originNameSpace()) && !x.exact())
+                        || x.originNameSpace().equals(originNameSpace) && x.exact()
+                )
                 .findFirst()
                 .map(x -> originNameSpace.replaceFirst("^" + x.originNameSpace(), x.targetNameSpace()).replaceFirst("^\\.", ""))
                 .orElse(originNameSpace);

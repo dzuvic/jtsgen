@@ -18,31 +18,9 @@
  *
  */
 
-package dz.jtsgen.processor.model;
+package dz.jtsgen.annotations;
 
-import org.immutables.value.Value;
-
-/**
- * just a simple representation of a name space mapping
- *
- * the empty string represents the root name space
- */
-@Value.Immutable
-public abstract class NameSpaceMapping {
-
-    @Value.Parameter
-    public abstract String originNameSpace();
-
-    @Value.Parameter
-    public abstract String targetNameSpace();
-
-    @Value.Default
-    public boolean exact() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return (this.exact() ? "=" : "") + this.originNameSpace() +" -> " + this.targetNameSpace();
-    }
+public enum NameSpaceMappingStrategy {
+    TOP_LEVEL_TO_ROOT,
+    ALL_TO_ROOT
 }

@@ -21,6 +21,7 @@
 package dz.jtsgen.processor.nsmap;
 
 import dz.jtsgen.processor.model.NameSpaceMapping;
+import dz.jtsgen.processor.model.NameSpaceMappingBuilder;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -32,12 +33,24 @@ public class SimpleNameSpaceMapperTest {
     
     @Test
     public void mapNameSpace() throws Exception {
-        NameSpaceMapping oneNsMapping = new NameSpaceMapping("a.b","");
+        NameSpaceMapping oneNsMapping = NameSpaceMappingBuilder.of("a.b","");
         List<NameSpaceMapping> oneMapping = Collections.singletonList(oneNsMapping);
         
         SimpleNameSpaceMapper snsm = new SimpleNameSpaceMapper(oneMapping);
         assertEquals(snsm.mapNameSpace("a.b"),"");
         assertEquals(snsm.mapNameSpace("a.b.c"),"c");
+        assertEquals(snsm.mapNameSpace("a.d"),"a.d");
+        assertEquals(snsm.mapNameSpace(""),"");
+    }
+
+    @Test
+    public void mapNameSpaceExact() throws Exception {
+        NameSpaceMapping oneNsMapping = NameSpaceMappingBuilder.of("a.b","").withExact(true);
+        List<NameSpaceMapping> oneMapping = Collections.singletonList(oneNsMapping);
+
+        SimpleNameSpaceMapper snsm = new SimpleNameSpaceMapper(oneMapping);
+        assertEquals(snsm.mapNameSpace("a.b"),"");
+        assertEquals(snsm.mapNameSpace("a.b.c"),"a.b.c");
         assertEquals(snsm.mapNameSpace("a.d"),"a.d");
         assertEquals(snsm.mapNameSpace(""),"");
     }

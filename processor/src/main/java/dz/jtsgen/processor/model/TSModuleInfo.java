@@ -20,6 +20,7 @@
 
 package dz.jtsgen.processor.model;
 
+import dz.jtsgen.annotations.NameSpaceMappingStrategy;
 import dz.jtsgen.annotations.OutputType;
 import dz.jtsgen.processor.util.StringUtils;
 
@@ -45,6 +46,7 @@ public final class TSModuleInfo {
     private List<Pattern> excludes;
     private List<NameSpaceMapping> nameSpaceMappings;
     private final OutputType outputType;
+    private final NameSpaceMappingStrategy nameSpaceMappingStrategy = NameSpaceMappingStrategy.ALL_TO_ROOT;
 
 
     public TSModuleInfo(String moduleName, String javaPackage
@@ -229,6 +231,10 @@ public final class TSModuleInfo {
 
     public OutputType getOutputType() {
         return outputType;
+    }
+
+    public NameSpaceMappingStrategy getNameSpaceMappingStrategy() {
+        return nameSpaceMappingStrategy;
     }
 
     @Override

@@ -18,31 +18,10 @@
  *
  */
 
-package dz.jtsgen.processor.model;
+// Test excludion of itself, so no output should be generated
+@TSModule(
+        moduleName = "inherit1_test"
+)
+package jts.modules.inherit1;
 
-import org.immutables.value.Value;
-
-/**
- * just a simple representation of a name space mapping
- *
- * the empty string represents the root name space
- */
-@Value.Immutable
-public abstract class NameSpaceMapping {
-
-    @Value.Parameter
-    public abstract String originNameSpace();
-
-    @Value.Parameter
-    public abstract String targetNameSpace();
-
-    @Value.Default
-    public boolean exact() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return (this.exact() ? "=" : "") + this.originNameSpace() +" -> " + this.targetNameSpace();
-    }
-}
+import dz.jtsgen.annotations.TSModule;

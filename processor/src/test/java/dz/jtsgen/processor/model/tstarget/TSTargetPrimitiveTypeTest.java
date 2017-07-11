@@ -36,7 +36,7 @@ public class TSTargetPrimitiveTypeTest {
         assertEquals(testee.conversionCoverage(), ConversionCoverage.DIRECT);
         assertEquals(testee.getJavaType(),"null");
         assertEquals(testee.toString(),"null");
-        assertEquals(testee.tsTargetType(),"null");
+        assertEquals(testee.tsTypeName(),"null");
         assertEquals(testee.typeParameters(), Collections.emptyList());
         assertEquals(testee.typeParameterTypes(), new HashMap<>());
     }

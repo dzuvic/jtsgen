@@ -23,6 +23,7 @@ package dz.jtsgen.processor.jtp;
 import dz.jtsgen.annotations.OutputType;
 import dz.jtsgen.annotations.TSModule;
 import dz.jtsgen.processor.model.NameSpaceMapping;
+import dz.jtsgen.processor.model.NameSpaceMappingBuilder;
 import dz.jtsgen.processor.model.TSModuleInfo;
 import dz.jtsgen.processor.model.TSTargetType;
 import dz.jtsgen.processor.model.tstarget.TSTargetFactory;
@@ -126,7 +127,7 @@ public final class TSModuleHandler {
                 return vals.stream()
                         .map(x -> {
                             String value = (String) x.getValue();
-                            Optional<NameSpaceMapping> result = splitIntoTwo(value).flatMap(y -> Optional.of(new NameSpaceMapping(y.getFirst(), y.getSecond())));
+                            Optional<NameSpaceMapping> result = splitIntoTwo(value).flatMap(y -> Optional.of(NameSpaceMappingBuilder.of(y.getFirst(), y.getSecond())));
                             if (!result.isPresent())
                                 env.getMessager().printMessage(Diagnostic.Kind.ERROR, "param not valid. Expecting a name space mapping. Got:" + x, element);
                             return result;

@@ -95,6 +95,7 @@ jacocoTestReport {
                     '/dz/jtsgen/processor/model/TSEnumBuilder*',
                     '/dz/jtsgen/processor/model/TSEnumMemberBuilder*',
                     '/dz/jtsgen/processor/model/TSInterfaceBuilder*',
+                    '/dz/jtsgen/processor/model/NameSpaceMappingBuilder*',
                     '/dz/jtsgen/processor/model/TSRegularMemberBuilder*'
             ] )
         })

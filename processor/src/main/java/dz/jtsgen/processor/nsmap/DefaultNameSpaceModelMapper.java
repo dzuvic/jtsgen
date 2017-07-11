@@ -75,6 +75,17 @@ final class DefaultNameSpaceModelMapper implements NameSpaceModelMapper {
         List<? extends Element> elements = model.getTsTypes().stream()
                 .map(TSType::getElement)
                 .collect(Collectors.toList());
-        return NameSpaceMapperCalculator.computeNameSpaceMapping(elements);
+        return nsMappingStarategy(model).computeNameSpaceMapping(elements);
+
+    }
+
+    private NameSpaceMapperCalculator nsMappingStarategy(TypeScriptModel model) {
+        switch (model.getModuleInfo().getNameSpaceMappingStrategy()) {
+            case ALL_TO_ROOT:
+                return new AllRootNameSpaceMapperCalculator();
+            case TOP_LEVEL_TO_ROOT:
+                return new TopLevelNameSpaceMapperCalculator();
+            default: throw new IllegalStateException("enum not implemented: " + model.getModuleInfo().getNameSpaceMappingStrategy() );
+        }
     }
 }

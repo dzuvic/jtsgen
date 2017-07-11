@@ -22,6 +22,7 @@ package dz.jtsgen.processor.nsmap;
 
 import dz.jtsgen.processor.util.Tuple;
 
+import javax.lang.model.element.Element;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -29,6 +30,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static dz.jtsgen.processor.util.StringUtils.countMatches;
+import static dz.jtsgen.processor.util.StringUtils.lastOf;
+import static dz.jtsgen.processor.util.StringUtils.untill;
 
 /**
  * Some name space helper
@@ -54,6 +57,16 @@ public final class NameSpaceHelper {
             } else if (i.getSecond().equals(min)) result.add(i.getFirst());
         }
         return result;
+    }
+
+    /**
+     * @param annotatedElements a Element list
+     * @return a list of tuples with first: package name second: simple name
+     */
+    public static List<Tuple<String, String>> typesWithPackageNames(Collection<? extends Element> annotatedElements) {
+        return annotatedElements.stream()
+                    .map(x -> new Tuple<>(untill(x.toString()), lastOf(x.toString())))
+                    .collect(Collectors.toList());
     }
 
     private static Integer pathLength(String x) {

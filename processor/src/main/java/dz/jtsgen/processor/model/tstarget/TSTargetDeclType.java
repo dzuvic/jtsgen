@@ -22,6 +22,7 @@ package dz.jtsgen.processor.model.tstarget;
 
 import dz.jtsgen.processor.model.ConversionCoverage;
 import dz.jtsgen.processor.model.TSTargetType;
+import dz.jtsgen.processor.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -34,16 +35,18 @@ final class TSTargetDeclType implements TSTargetType, TSTargetInternal {
     private  final String javaType;
 
     /**
-     * the resulting target type, currently as String
+     * the resulting target type name, currently as String
      */
-    private  final String tsTargetType;
+    private  final String tsTypeName;
+    private final String tsNameSpace;
     private final List<String> typeParameters;
     private  final Map<String,TSTargetType> typeParametersTypes;
     private final ConversionCoverage conversionCoverage;
 
-    TSTargetDeclType(String javaType, String tsTargetType, List<String> typeParameters, Map<String, TSTargetType> typeParametersTypes, ConversionCoverage conversionCoverage) {
+    TSTargetDeclType(String javaType, String tsTypeName, List<String> typeParameters, Map<String, TSTargetType> typeParametersTypes, ConversionCoverage conversionCoverage, String tsNameSpace) {
         this.javaType = javaType;
-        this.tsTargetType = tsTargetType;
+        this.tsNameSpace = tsNameSpace == null ? StringUtils.untill(javaType) : tsNameSpace;
+        this.tsTypeName = tsTypeName;
         this.typeParameters = typeParameters == null ? Collections.emptyList() : typeParameters;
         this.conversionCoverage = conversionCoverage == null ? ConversionCoverage.DIRECT : conversionCoverage;
         this.typeParametersTypes = typeParametersTypes == null ? new HashMap<>() : typeParametersTypes;
@@ -64,7 +67,8 @@ final class TSTargetDeclType implements TSTargetType, TSTargetInternal {
     @Override
     public String toString() {
         StringBuilder result=new StringBuilder();
-        result.append(tsTargetType);
+        if (!"".equals(this.tsNameSpace())) result.append(this.tsNameSpace()).append(".");
+        result.append(tsTypeName);
         if (typeParametersTypes.size() > 0) {
             result.append("<");
             result.append(
@@ -92,8 +96,13 @@ final class TSTargetDeclType implements TSTargetType, TSTargetInternal {
     }
 
     @Override
-    public String tsTargetType() {
-        return this.tsTargetType;
+    public String tsTypeName() {
+        return this.tsTypeName;
+    }
+
+    @Override
+    public String tsNameSpace() {
+        return this.tsNameSpace;
     }
 }
 

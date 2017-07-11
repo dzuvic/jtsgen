@@ -22,12 +22,15 @@ package dz.jtsgen.processor.model.tstarget;
 
 import dz.jtsgen.processor.model.TSTargetType;
 import dz.jtsgen.processor.model.NameSpaceMapper;
+import dz.jtsgen.processor.util.StringUtils;
 
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static dz.jtsgen.processor.util.StringUtils.lastOf;
+import static dz.jtsgen.processor.util.StringUtils.untill;
 import static dz.jtsgen.processor.util.StringUtils.withoutTypeArgs;
 
 /**
@@ -55,8 +58,10 @@ public final class TSTargetFactory {
                         LOG.info(() -> "TSTar: type variables disjoint: " + jTypeVars + " / " + tsTypeVars + " from " + mappingString);
                         return Optional.empty();
                     }
+            final String qualifiedName = withoutTypeArgs(x.getSecond());
             return Optional.of(
-                            new TSTargetDeclType(withoutTypeArgs(x.getFirst()), withoutTypeArgs(x.getSecond()), jTypeVars, null, x.getConversionCoverage())
+                            new TSTargetDeclType(withoutTypeArgs(x.getFirst()), lastOf(qualifiedName), jTypeVars, null, x.getConversionCoverage(), untill(qualifiedName)
+                            )
                     );
                 }
         );
@@ -91,10 +96,12 @@ public final class TSTargetFactory {
         NameSpaceMapper mapper = nameSpaceMapper == null ? IDENTITY : nameSpaceMapper;
         return new TSTargetDeclType(
                 tstype.getJavaType(),
-                tsTargetInternal.map(x -> mapper.mapNameSpace(x.tsTargetType())).orElse("none"),
+                tsTargetInternal.map(TSTargetInternal::tsTypeName).orElse("none"),
                 tstype.typeParameters(),
                 mapNamespace(typeParamMap, mapper),
-                tstype.conversionCoverage());
+                tstype.conversionCoverage(),
+                tsTargetInternal.map(x -> mapper.mapNameSpace(x.tsNameSpace())).orElse("none")
+        );
     }
 
     private static Map<String, TSTargetType> mapNamespace(Map<String, TSTargetType> typeParamMap, NameSpaceMapper mapper) {
@@ -106,10 +113,12 @@ public final class TSTargetFactory {
               result.put(x.getKey(),
                       new TSTargetDeclType(
                                       x.getValue().getJavaType(),
-                                      tsTargetInternal.map(y -> mapper.mapNameSpace(y.tsTargetType())).orElse("none"),
+                                      tsTargetInternal.map(TSTargetInternal::tsTypeName).orElse("none"),
                                       x.getValue().typeParameters(),
                                       mapNamespace(x.getValue().typeParameterTypes(), mapper),
-                                      x.getValue().conversionCoverage())
+                                      x.getValue().conversionCoverage(),
+                                      tsTargetInternal.map(y -> mapper.mapNameSpace(y.tsNameSpace())).orElse("none")
+                                       )
                       );
             } else result.put(x.getKey(), x.getValue());
         }

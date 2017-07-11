@@ -17,32 +17,12 @@
  * along with jtsgen.  If not, see http://www.gnu.org/licenses/
  *
  */
+package jts.modules.inherit1.sub1;
 
-package dz.jtsgen.processor.model;
+import jts.modules.inherit1.TheParentType;
+import dz.jtsgen.annotations.TypeScript;
 
-import org.immutables.value.Value;
-
-/**
- * just a simple representation of a name space mapping
- *
- * the empty string represents the root name space
- */
-@Value.Immutable
-public abstract class NameSpaceMapping {
-
-    @Value.Parameter
-    public abstract String originNameSpace();
-
-    @Value.Parameter
-    public abstract String targetNameSpace();
-
-    @Value.Default
-    public boolean exact() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return (this.exact() ? "=" : "") + this.originNameSpace() +" -> " + this.targetNameSpace();
-    }
+@TypeScript
+public interface Inherit1FirstClass  extends TheParentType {
+    String getInherit1FirstClass();
 }

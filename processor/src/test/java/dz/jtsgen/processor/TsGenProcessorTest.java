@@ -128,6 +128,13 @@ public class TsGenProcessorTest {
     }
 
     @Test
+    public void test_multi_interface_with_inheritance_and_namespaces() throws IOException {
+        final String folderName = "inherit1_test";
+        final String tdsFilename = "inherit1_test.d.ts";
+        Compilation c = CompileHelper.compileForNoModule("jts/modules/inherit1", folderName, tdsFilename, true, 0, "TheParentType.java", "package-info.java", "sub1/Inherit1FirstClass.java" , "sub2/Inherit1SecondChild.java" );
+    }
+
+    @Test
     public void test_two_simple_interface_with_one_ignored_partially() throws IOException {
         Compilation c = CompileHelper.compileJtsDev(DUMP_FILES,  0, "InterFaceTest.java", "InterFaceTestWithOneIgnoredMethod.java");
         assertEquals("must have Type InterFaceTest", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTest\\s+\\{")).size());
