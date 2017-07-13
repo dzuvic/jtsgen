@@ -22,11 +22,16 @@ package jts.modules.testM1;
 
 import dz.jtsgen.annotations.TSModule;
 import dz.jtsgen.annotations.TypeScript;
+import jts.modules.testM1.m2.InterFaceTestModuleM2MustBeIn;
 
 import java.time.LocalDate;
 import java.util.Date;
 
 @TypeScript
 public class MemberWithModuleDef {
+    public InterFaceTestModuleM2MustBeIn getMustBeIn() {
+        return null;
+    }
+    
     public Date date_string=new Date();
 }

@@ -20,18 +20,15 @@
 
 package dz.jtsgen.processor.model.tstarget;
 
-import dz.jtsgen.processor.model.TSTargetType;
 import dz.jtsgen.processor.model.NameSpaceMapper;
-import dz.jtsgen.processor.util.StringUtils;
+import dz.jtsgen.processor.model.TSTargetType;
 
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static dz.jtsgen.processor.util.StringUtils.lastOf;
-import static dz.jtsgen.processor.util.StringUtils.untill;
-import static dz.jtsgen.processor.util.StringUtils.withoutTypeArgs;
+import static dz.jtsgen.processor.util.StringUtils.*;
 
 /**
  * creates a TSTargetType by the string representation of the java to ts type mapping

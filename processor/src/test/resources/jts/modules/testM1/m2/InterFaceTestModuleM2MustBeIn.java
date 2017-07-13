@@ -17,19 +17,11 @@
  * along with jtsgen.  If not, see http://www.gnu.org/licenses/
  *
  */
+package jts.modules.testM1.m2;
 
-package dz.jtsgen.processor.model;
+import dz.jtsgen.annotations.TypeScript;
 
-import dz.jtsgen.annotations.OutputType;
-import org.junit.Test;
-
-import static org.junit.Assert.*;
-
-public class TSModuleInfoTest {
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void tsPackageFriendly() throws Exception {
-        TSModuleInfoBuilder.builder().moduleName("-a").build();
-    }
+// Must not be in output
+public interface InterFaceTestModuleM2MustBeIn {
+    int getMustBeIn();
 }

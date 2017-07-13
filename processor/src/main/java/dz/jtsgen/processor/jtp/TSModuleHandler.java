@@ -20,12 +20,10 @@
 
 package dz.jtsgen.processor.jtp;
 
+import dz.jtsgen.annotations.NameSpaceMappingStrategy;
 import dz.jtsgen.annotations.OutputType;
 import dz.jtsgen.annotations.TSModule;
-import dz.jtsgen.processor.model.NameSpaceMapping;
-import dz.jtsgen.processor.model.NameSpaceMappingBuilder;
-import dz.jtsgen.processor.model.TSModuleInfo;
-import dz.jtsgen.processor.model.TSTargetType;
+import dz.jtsgen.processor.model.*;
 import dz.jtsgen.processor.model.tstarget.TSTargetFactory;
 import dz.jtsgen.processor.util.StringUtils;
 
@@ -66,48 +64,61 @@ public final class TSModuleHandler {
                 .stream()
                 .map((x) -> {
                     Optional<? extends AnnotationMirror> bla = x.getAnnotationMirrors().stream().filter((y) -> y.getAnnotationType().equals(this.annotationElement)).findFirst();
-                    return bla.map((y) -> {
-                                final String packageName = x.toString();
-                                AnnotationValue moduleName = null, version = null, author = null, authorUrl = null, description = null, license = null, customTypeMapping = null;
-                                AnnotationValue exclAnnotationValue = null, nameSpaceMappingAnnotationValue = null, outputTypeValue=null;
+                    return bla.flatMap((y) -> {
+                                TSModuleInfoBuilder.Builder tsBuilder = TSModuleInfoBuilder.builder();
+                                tsBuilder.javaPackage(x.toString());
                                 for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : y.getElementValues().entrySet()) {
-                                    final String simpleName = entry.getKey().getSimpleName().toString();
-                                    if ("version".equals(simpleName)) version = entry.getValue();
-                                    else if ("moduleName".equals(simpleName)) moduleName = entry.getValue();
-                                    else if ("author".equals(simpleName)) author = entry.getValue();
-                                    else if ("description".equals(simpleName)) description = entry.getValue();
-                                    else if ("authorUrl".equals(simpleName)) authorUrl = entry.getValue();
-                                    else if ("license".equals(simpleName)) license = entry.getValue();
-                                    else if ("customTypeMappings".equals(simpleName)) customTypeMapping = entry.getValue();
-                                    else if ("excludes".equals(simpleName)) exclAnnotationValue = entry.getValue();
-                                    else if ("nameSpaceMapping".equals(simpleName)) nameSpaceMappingAnnotationValue = entry.getValue();
-                                    else if ("outputType".equals(simpleName)) outputTypeValue = entry.getValue();
+
+                                    final AnnotationValue value =  entry.getValue();
+                                    if (isNameAndNotNull("version", entry)) tsBuilder.moduleVersion(asString(value));
+                                    else if (isNameAndNotNull("moduleName",entry)) processModuleName(entry, tsBuilder) ;
+                                    else if (isNameAndNotNull("author",entry)) tsBuilder.moduleAuthor(asString(value));
+                                    else if (isNameAndNotNull("description",entry)) tsBuilder.moduleDescription(asString(value));
+                                    else if (isNameAndNotNull("authorUrl",entry)) tsBuilder.moduleAuthorUrl(asString(value));
+                                    else if (isNameAndNotNull("license",entry)) tsBuilder.moduleLicense(asString(value));
+                                    else if (isNameAndNotNull("customTypeMappings",entry)) tsBuilder.customMappings(convertTypeMapping(entry));
+                                    else if (isNameAndNotNull("excludes",entry)) tsBuilder.excludes(convertExclusion(entry.getValue(), x));
+                                    else if (isNameAndNotNull("nameSpaceMapping",entry)) tsBuilder.nameSpaceMappings(convertToNameSpaceMappings(entry.getValue(), x));
+                                    else if (isNameAndNotNull("outputType",entry)) tsBuilder.outputType(convertOutputType(entry.getValue()));
+                                    else if (isNameAndNotNull("nameSpaceMappingStrategy",entry)) tsBuilder.nameSpaceMappingStrategy(convertNameSpaceMappingStrategy(entry.getValue()));
                                     else LOG.warning("unknown param on annotation TSModule " + entry.getKey());
                                 }
-
-                                final String versionString = version != null ? (String) version.getValue() : null;
-                                final String descriptionString = description != null ? (String) description.getValue() : null;
-                                final String authorString = author != null ? (String) author.getValue() : null;
-                                final String authorUrlString = authorUrl != null ? (String) authorUrl.getValue() : null;
-                                final String licenseString = license != null ? (String) license.getValue() : null;
-                                final String moduleNameString = moduleName != null ? (String) moduleName.getValue() : null;
-                                if (moduleNameString == null || moduleNameString.isEmpty() || !StringUtils.isPackageFriendly(moduleNameString)) {
-                                    this.env.getMessager().printMessage(Diagnostic.Kind.ERROR, "The module name '" + moduleNameString + "' is not package name friendly", x);
-                                    return null;
-                                }
-                                Map<String, TSTargetType> customTypeMappingMap = convertTypeMapping(customTypeMapping, x);
-                                List<Pattern> exclusionList = convertExclusion(exclAnnotationValue, x);
-                                List<NameSpaceMapping> nameSpaceMappings = convertToNameSpaceMappings(nameSpaceMappingAnnotationValue, x);
-                                OutputType outputType = convertOutputType(outputTypeValue);
-                                return new TSModuleInfo(moduleNameString, packageName)
-                                        .withModuleData(versionString, descriptionString, authorString, licenseString, authorUrlString, moduleNameString, outputType)
-                                        .withTypeMappingInfo(customTypeMappingMap, exclusionList, nameSpaceMappings);
+                                return Optional.of( tsBuilder.build());
                             }
                     );
                 })
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toSet());
+    }
+
+
+    private String asString(AnnotationValue value) {
+        return (value.getValue() instanceof String) ? (String) value.getValue() : "" ;
+    }
+
+    private void processModuleName(Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry, TSModuleInfoBuilder.Builder tsBuilder) {
+        if (entry.getValue().getValue() == null || entry.getValue().getValue().toString().isEmpty() || !StringUtils.isPackageFriendly(entry.getValue().getValue().toString())) {
+            this.env.getMessager().printMessage(Diagnostic.Kind.ERROR, "The module name '" + entry.getValue().getValue().toString() + "' is not package name friendly", entry.getKey());
+        } else tsBuilder.moduleName(entry.getValue().getValue().toString());
+
+    }
+
+    private NameSpaceMappingStrategy convertNameSpaceMappingStrategy(AnnotationValue value) {
+        return (value != null
+                && value.getValue() != null
+                && Arrays.stream(NameSpaceMappingStrategy.values()).anyMatch(x -> x.name().equals(value.getValue().toString())))
+                ? NameSpaceMappingStrategy.valueOf(value.getValue().toString())
+                :null;
+    }
+    
+    private String stringValue(String version, Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry) {
+        return null;
+    }
+
+    private boolean isNameAndNotNull(String theName, Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry) {
+        final String simpleName = entry.getKey().getSimpleName().toString();
+        return theName.equals(simpleName) && entry.getValue() != null;
     }
 
     private OutputType convertOutputType(AnnotationValue outputTypeValue) {
@@ -162,8 +173,10 @@ public final class TSModuleHandler {
     }
 
 
-    private Map<String, TSTargetType> convertTypeMapping(AnnotationValue customMappingValue, Element element) {
-        if (customMappingValue == null) return null;
+    private Map<String, TSTargetType> convertTypeMapping(Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry) {
+        AnnotationValue customMappingValue = entry.getValue();
+        Element element = entry.getKey();
+        if (customMappingValue == null) return new HashMap<>();
         List<TSTargetType> targetTypes = new SimpleAnnotationValueVisitor8<List<TSTargetType>, Void>() {
             @Override
             public List<TSTargetType> visitArray(List<? extends AnnotationValue> vals, Void aVoid) {

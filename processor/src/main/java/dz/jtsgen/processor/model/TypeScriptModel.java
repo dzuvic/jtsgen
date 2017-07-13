@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 public class TypeScriptModel {
 
     // java package -> TSModuleInfo
-    private TSModuleInfo moduleInfo = new TSModuleInfo("unknown", null).withTypeMappingInfo(null, defaultExclusion(),null);
+    private TSModuleInfo moduleInfo = TSModuleInfoBuilder.builder().excludes(defaultExclusion()).build();
 
 
     private static List<Pattern> defaultExclusion() {

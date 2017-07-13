@@ -1,8 +1,8 @@
 package dz.jtsgen.processor.renderer;
 
 import dz.jtsgen.processor.model.TypeScriptModel;
-import dz.jtsgen.processor.nsmap.NameSpaceModelMapper;
 import dz.jtsgen.processor.nsmap.NameSpaceMapperFactory;
+import dz.jtsgen.processor.nsmap.NameSpaceModelMapper;
 import dz.jtsgen.processor.renderer.model.TypeScriptRenderModel;
 import dz.jtsgen.processor.renderer.module.ModuleGenerator;
 

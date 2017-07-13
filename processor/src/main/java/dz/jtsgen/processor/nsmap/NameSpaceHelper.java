@@ -29,9 +29,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static dz.jtsgen.processor.util.StringUtils.countMatches;
-import static dz.jtsgen.processor.util.StringUtils.lastOf;
-import static dz.jtsgen.processor.util.StringUtils.untill;
+import static dz.jtsgen.processor.util.StringUtils.*;
 
 /**
  * Some name space helper

@@ -25,8 +25,11 @@
         customTypeMappings={"java.util.Date -> string"},
         authorUrl="SomeAuthorUrl",
         description="some description",
-        license="some license"
+        license="some license",
+        nameSpaceMappingStrategy = NameSpaceMappingStrategy.TOP_LEVEL_TO_ROOT
+
 )
 package jts.modules.testM1;
 
+import dz.jtsgen.annotations.NameSpaceMappingStrategy;
 import dz.jtsgen.annotations.TSModule;

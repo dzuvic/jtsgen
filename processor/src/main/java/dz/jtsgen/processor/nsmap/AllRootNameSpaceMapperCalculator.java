@@ -26,13 +26,19 @@ import dz.jtsgen.processor.util.StringUtils;
 import dz.jtsgen.processor.util.Tuple;
 
 import javax.lang.model.element.Element;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static dz.jtsgen.processor.nsmap.NameSpaceHelper.typesWithPackageNames;
 
+/**
+ * This name space mapping strategy maps everything to the root name space, if possible.
+ * All conflicts should be left into a distinct name space
+ */
 public class AllRootNameSpaceMapperCalculator implements NameSpaceMapperCalculator {
     private static Logger LOG = Logger.getLogger(AllRootNameSpaceMapperCalculator.class.getName());
 

@@ -23,6 +23,7 @@ package dz.jtsgen.processor.model;
 import dz.jtsgen.annotations.NameSpaceMappingStrategy;
 import dz.jtsgen.annotations.OutputType;
 import dz.jtsgen.processor.util.StringUtils;
+import org.immutables.value.Value;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -32,45 +33,8 @@ import java.util.regex.Pattern;
  * <p>
  * Created by zuvic on 16.02.17.
  */
-public final class TSModuleInfo {
-
-    private final String moduleName;
-    private final String javaPackage;
-    private final String moduleVersion;
-    private final String moduleDescription;
-    private final String moduleAuthor;
-    private final String moduleLicense;
-    private final String moduleAuthorUrl;
-    private final String umdVariableName;
-    private Map<String,TSTargetType> customMappings;
-    private List<Pattern> excludes;
-    private List<NameSpaceMapping> nameSpaceMappings;
-    private final OutputType outputType;
-    private final NameSpaceMappingStrategy nameSpaceMappingStrategy = NameSpaceMappingStrategy.ALL_TO_ROOT;
-
-
-    public TSModuleInfo(String moduleName, String javaPackage
-    ) {
-        this(moduleName, javaPackage, null, null, null, null, null, null, null, null, null, null);
-    }
-
-    // copy constructor
-    public TSModuleInfo(TSModuleInfo module) {
-        this(
-                module.moduleName,
-                module.javaPackage,
-                module.moduleVersion,
-                module.moduleDescription,
-                module.moduleAuthor,
-                module.moduleLicense,
-                module.moduleAuthorUrl,
-                module.umdVariableName,
-                module.customMappings,
-                module.excludes,
-                module.nameSpaceMappings,
-                module.outputType
-        );
-    }
+@Value.Immutable
+public abstract class TSModuleInfo {
 
     /**
      *
@@ -82,7 +46,6 @@ public final class TSModuleInfo {
      * @param moduleName if null use current
      * @return return a copy with params changed
      */
-
     public TSModuleInfo withModuleData(
               String moduleVersion
             , String moduleDescription
@@ -92,169 +55,104 @@ public final class TSModuleInfo {
             , String moduleName
             , OutputType outputType
     ) {
-        return new TSModuleInfo(
-                moduleName == null ? this.moduleName : moduleName ,
-                this.javaPackage,
-                moduleVersion== null ? this.moduleVersion : moduleVersion ,
-                moduleDescription== null ? this.moduleDescription : moduleDescription ,
-                moduleAuthor== null ? this.moduleAuthor : moduleAuthor ,
-                moduleLicense== null ? this.moduleLicense : moduleLicense ,
-                moduleAuthorUrl== null ? this.moduleAuthorUrl : moduleAuthorUrl ,
-                this.umdVariableName, this.customMappings, this.excludes, this.nameSpaceMappings, outputType
-        );
+        return TSModuleInfoBuilder.copyOf(this)
+                .withModuleName(moduleName == null ? this.getModuleName() : moduleName)
+                .withModuleVersion(moduleVersion== null ? this.getModuleVersion(): moduleVersion )
+                .withModuleDescription(moduleDescription== null ? this.getModuleDescription(): moduleDescription )
+                .withModuleAuthor(moduleAuthor== null ? this.getModuleAuthor(): moduleAuthor )
+                .withModuleLicense(moduleLicense== null ? this.getModuleLicense(): moduleLicense )
+                .withModuleAuthorUrl(moduleAuthorUrl== null ? this.getModuleAuthorUrl(): moduleAuthorUrl )
+                .withOutputType( outputType == null ? this.getOutputType() : outputType);
     }
-
-    public TSModuleInfo withTypeMappingInfo(Map<String, TSTargetType> mapping, List<Pattern> excludes, List<NameSpaceMapping> nameSpaceMappings) {
-        return new TSModuleInfo(this.moduleName, this.javaPackage,
-                       this.moduleVersion, this.moduleDescription, this.moduleAuthor, this.moduleLicense, this.moduleAuthorUrl,
-                       this.umdVariableName, mapping, excludes, nameSpaceMappings, this.outputType);
-    }
-
-    /**
-     *
-     * @param nameSpaceMappings if null or empty use current
-     * @return copy with changed value
-     */
-    public TSModuleInfo withNameSpaceMapping(List<NameSpaceMapping> nameSpaceMappings) {
-        return this.withTypeMappingInfo(this.customMappings, this.excludes,
-                (nameSpaceMappings == null || nameSpaceMappings.isEmpty()) ? this.nameSpaceMappings : nameSpaceMappings);
-    }
-
-    // the author was just too lazy writing a builder for this type...
-    private TSModuleInfo(
-            String moduleName
-            , String javaPackage
-            , String moduleVersion
-            , String moduleDescription
-            , String moduleAuthor
-            , String moduleLicense
-            , String moduleAuthorUrl
-            , String umdVariableName
-            , Map<String,TSTargetType> customMappings
-            , List<Pattern> excludes
-            , List<NameSpaceMapping> nameSpaceMappings
-            , OutputType outputType
-
-    ) {
-        assert StringUtils.isPackageFriendly(moduleName);
-        this.moduleName = moduleName;
-
-        //Optional
-        this.javaPackage = javaPackage;
-        this.umdVariableName = umdVariableName;
-
-        this.moduleVersion = moduleVersion == null ? "1.0.0" : moduleVersion;
-        this.moduleDescription = moduleDescription == null ? "unknown" : moduleDescription;
-        this.moduleAuthor = moduleAuthor == null ? "unknown" : moduleAuthor;
-        this.moduleLicense = moduleLicense == null ? "unknown" : moduleLicense;
-        this.moduleAuthorUrl = moduleAuthorUrl == null ? "unknown" : moduleAuthorUrl;
-        this.outputType = outputType == null ? OutputType.NAMESPACE_AMBIENT_TYPE : outputType;
-
-        final Map<String,TSTargetType> customMappingsCopy=new LinkedHashMap<>();
-        final List<Pattern> excludesCopy = new ArrayList<>();
-        final List<NameSpaceMapping> nameSpaceMappingCopy = new LinkedList<>();
-
-        if (customMappings != null) customMappingsCopy.putAll(customMappings);
-        if (excludes != null) excludesCopy.addAll(excludes);
-        if (nameSpaceMappings != null) nameSpaceMappingCopy.addAll(nameSpaceMappings);
-
-        this.customMappings=Collections.unmodifiableMap(customMappingsCopy);
-        this.excludes=Collections.unmodifiableList(excludesCopy);
-        this.nameSpaceMappings=Collections.unmodifiableList(nameSpaceMappingCopy);
-
-
-    }
+    
 
     /**
      * @return is Module is default module
      */
-    public boolean isDefault() {
-        return this.javaPackage == null;
-
+    @Value.Derived
+    public boolean getDefault() {
+        return !this.getJavaPackage().isPresent();
     }
 
 
-    public Optional<String> getJavaPackage() {
-        return Optional.ofNullable(this.javaPackage);
-    }
-
-    public Optional<String> getUmdVariableName() {
-        return Optional.ofNullable(umdVariableName);
-    }
+//    public Optional<String> getJavaPackage() {
+//        return Optional.ofNullable(this.javaPackage);
+//    }
+//    @Value.Default
+    public abstract Optional<String> getUmdVariableName();
 
     /**
      * the module name, package name friendly, that appears also in the declared namespace
      */
+    @Value.Default
     public String getModuleName() {
-        return moduleName;
+        return "unknown";
+    }
+
+    @Value.Check
+    protected void check() {
+        if (! StringUtils.isPackageFriendly(this.getModuleName())) throw new IllegalArgumentException("The module name '" + this.getModuleName() + "' is not package name friendly");
     }
 
     /**
      * @return the module name for package.json, this must also be package name friendly, because the java compiler
      * only accepts packages names for sub dirs (as ressource)
      */
+    @Value.Derived
     public String getModuleDirectoryName() {
-        return StringUtils.lastOf(moduleName,"/");
+        return StringUtils.lastOf(this.getModuleName(),"/");
     }
 
+    @Value.Default
     public String getModuleVersion() {
-        return moduleVersion;
+        return "1.0.0";
     }
 
+    @Value.Default
     public String getModuleDescription() {
-        return moduleDescription;
+        return "unknown";
     }
 
+    @Value.Default
     public String getModuleAuthor() {
-        return moduleAuthor;
+        return "unknown";
     }
 
+    @Value.Default
     public String getModuleLicense() {
-        return moduleLicense;
+        return "unknown";
     }
 
+    @Value.Default
     public String getModuleAuthorUrl() {
-        return moduleAuthorUrl;
+        return "unknown";
     }
 
+    @Value.Default
     public Map<String,TSTargetType> getCustomMappings() {
-        return customMappings;
+        return Collections.unmodifiableMap(new LinkedHashMap<String,TSTargetType>());
     }
 
+    public abstract Optional<String> getJavaPackage();
+
+    @Value.Default
     public List<Pattern> getExcludes() {
-        return excludes;
+        return Collections.unmodifiableList(new ArrayList<>());
     }
 
+    @Value.Default
     public List<NameSpaceMapping> getNameSpaceMappings() {
-        return nameSpaceMappings;
+        return Collections.unmodifiableList(new ArrayList<>());
     }
 
+    @Value.Default
     public OutputType getOutputType() {
-        return outputType;
+        return OutputType.NAMESPACE_AMBIENT_TYPE;
     }
 
+    @Value.Default
     public NameSpaceMappingStrategy getNameSpaceMappingStrategy() {
-        return nameSpaceMappingStrategy;
+        return NameSpaceMappingStrategy.ALL_TO_ROOT;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof TSModuleInfo)) return false;
-        TSModuleInfo that = (TSModuleInfo) o;
-        return Objects.equals(getModuleName(), that.getModuleName()) &&
-                Objects.equals(getJavaPackage(), that.getJavaPackage()) &&
-                Objects.equals(getModuleVersion(), that.getModuleVersion()) &&
-                Objects.equals(getModuleDescription(), that.getModuleDescription()) &&
-                Objects.equals(getModuleAuthor(), that.getModuleAuthor()) &&
-                Objects.equals(getModuleLicense(), that.getModuleLicense()) &&
-                Objects.equals(getModuleAuthorUrl(), that.getModuleAuthorUrl()) &&
-                Objects.equals(getOutputType(), that.getOutputType()) &&
-                Objects.equals(getUmdVariableName(), that.getUmdVariableName());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getModuleName(), getJavaPackage(), getModuleVersion(), getModuleDescription(), getModuleAuthor(), getModuleLicense(), getModuleAuthorUrl(), getUmdVariableName(), getOutputType());
-    }
+    
 }

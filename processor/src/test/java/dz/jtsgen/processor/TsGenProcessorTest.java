@@ -131,7 +131,11 @@ public class TsGenProcessorTest {
     public void test_multi_interface_with_inheritance_and_namespaces() throws IOException {
         final String folderName = "inherit1_test";
         final String tdsFilename = "inherit1_test.d.ts";
-        Compilation c = CompileHelper.compileForNoModule("jts/modules/inherit1", folderName, tdsFilename, true, 0, "TheParentType.java", "package-info.java", "sub1/Inherit1FirstClass.java" , "sub2/Inherit1SecondChild.java" );
+        Compilation c = CompileHelper.compileForNoModule("jts/modules/inherit1", folderName, tdsFilename, DUMP_FILES, 0, "TheParentType.java", "package-info.java", "sub1/Inherit1FirstClass.java" , "sub2/Inherit1SecondChild.java" );
+
+        ReferenceHelper.assertEquals(
+                c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, tdsFilename).orElse(null)
+                , "inherit1_test.d.ts");
     }
 
     @Test
@@ -308,7 +312,7 @@ public class TsGenProcessorTest {
     public void members_with_module_definitions() throws IOException {
         final String folderName = "testm1";
         final String tdsFilename = "test-m1.d.ts";
-        Compilation c = CompileHelper.compileForModule("jts/modules/testM1", folderName, tdsFilename, DUMP_FILES, 0, "MemberWithModuleDef.java", "package-info.java");
+        Compilation c = CompileHelper.compileForModule("jts/modules/testM1", folderName, tdsFilename, DUMP_FILES, 0, "MemberWithModuleDef.java", "package-info.java", "m2/InterFaceTestModuleM2MustBeIn.java");
         assertEquals("must have author Me Myself And I", 1, findSourceLine(c, folderName, PACKAGE_JSON, Pattern.compile("^\\s+\"author\":\\s+\"Me Myself And I\"")).size());
         assertEquals("must have authorUrl some authorUrl", 1, findSourceLine(c, folderName, PACKAGE_JSON, Pattern.compile("^\\s+\"authorUrl\":\\s+\"SomeAuthorUrl\"")).size());
         assertEquals("must have description some description", 1, findSourceLine(c, folderName, PACKAGE_JSON, Pattern.compile("^\\s+\"description\":\\s+\"some description\"")).size());
@@ -316,6 +320,9 @@ public class TsGenProcessorTest {
 
         assertEquals("must have Type MemberWithModuleDef", 1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+interface\\s+MemberWithModuleDef\\s*\\{")).size());
         assertEquals("java.util.Date must be converted to string", 1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+date_string:\\s+string;")).size());
+        assertEquals("must have m2 interface", 1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+readonly\\s+mustBeIn:\\s+m2.InterFaceTestModuleM2MustBeIn;")).size());
+
+        assertEquals("must have namespace m2", 1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+namespace\\s+m2\\s*\\{")).size());
     }
 
     @Test

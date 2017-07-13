@@ -30,8 +30,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static dz.jtsgen.processor.nsmap.NameSpaceHelper.typesWithPackageNames;
-import static dz.jtsgen.processor.util.StringUtils.lastOf;
-import static dz.jtsgen.processor.util.StringUtils.untill;
 
 /**
  * calculates a namespace mapping to map toplevel package to root:

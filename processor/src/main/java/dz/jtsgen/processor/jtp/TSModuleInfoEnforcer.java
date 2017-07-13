@@ -71,7 +71,7 @@ public class TSModuleInfoEnforcer {
         String moduleAuthor = env.getOptions().get(JTSGEN_OUTPUT_OPTION_MODULEAUTHOR);
         String moduleLicense = env.getOptions().get(JTSGEN_OUTPUT_OPTION_MODULELICENSE);
         String moduleAuthorUrl = env.getOptions().get(JTSGEN_OUTPUT_OPTION_MODULEAUTHORURL);
-        return new TSModuleInfo(this.model.getModuleInfo())
+        return this.model.getModuleInfo()
                 .withModuleData(moduleVersion, moduleDescription, moduleAuthor, moduleLicense, moduleAuthorUrl, moduleName, this.model.getModuleInfo().getOutputType()) ;
     }
 
@@ -85,7 +85,7 @@ public class TSModuleInfoEnforcer {
             env.getMessager().printMessage(Diagnostic.Kind.ERROR,"the module name for the default module specified using the jtsgenModuleName option is not a valid package name. Unfortunately the java compiler need a valid package name when creating a ressource");
             return Optional.empty();
         }
-        if (! model.getModuleInfo().isDefault()) {
+        if (! model.getModuleInfo().getDefault()) {
             return Optional.of(model.getModuleInfo().getModuleName());
         }
         Set<String> commonOrTop = topPackages(typesWithPackageNames(annotatedElements).stream().map(Tuple::getFirst).collect(Collectors.toList()));
