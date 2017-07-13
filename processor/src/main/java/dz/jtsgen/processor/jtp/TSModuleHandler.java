@@ -112,10 +112,6 @@ public final class TSModuleHandler {
                 :null;
     }
     
-    private String stringValue(String version, Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry) {
-        return null;
-    }
-
     private boolean isNameAndNotNull(String theName, Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry) {
         final String simpleName = entry.getKey().getSimpleName().toString();
         return theName.equals(simpleName) && entry.getValue() != null;

@@ -133,9 +133,17 @@ public class TsGenProcessorTest {
         final String tdsFilename = "inherit1_test.d.ts";
         Compilation c = CompileHelper.compileForNoModule("jts/modules/inherit1", folderName, tdsFilename, DUMP_FILES, 0, "TheParentType.java", "package-info.java", "sub1/Inherit1FirstClass.java" , "sub2/Inherit1SecondChild.java" );
 
-        ReferenceHelper.assertEquals(
-                c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, tdsFilename).orElse(null)
-                , "inherit1_test.d.ts");
+        assertEquals("must have Type TheParentType", 1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+interface\\s+TheParentType\\s+\\{")).size());
+        assertEquals("must have Type Inherit1FirstClass", 1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+interface\\s+Inherit1FirstClass\\s+extends\\s+TheParentType\\s+\\{")).size());
+        assertEquals("must have Type Inherit1SecondChild", 1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+interface\\s+Inherit1SecondChild\\s+extends\\s+Inherit1FirstClass\\s+\\{")).size());
+
+        assertEquals("must have not have namespaces ", 0, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+namespace")).size());
+
+        assertTrue("must have fromTheParent: string", findSourceLine(c, folderName, tdsFilename, Pattern.compile("fromTheParent:\\s+string;")).size() >= 2);
+        assertTrue("must have inherit1FirstClass: string", findSourceLine(c, folderName, tdsFilename, Pattern.compile("inherit1FirstClass:\\s+string;")).size() >= 1);
+        assertEquals("must have a number", 1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("aNumber:\\s+number;")).size());
+        assertEquals("must have a someFinalString: string", 1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("someFinalString:\\s+string;")).size());
+        
     }
 
     @Test
@@ -218,14 +226,27 @@ public class TsGenProcessorTest {
         assertEquals("must not have member from Version", 0, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("jdkSpecialVersion:\\s+string;")).size());
     }
 
+    // Tests no generation because of exclusion
     @Test
     public void test_custom_exclusion() throws IOException {
         final String folderName = "exclusion_test";
         final String tdsFilename = "exclusion_test.d.ts";
         Compilation c = CompileHelper.compileForModule("jts/modules/exclude", folderName, tdsFilename, DUMP_FILES, 0, "InterFaceTestSelfExclusion.java", "package-info.java");
 
-        // ?? What?
         assertEquals("must have Type InterfaceWithEnum", 0, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTestSelfExclusion\\s*\\{")).size());
+    }
+
+    // Tests no generation because of exclusion
+    @Test
+    public void test_nsmap_manual() throws IOException {
+        final String folderName = "nsmanual";
+        final String tdsFilename = "nsmanual.d.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/nsmanual", folderName, tdsFilename, DUMP_FILES, 0, "InterFaceNSManual.java", "package-info.java");
+
+        assertEquals("must have Type InterFaceNSManual", 1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceNSManual\\s*\\{")).size());
+        assertEquals("must have namespace jts", 1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+namespace\\s+jts\\s*\\{")).size());
+        assertEquals("must have namespace modules", 1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+namespace\\s+modules\\s*\\{")).size());
+        assertEquals("must have namespace manual", 1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+namespace\\s+nsmanual\\s*\\{")).size());
     }
 
 

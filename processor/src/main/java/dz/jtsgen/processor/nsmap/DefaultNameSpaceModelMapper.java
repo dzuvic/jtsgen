@@ -85,6 +85,8 @@ final class DefaultNameSpaceModelMapper implements NameSpaceModelMapper {
                 return new AllRootNameSpaceMapperCalculator();
             case TOP_LEVEL_TO_ROOT:
                 return new TopLevelNameSpaceMapperCalculator();
+            case MANUAL:
+                return new NoNameSpaceMappingCalculator();
             default: throw new IllegalStateException("enum not implemented: " + model.getModuleInfo().getNameSpaceMappingStrategy() );
         }
     }

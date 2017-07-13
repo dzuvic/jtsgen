@@ -31,7 +31,7 @@ Currently the following features are supported:
   annotation. It also supports type parameters, e.g. a `ImmutableList<T>`
   can be be mapped to your own type `ImmutableArray<T>` with a
   corresponding (mapped) type `T`
-* Java package as typescript name space
+* Java package as typescript name space, configurable
 * converting getter/setter to TypeScript types
 * `readonly` if no setter is found
 * Name Space mapping to minimize the TypeScript name spaces. It can be
@@ -135,13 +135,21 @@ The Processor has no knowledge about the the necessary imports.
 #### Name Space Mapping
 
 TSModule accepts a list of name spaces, that should me mapped (shortened).
-In case of an empty list, a name space mapping will be calculated. In
-that case the top top level packages will be mapped to the root name space.
+That list will be prepended to the calculated name space mapping. The
+following name spave mapping strategies are available:
 
-Some examples:
+* `TOP_LEVEL_TO_ROOT`: The top level java types are mapped to the
+  root name space. Everythin beneath is mapped into name spaces
+* `ALL_TO_ROOT`: All types are mapped to the root name space, only
+  the types of same name reside in their own name space
+* `MANUAL`: No name space mapping is calculated
 
-* `a.b.c -> `: Maps a.b.c to root
+
+Some examples of :
+
+* `a.b.c -> `: Maps a.b.c (and beneath) to root
 * `a.b.c -> a.b`: Maps a.b.c to namespace a
+* `=a.b.c -> `: Maps only a.b.c to the root
 
 #### Configuring the output
 
@@ -155,7 +163,7 @@ the TSModule annotation:
 * `MODULE` : exports a declared module, e.g. using
   `declare module` at the top without ambient types
 * `NO_MODULE` : exports a single file containing all converted types
-  without any surrounding namespace or module declaration
+  without any surrounding namespace or module declaration (since 0.2.0)
 
 
 
