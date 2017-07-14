@@ -1,8 +1,31 @@
 # Change Log
 
-## [Unreleased](https://github.com/dzuvic/jtsgen/tree/HEAD)
+##  [jtsgen-0.2.0](https://github.com/dzuvic/jtsgen/tree/jtsgen-0.2.0) (2017-07-14)
 
-[Full Changelog](https://github.com/dzuvic/jtsgen/compare/jtsgen-0.1.3...HEAD)
+### New Features
+
+* Support for inheritance added
+* Selectable name space mapping strategy
+* Output file without any module or name space declaration
+
+### Breaking  Change
+
+* The default name space mapping changes to "ALL_ROOT"
+* Defining a name space mapping doe not replace the calculated any more
+* Renamed the OutputType enum members
+
+### Tickets
+
+**Implemented enhancements:**
+
+- change default name space mapping in order to avoid name spaces at all [\#26](https://github.com/dzuvic/jtsgen/issues/26)
+- Missing "NO\_MODULE" OutputType [\#25](https://github.com/dzuvic/jtsgen/issues/25)
+- Please support inheritance [\#23](https://github.com/dzuvic/jtsgen/issues/23)
+- support exporting for direct usage [\#15](https://github.com/dzuvic/jtsgen/issues/15)
+- Support for no name space mapping [\#29](https://github.com/dzuvic/jtsgen/issues/29)
+
+## [jtsgen-0.1.4](https://github.com/dzuvic/jtsgen/tree/jtsgen-0.1.4) (2017-05-31)
+[Full Changelog](https://github.com/dzuvic/jtsgen/compare/jtsgen-0.1.3...jtsgen-0.1.4)
 
 **Implemented enhancements:**
 

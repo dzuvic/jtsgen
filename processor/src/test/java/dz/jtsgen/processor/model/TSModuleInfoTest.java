@@ -32,4 +32,18 @@ public class TSModuleInfoTest {
     public void tsPackageFriendly() throws Exception {
         TSModuleInfoBuilder.builder().moduleName("-a").build();
     }
+
+    @Test
+    public void test_TSModuleINfo_withModuleData() throws Exception {
+        TSModuleInfo original=TSModuleInfoBuilder.builder().build();
+
+        assertEquals(original, original.withModuleData(null,null,null,null,null,null,null));
+        assertEquals(original, original.withModuleData(original.getModuleVersion(),null,null,null,null,null,null));
+        assertEquals(original, original.withModuleData(null,original.getModuleDescription(),null,null,null,null,null));
+        assertEquals(original, original.withModuleData(null,null,original.getModuleAuthor(),null,null,null,null));
+        assertEquals(original, original.withModuleData(null,null,null,original.getModuleLicense(),null,null,null));
+        assertEquals(original, original.withModuleData(null,null,null,null,original.getModuleAuthorUrl(),null,null));
+        assertEquals(original, original.withModuleData(null,null,null,null,null,original.getModuleName(),null));
+        assertEquals(original, original.withModuleData(null,null,null,null,null,null,original.getOutputType()));
+    }
 }
