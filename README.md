@@ -201,8 +201,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly "jtsgen:jtsgen-annotations:0.1.4"
-    compileOnly "jtsgen:jtsgen-processor:0.1.4"
+    compileOnly "jtsgen:jtsgen-annotations:0.2.0"
+    compileOnly "jtsgen:jtsgen-processor:0.2.0"
 }
 ````
 
