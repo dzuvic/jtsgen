@@ -71,7 +71,7 @@ public final class TSModuleHandler {
 
                                     final AnnotationValue value =  entry.getValue();
                                     if (isNameAndNotNull("version", entry)) tsBuilder.moduleVersion(asString(value));
-                                    else if (isNameAndNotNull("moduleName",entry)) processModuleName(entry, tsBuilder) ;
+                                    else if (isNameAndNotNull("moduleName",entry)) tsBuilder.moduleName(processModuleName(x, value)) ;
                                     else if (isNameAndNotNull("author",entry)) tsBuilder.moduleAuthor(asString(value));
                                     else if (isNameAndNotNull("description",entry)) tsBuilder.moduleDescription(asString(value));
                                     else if (isNameAndNotNull("authorUrl",entry)) tsBuilder.moduleAuthorUrl(asString(value));
@@ -93,18 +93,19 @@ public final class TSModuleHandler {
     }
 
 
-    private String asString(AnnotationValue value) {
+    String asString(AnnotationValue value) {
         return (value.getValue() instanceof String) ? (String) value.getValue() : "" ;
     }
 
-    private void processModuleName(Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry, TSModuleInfoBuilder.Builder tsBuilder) {
-        if (entry.getValue().getValue() == null || entry.getValue().getValue().toString().isEmpty() || !StringUtils.isPackageFriendly(entry.getValue().getValue().toString())) {
-            this.env.getMessager().printMessage(Diagnostic.Kind.ERROR, "The module name '" + entry.getValue().getValue().toString() + "' is not package name friendly", entry.getKey());
-        } else tsBuilder.moduleName(entry.getValue().getValue().toString());
+    String  processModuleName(Element element, AnnotationValue annotationValue) {
+        if (annotationValue.getValue() == null || annotationValue.getValue().toString().isEmpty() || !StringUtils.isPackageFriendly(annotationValue.getValue().toString())) {
+            this.env.getMessager().printMessage(Diagnostic.Kind.ERROR, "The module name '" + annotationValue.getValue() + "' is not package name friendly", element);
+            return "unknown";
+        } else return annotationValue.getValue().toString();
 
     }
 
-    private NameSpaceMappingStrategy convertNameSpaceMappingStrategy(AnnotationValue value) {
+    NameSpaceMappingStrategy convertNameSpaceMappingStrategy(AnnotationValue value) {
         return (value != null
                 && value.getValue() != null
                 && Arrays.stream(NameSpaceMappingStrategy.values()).anyMatch(x -> x.name().equals(value.getValue().toString())))
@@ -112,12 +113,12 @@ public final class TSModuleHandler {
                 :null;
     }
     
-    private boolean isNameAndNotNull(String theName, Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry) {
+    boolean isNameAndNotNull(String theName, Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry) {
         final String simpleName = entry.getKey().getSimpleName().toString();
         return theName.equals(simpleName) && entry.getValue() != null;
     }
 
-    private OutputType convertOutputType(AnnotationValue outputTypeValue) {
+    OutputType convertOutputType(AnnotationValue outputTypeValue) {
         return (outputTypeValue != null
                 && outputTypeValue.getValue() != null
                 && Arrays.stream(OutputType.values()).anyMatch(x -> x.name().equals(outputTypeValue.getValue().toString())))
@@ -126,7 +127,7 @@ public final class TSModuleHandler {
 
     }
 
-    private List<NameSpaceMapping> convertToNameSpaceMappings(AnnotationValue nameSpaceMappingAnnotationValue, Element element) {
+    List<NameSpaceMapping> convertToNameSpaceMappings(AnnotationValue nameSpaceMappingAnnotationValue, Element element) {
         if (nameSpaceMappingAnnotationValue == null) return null;
         return new SimpleAnnotationValueVisitor8<List<NameSpaceMapping>, Void>() {
             @Override
@@ -147,7 +148,7 @@ public final class TSModuleHandler {
         }.visit(nameSpaceMappingAnnotationValue);
     }
 
-    private List<Pattern> convertExclusion(AnnotationValue exclAnnotationValue, Element element) {
+    List<Pattern> convertExclusion(AnnotationValue exclAnnotationValue, Element element) {
         if (exclAnnotationValue == null) return null;
         return new SimpleAnnotationValueVisitor8<List<Pattern>, Void>() {
             @Override
@@ -169,7 +170,7 @@ public final class TSModuleHandler {
     }
 
 
-    private Map<String, TSTargetType> convertTypeMapping(Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry) {
+    Map<String, TSTargetType> convertTypeMapping(Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry) {
         AnnotationValue customMappingValue = entry.getValue();
         Element element = entry.getKey();
         if (customMappingValue == null) return new HashMap<>();
