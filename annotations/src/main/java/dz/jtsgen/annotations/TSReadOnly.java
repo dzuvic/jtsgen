@@ -25,9 +25,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * classes / methods / fields annotated with TSIgnore will be ignored
+ * classes / methods / fields annotated with TSReadOnly will be mapped read only
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target(value = {ElementType.TYPE, ElementType.METHOD, ElementType.FIELD})
-public @interface TSIgnore {
+public @interface TSReadOnly {
 }

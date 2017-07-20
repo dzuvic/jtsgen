@@ -20,6 +20,7 @@
 
 package jts.dev;
 
+import dz.jtsgen.annotations.TSReadOnly;
 import dz.jtsgen.annotations.TypeScript;
 
 @TypeScript
@@ -34,6 +35,7 @@ public class MemberTestObject {
     private int x_with_setter_only=0;
     private int x_with_getter_setter=0;
 
+    @TSReadOnly
     public int getX_with_getter_only() {
         return x_with_getter_only;
     }

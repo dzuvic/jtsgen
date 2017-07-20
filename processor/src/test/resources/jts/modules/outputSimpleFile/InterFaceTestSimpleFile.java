@@ -19,9 +19,11 @@
  */
 package jts.modules.outputSimpleFile;
 
+import dz.jtsgen.annotations.TSReadOnly;
 import dz.jtsgen.annotations.TypeScript;
 
 @TypeScript
+@TSReadOnly
 public interface InterFaceTestSimpleFile {
     String getOutputSimpleFile();
 }

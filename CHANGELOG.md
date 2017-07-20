@@ -1,5 +1,17 @@
 # Change Log
 
+## jtsgen-0.3.0 (UNRELEASED)
+
+### New Features
+
+* `@TSReadOnly` annotated members are exported as `readonly`
+
+### Breaking Changes
+
+* The default mechanism that generates `readonly` when only getters are
+  visible has been removed. Use the `@TSReadonly` annotation to generate
+  readonly members
+
 ##  [jtsgen-0.2.0](https://github.com/dzuvic/jtsgen/tree/jtsgen-0.2.0) (2017-07-14)
 
 ### New Features

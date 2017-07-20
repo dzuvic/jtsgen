@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Dragan Zuvic
+ * Copyright (c) 2017 Dragan Zuvic
  *
  * This file is part of jtsgen.
  *
@@ -7,7 +7,7 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * jtsgen is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -17,16 +17,16 @@
  * along with jtsgen.  If not, see http://www.gnu.org/licenses/
  *
  */
-package jts.dev;
 
-import dz.jtsgen.annotations.TSReadOnly;
-import dz.jtsgen.annotations.TypeScript;
+// Test excludion of itself, so no output should be generated
+@TSModule(
+        moduleName = "tsmodule_error",
+        outputType = OutputType.NO_MODULE,
+        nameSpaceMapping = { "X<-Y"},
+        customTypeMappings = { "<- Bla"},
+        excludes = { "aaa{.*]"}
+)
+package jts.modules.tsmodule_error;
 
-@TypeScript
-@TSReadOnly
-public interface InterFaceTest {
-    int get();
-    int aMethod();
-    int getSomeInt();
-    String getSomeString();
-}
+import dz.jtsgen.annotations.OutputType;
+import dz.jtsgen.annotations.TSModule;

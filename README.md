@@ -22,7 +22,8 @@ you want a specific feature being implemented.
 Currently the following features are supported:
 
 * Emitting types for `@TypeScript` annotated Java classes and interfaces
-* Ignoring a type using `@TSIgnore` annotation
+* Ignoring a type using `@TSIgnore` annotation. Supporting `readonly` using
+  `@TSReadOnly` annotation
 * creating a module with corresponding package.json. The name is constructed
   if not configured
 * Configuration of the JavaScript / TypeScript module using the `@TSModule`
@@ -33,7 +34,6 @@ Currently the following features are supported:
   corresponding (mapped) type `T`
 * Java package as typescript name space, configurable
 * converting getter/setter to TypeScript types
-* `readonly` if no setter is found
 * Name Space mapping to minimize the TypeScript name spaces. It can be
   configured or calculated.
 * Inheritance (since 0.2.0)

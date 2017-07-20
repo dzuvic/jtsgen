@@ -34,6 +34,7 @@ import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardLocation;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -67,6 +68,26 @@ public class TsGenProcessorTest {
 
         // check that any logging is disabled is disabled
         assertEquals(Logger.getLogger(TsGenProcessor.class.getPackage().getName()).getLevel(), Level.OFF);
+    }
+
+    @Test
+    public void check_simple_ts_module_error() {
+        JavaFileObject[] files = {
+                JavaFileObjects.forResource("jts/modules/tsmodule_error/InterFaceTestTsModuleError.java"),
+                JavaFileObjects.forResource("jts/modules/tsmodule_error/package-info.java")
+        };
+        Compilation c = javac()
+                .withProcessors(new TsGenProcessor())
+                .withOptions("-AjtsgenLogLevel=none")
+                .compile(files);
+
+        assertTrue(c.errors().size() > 0);
+        boolean v1 = c.errors().stream().anyMatch( x -> x.getMessage(Locale.ENGLISH).contains("param not valid. Expecting a name space"));
+        boolean v2 = c.errors().stream().anyMatch( x -> x.getMessage(Locale.ENGLISH).contains("param not valid. Expecting origin and target"));
+        boolean v3 = c.errors().stream().anyMatch( x -> x.getMessage(Locale.ENGLISH).contains("param not valid. Expecting a regular Expression."));
+
+        // at least one of the error must exists
+        assertTrue( v1 || v2 || v3);
     }
 
     @Test
@@ -192,7 +213,7 @@ public class TsGenProcessorTest {
         assertEquals("must have Type InterfaceWithEnum", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterfaceWithEnum\\s*\\{")).size());
 
         assertEquals("must include enum values", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+A, B, C\\s*$")).size());
-        assertEquals("must have the member someEnum: SomeEnum", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+readonly\\s+someEnum:\\s+SomeEnum;")).size());
+        assertEquals("must have the member someEnum: SomeEnum", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+someEnum:\\s+SomeEnum;")).size());
 
     }
 
@@ -220,7 +241,7 @@ public class TsGenProcessorTest {
         Compilation c = CompileHelper.compileJtsDev(DUMP_FILES, 1,"InterFaceTestWithSunInternal.java");
 
         assertEquals("must have Type InterfaceWithEnum", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTestWithSunInternal\\s*\\{")).size());
-        assertEquals("must be mapped to any", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+readonly\\s+mustBeExcluded:\\s+any;")).size());
+        assertEquals("must be mapped to any", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+\\s+mustBeExcluded:\\s+any;")).size());
 
         assertEquals("must not have the type Version included", 0, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+Version\\s*\\{")).size());
         assertEquals("must not have member from Version", 0, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("jdkSpecialVersion:\\s+string;")).size());
@@ -341,7 +362,7 @@ public class TsGenProcessorTest {
 
         assertEquals("must have Type MemberWithModuleDef", 1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+interface\\s+MemberWithModuleDef\\s*\\{")).size());
         assertEquals("java.util.Date must be converted to string", 1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+date_string:\\s+string;")).size());
-        assertEquals("must have m2 interface", 1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+readonly\\s+mustBeIn:\\s+m2.InterFaceTestModuleM2MustBeIn;")).size());
+        assertEquals("must have m2 interface", 1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+mustBeIn:\\s+m2.InterFaceTestModuleM2MustBeIn;")).size());
 
         assertEquals("must have namespace m2", 1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+namespace\\s+m2\\s*\\{")).size());
     }

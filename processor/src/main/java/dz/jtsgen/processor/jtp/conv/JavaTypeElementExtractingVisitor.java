@@ -21,6 +21,7 @@
 package dz.jtsgen.processor.jtp.conv;
 
 import dz.jtsgen.annotations.TSIgnore;
+import dz.jtsgen.annotations.TSReadOnly;
 import dz.jtsgen.processor.model.TSMember;
 import dz.jtsgen.processor.model.TSRegularMemberBuilder;
 import dz.jtsgen.processor.model.TSTargetType;
@@ -51,16 +52,18 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
     private final Set<String> extractableMembers = new HashSet<>();
 
     // the current Java Type
-    private final TypeElement element;
+    private final TypeElement typeElementToConvert;
 
     // the environment
-    private TSProcessingInfo TSProcessingInfo;
+    private TSProcessingInfo tsProcessingInfo;
 
 
-    JavaTypeElementExtractingVisitor(TypeElement element, TSProcessingInfo visitorParam) {
-        assert element != null && visitorParam != null;
-        this.element = element;
-        this.TSProcessingInfo = visitorParam;
+
+    JavaTypeElementExtractingVisitor(TypeElement typeElementToConvert, TSProcessingInfo visitorParam) {
+        assert typeElementToConvert != null && visitorParam != null;
+        this.typeElementToConvert = typeElementToConvert;
+        this.tsProcessingInfo = visitorParam;
+
     }
 
     @Override
@@ -74,14 +77,16 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
         final boolean isPublic = e.getModifiers().contains(Modifier.PUBLIC);
         final String name = e.getSimpleName().toString();
         final boolean isIgnored = isIgnored(e);
+        final boolean  isReadOnlyAnnotation = readOnlyAnnotation(e) || readOnlyAnnotation(this.typeElementToConvert);
         LOG.log(Level.FINEST, () -> String.format("JTExV visiting variable %s%s", name, isIgnored?" (ignored)":""));
         if (isPublic && !members.containsKey(name)) {
-            final TSTargetType tsTypeOfExecutable = convertTypeMirrorOfMemberToTsType(e, TSProcessingInfo);
-            members.put(name, TSRegularMemberBuilder.of(name,tsTypeOfExecutable,false));
+            final TSTargetType tsTypeOfExecutable = convertTypeMirrorOfMemberToTsType(e, tsProcessingInfo);
+            members.put(name, TSRegularMemberBuilder.of(name,tsTypeOfExecutable, isReadOnlyAnnotation));
             if (! isIgnored) extractableMembers.add(name);
         }
         return null;
     }
+
 
     @Override
     public Void visitExecutable(ExecutableElement e, Void notcalled) {
@@ -90,22 +95,32 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
             final String name = nameFromMethod(e.getSimpleName().toString());
             final boolean isPublic = e.getModifiers().contains(Modifier.PUBLIC);
             final boolean isIgnored = isIgnored(e);
+            final boolean isReadOnly = readOnlyAnnotation(e) || readOnlyAnnotation(this.typeElementToConvert);
             if (isGetter(e) && ( !isPublic ||  isIgnored )) return null; // return early for not converting private types
-            final TSTargetType tsTypeOfExecutable = convertTypeMirrorToTsType(e, TSProcessingInfo);
+            final TSTargetType tsTypeOfExecutable = convertTypeMirrorToTsType(e, tsProcessingInfo);
             LOG.fine(() -> "is getter or setter: " + (isPublic ? "public " : " ") + e.getSimpleName() + " -> " + name + ":" + tsTypeOfExecutable + " " +(isIgnored?"(ignored)":""));
             if (members.containsKey(name)) {
                 // can't be read only anymore
-                members.put(name, TSRegularMemberBuilder.of(name, isGetter(e) ? tsTypeOfExecutable : members.get(name).getType(), false));
+                members.put(name, TSRegularMemberBuilder.of(name, isGetter(e) ? tsTypeOfExecutable : members.get(name).getType(), isReadOnly));
             } else {
-                members.put(name, TSRegularMemberBuilder.of(name, tsTypeOfExecutable, isGetter(e)));
+                members.put(name, TSRegularMemberBuilder.of(name, tsTypeOfExecutable, isReadOnly));
             }
             if (isGetter(e)) extractableMembers.add(name);
         }
         return null;
     }
 
+    private boolean readOnlyAnnotation(Element e) {
+        final TypeElement annoTationElement = this.tsProcessingInfo.elementCache().typeElementByCanonicalName(TSReadOnly.class.getCanonicalName());
+        return e.getAnnotationMirrors().stream().anyMatch( (x) ->
+                x.getAnnotationType().asElement().equals(annoTationElement)
+        );
+    }
+
     private boolean isIgnored(Element e) {
-        return e.getAnnotationMirrors().stream().anyMatch( (x) -> TSIgnore.class.getName().equals(x.getAnnotationType().toString()));
+        final TypeElement annoTationElement = this.tsProcessingInfo.elementCache().typeElementByCanonicalName(TSIgnore.class.getCanonicalName());
+        return e.getAnnotationMirrors().stream().anyMatch( (x) ->
+                x.getAnnotationType().asElement().equals(annoTationElement));
     }
 
 

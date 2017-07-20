@@ -20,30 +20,25 @@
 
 package dz.jtsgen.processor.jtp.conv;
 
-import dz.jtsgen.processor.model.TypeScriptModel;
-import org.immutables.value.Value;
-
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.TypeElement;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * holds information needed acessing the model when traversing the AST
- */
-@Value.Immutable
-public abstract class TSProcessingInfo {
+public class TypeElementCache {
+    private final ProcessingEnvironment processingEnvironment;
+    private final Map<String,TypeElement> cache = new ConcurrentHashMap<>();
 
-    @Value.Parameter
-    public abstract TypeElement getAnnotation();
-
-    @Value.Parameter
-    public abstract ProcessingEnvironment getpEnv();
-
-    @Value.Parameter
-    public abstract TypeScriptModel getTsModel();
-
-    @Value.Lazy
-    public TypeElementCache elementCache() {
-        return new TypeElementCache(this.getpEnv());
+    public TypeElementCache(ProcessingEnvironment processingEnvironment) {
+        this.processingEnvironment = processingEnvironment;
     }
 
+    public TypeElement typeElementByCanonicalName(String canonicalName) {
+        if (this.cache.containsKey(canonicalName)) return this.cache.get(canonicalName);
+        else {
+            TypeElement element = this.processingEnvironment.getElementUtils().getTypeElement(canonicalName);
+            this.cache.put(canonicalName,element);
+            return element;
+        }
+    }
 }
