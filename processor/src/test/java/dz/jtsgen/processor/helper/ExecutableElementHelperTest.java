@@ -25,6 +25,8 @@ import org.junit.Test;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Name;
+import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
 
 import static dz.jtsgen.processor.helper.ExecutableElementHelper.isGetter;
 import static dz.jtsgen.processor.helper.ExecutableElementHelper.isSetter;
@@ -39,12 +41,14 @@ public class ExecutableElementHelperTest {
     @Test
     public void isGetterOrSetter() throws Exception {
         assertFalse(ExecutableElementHelper.isGetterOrSetter((String) null));
-        assertFalse(ExecutableElementHelper.isGetterOrSetter((Element) null));
+        assertFalse(ExecutableElementHelper.isGetterOrSetter((ExecutableElement) null));
         assertFalse(ExecutableElementHelper.isGetterOrSetter(createDummy("set")));
         assertFalse(ExecutableElementHelper.isGetterOrSetter(createDummy("get")));
+        assertFalse(ExecutableElementHelper.isGetterOrSetter(createBooleanDummy("is")));
         assertFalse(ExecutableElementHelper.isGetterOrSetter(createDummy("bla")));
         assertTrue(ExecutableElementHelper.isGetterOrSetter(createDummy("setA")));
         assertTrue(ExecutableElementHelper.isGetterOrSetter(createDummy("getA")));
+        assertTrue(ExecutableElementHelper.isGetterOrSetter(createBooleanDummy("isA")));
     }
 
     @Test
@@ -58,18 +62,22 @@ public class ExecutableElementHelperTest {
 
     @Test
     public void isGetter_tests() throws Exception {
-        assertFalse(isGetter((Element) null));
+        assertFalse(isGetter((ExecutableElement) null));
         assertTrue(isGetter(createDummy("getA")));
+        assertTrue(isGetter(createBooleanDummy("isA")));
         assertFalse(isGetter(createDummy(null)));
         assertFalse(isGetter(createDummySimpleNameIsNull()));
         assertFalse(isGetter(createDummy("get")));
+        assertFalse(isGetter(createBooleanDummy("is")));
     }
 
     private ExecutableElement createDummy(final String simpleName) {
         final ExecutableElement mock = mock(ExecutableElement.class);
         final Name nameMock = mock(Name.class);
+        final TypeMirror kindMock = mock(TypeMirror.class);
         when(nameMock.toString()).thenReturn(simpleName);
         when(mock.getSimpleName()).thenReturn(nameMock);
+        when(mock.getReturnType()).thenReturn(kindMock);
         return mock;
     }
 
@@ -79,11 +87,24 @@ public class ExecutableElementHelperTest {
         return mock;
     }
 
+    private ExecutableElement createBooleanDummy(final String simpleName) {
+        final ExecutableElement mock = mock(ExecutableElement.class);
+        final Name nameMock = mock(Name.class);
+        final TypeMirror kindMock = mock(TypeMirror.class);
+        when(nameMock.toString()).thenReturn(simpleName);
+        when(mock.getSimpleName()).thenReturn(nameMock);
+        when(mock.getReturnType()).thenReturn(kindMock);
+        when(kindMock.getKind()).thenReturn(TypeKind.BOOLEAN);
+        return mock;
+    }
+
     @Test
     public void extract_methodName_fromGetterSetter() throws Exception {
         assertEquals("x", nameFromMethod("setX"));
         assertEquals("x", nameFromMethod("getX"));
+        assertEquals("x", nameFromMethod("isX"));
         assertEquals("x_b", nameFromMethod("getX_b"));
+        assertEquals("x_b", nameFromMethod("isX_b"));
         assertEquals("x_b", nameFromMethod("setX_b"));
         assertEquals("x_with_getter_setter", nameFromMethod("setX_with_getter_setter"));
     }
