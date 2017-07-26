@@ -137,14 +137,14 @@ public class TypeScriptAnnotationProcessor implements JavaTypeProcessor, JavaTyp
         boolean r =
                 typeElement.getQualifiedName().equals(this.javaLangObjectElement.getQualifiedName())
                         || typeElement.getQualifiedName().contentEquals(this.javaLangEnumElement.getQualifiedName().toString());
-        if (r) LOG.finest(() -> "TSAP " + typeElement + " is top type");
+        if (r) LOG.fine(() -> "TSAP " + typeElement + " is top type");
         return r;
     }
 
     private boolean isMarkerInterface(TypeElement typeElement) {
         boolean isMarker = typeElement.getKind() == ElementKind.INTERFACE
                 && typeElement.getEnclosedElements().size() == 0;
-        if (isMarker) LOG.finest(() -> "TSAP " + typeElement + " is marker interface");
+        if (isMarker) LOG.fine(() -> "TSAP " + typeElement + " is marker interface");
         return isMarker;
     }
 
@@ -153,7 +153,7 @@ public class TypeScriptAnnotationProcessor implements JavaTypeProcessor, JavaTyp
         boolean r= this.processingInfo.getTsModel().getModuleInfo().getExcludes().stream().anyMatch(
                 x -> x.matcher(typeName).find()
         );
-        if (r) LOG.finest(() -> "TSAP exclusion " + element);
+        if (r) LOG.fine(() -> "TSAP exclusion " + element);
         return r;
     }
 
@@ -165,6 +165,7 @@ public class TypeScriptAnnotationProcessor implements JavaTypeProcessor, JavaTyp
     }
 
     private Collection<? extends TSMember> findMembers(TypeElement e) {
+        LOG.fine(() -> "TSAP start converting java type " + e);
         JavaTypeElementExtractingVisitor visitor = new JavaTypeElementExtractingVisitor(e, processingInfo);
         e.getEnclosedElements().stream()
                 .filter(x -> x.getKind()== ElementKind.FIELD || x.getKind()==ElementKind.METHOD)

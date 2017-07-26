@@ -26,11 +26,11 @@ package dz.jtsgen.processor.model;
  */
 public enum ConversionCoverage {
 
-    DIRECT("->"),
-    /** include all subtypes of*/
-
-    SUBTYPES(">->");
     /** direct mapping only*/
+    DIRECT("|->"),
+
+    /** include all subtypes of*/
+    SUBTYPES("->");
 
     private final String arrowLiteral;
 

@@ -44,6 +44,19 @@ public class TSTargetFactoryTest {
     }
 
     @Test
+    public void test_createTSTargetByMapping_Type_TS_Literal() throws Exception {
+        createTSTargetByMapping("java.util.Collection<T> -> `T`[]").map(
+            x -> {
+                assertEquals(x.typeParameters(), Collections.singletonList("T"));
+                assertEquals(x.getJavaType(),"java.util.Collection");
+                assertEquals(x.isReferenceType(),true);
+                assertEquals(x.typeParameterTypes(), new HashMap<>());
+                return x;
+            }
+        ).orElseThrow(AssertionError::new);
+    }
+
+    @Test
     public void test_createTSTargetByMapping_Two_Types_Param() throws Exception {
         createTSTargetByMapping("java.util.Map<K,V> -> Map<K,V>").map(
             x -> {
