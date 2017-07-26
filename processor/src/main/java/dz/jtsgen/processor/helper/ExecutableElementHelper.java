@@ -21,18 +21,24 @@
 package dz.jtsgen.processor.helper;
 
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.type.TypeKind;
 
 /**
  * some helper functions
  */
 public final class ExecutableElementHelper {
 
-    public static boolean isGetterOrSetter(Element x) {
+    public static boolean isGetterOrSetter(ExecutableElement x) {
         return isGetter(x) || isSetter(x);
     }
 
-    public static boolean isGetter(Element x) {
-        return isGetter(x != null && x.getSimpleName() != null ? x.getSimpleName().toString() : null);
+    public static boolean isGetter(ExecutableElement x) {
+        final String simpleName = x != null && x.getSimpleName() != null ? x.getSimpleName().toString() : null;
+        if (simpleName != null && TypeKind.BOOLEAN == x.getReturnType().getKind()) {
+            return isBooleanGetter(simpleName);
+        }
+        return isGetter(simpleName);
     }
 
     public static boolean isSetter(Element x) {
@@ -41,7 +47,7 @@ public final class ExecutableElementHelper {
 
     /* ---- */
     public static boolean isGetterOrSetter(String x) {
-        return isGetter(x) || isSetter(x);
+        return isGetter(x) || isSetter(x) || isBooleanGetter(x);
     }
 
     private static boolean isSetter(String name) {
@@ -52,11 +58,24 @@ public final class ExecutableElementHelper {
         return name != null && name.length() > 3 && name.startsWith("get");
     }
 
+    public static boolean isBooleanGetter(String name) {
+        return name != null && name.length() > 2 && name.startsWith("is");
+    }
 
     public static String nameFromMethod(String s) {
         assert isGetterOrSetter(s);
-        String nameWithoutGetSet = s.startsWith("get") ? s.replaceFirst("get", "") : s.replaceFirst("set", "");
+        String nameWithoutGetSet = nameExtractor(s);
         return Character.toLowerCase(nameWithoutGetSet.charAt(0)) + nameWithoutGetSet.substring(1);
+    }
+
+    private static String nameExtractor(String s) {
+        if (s.startsWith("get")) {
+            return s.replaceFirst("get", "");
+        } else if (s.startsWith("is")) {
+            return s.replaceFirst("is", "");
+        } else {
+            return s.replaceFirst("set", "");
+        }
     }
 
 }
