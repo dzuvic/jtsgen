@@ -3,13 +3,17 @@ Custom Type Mapping
 
 The annotation processor supports a simple mapping description language. The custom Type Mapping for the module is a
 list of strings, each describing a type mapping. Each string consists of a Java Type (canonical name with type params)
-and the resulting TypeScript Type. Both Types are separated with an arrow, e.g.::
+and the resulting TypeScript Type. Both Types are separated with an arrow, e.g. :
+
+::
 
     java.util.Date -> IDateJSStatic
 
-maps a java.util.Date to the TypeScript type IDateJSStatic
+maps a ``java.util.Date`` to the TypeScript type ``IDateJSStatic``
 
-It also is possible to use type variables, e.g. ::
+It also is possible to use type variables, e.g. :
+
+::
 
     java.util.List<T> -> Array<T>
 
@@ -35,7 +39,9 @@ The Processor has no knowledge about the the necessary imports.
 Mapping-DSL
 -----------
 
-The Mapping DSL defined in ANTLR BNF variant::
+The Mapping DSL defined in ANTLR BNF variant:
+
+::
 
     mapping : origin  whsp* arrow whsp* target;
     arrow : '->' | '|->'
