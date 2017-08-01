@@ -18,28 +18,10 @@
  *
  */
 
-package dz.jtsgen.processor.dsl;
+package dz.jtsgen.processor.dsl.model;
 
-import java.util.regex.Pattern;
+import org.immutables.value.Value;
 
-enum TokenType {
-    // Token types cannot have underscores
-    WHITESPACE("[ \t\f]+"),
-    JIDENT("[a-zA-Z_]+[a-zA-Z_]*"),
-    ANGLEOPEN("\\<"),
-    ANGLECLOSE("\\>"),
-    DELIM(","),
-    ARROW("-\\>"),
-    DARROW("\\|-\\>"),
-    INVALID(".+");
-
-    private final Pattern pattern;
-
-    TokenType(String pattern) {
-        this.pattern = Pattern.compile(pattern);
-    }
-
-    public Pattern getPattern() {
-        return pattern;
-    }
+@Value.Immutable
+public abstract class TSMappedTypeVar {
 }

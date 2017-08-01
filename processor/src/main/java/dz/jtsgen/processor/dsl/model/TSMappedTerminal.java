@@ -18,19 +18,10 @@
  *
  */
 
-package dz.jtsgen.processor.dsl;
+package dz.jtsgen.processor.dsl.model;
 
 import org.immutables.value.Value;
 
 @Value.Immutable
-abstract class Token {
-
-    @Value.Parameter
-    abstract TokenType type();
-
-    @Value.Parameter
-    abstract String data();
-
-    @Value.Parameter
-    abstract Integer index();
+public abstract class TSMappedTerminal {
 }

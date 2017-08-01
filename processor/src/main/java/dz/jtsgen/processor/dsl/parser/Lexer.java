@@ -18,7 +18,10 @@
  *
  */
 
-package dz.jtsgen.processor.dsl;
+package dz.jtsgen.processor.dsl.parser;
+
+import dz.jtsgen.processor.dsl.ExpLexer;
+import dz.jtsgen.processor.dsl.TokenBuilder;
 
 import java.util.ArrayList;
 import java.util.List;

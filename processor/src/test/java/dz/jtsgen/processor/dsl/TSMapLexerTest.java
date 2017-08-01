@@ -20,6 +20,8 @@
 
 package dz.jtsgen.processor.dsl;
 
+import dz.jtsgen.processor.dsl.parser.Lexer;
+import dz.jtsgen.processor.dsl.parser.TokenType;
 import org.junit.Test;
 
 import java.util.Arrays;

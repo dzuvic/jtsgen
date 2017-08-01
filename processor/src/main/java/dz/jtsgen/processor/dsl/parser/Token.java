@@ -18,7 +18,19 @@
  *
  */
 
-package dz.jtsgen.processor.dsl;
+package dz.jtsgen.processor.dsl.parser;
 
-public abstract class TSMappedTypeVar {
+import org.immutables.value.Value;
+
+@Value.Immutable
+abstract class Token {
+
+    @Value.Parameter
+    abstract TokenType type();
+
+    @Value.Parameter
+    abstract String data();
+
+    @Value.Parameter
+    abstract Integer index();
 }
