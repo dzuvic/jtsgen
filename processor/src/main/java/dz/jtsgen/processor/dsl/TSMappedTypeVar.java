@@ -20,5 +20,5 @@
 
 package dz.jtsgen.processor.dsl;
 
-abstract class TSMappedTypeVar {
+public abstract class TSMappedTypeVar {
 }

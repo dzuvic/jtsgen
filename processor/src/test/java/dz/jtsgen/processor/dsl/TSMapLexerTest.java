@@ -20,8 +20,20 @@
 
 package dz.jtsgen.processor.dsl;
 
-import org.immutables.value.Value;
+import org.junit.Test;
 
-@Value.Immutable
-public abstract class TSMappedTerminal {
+import java.util.Arrays;
+
+import static org.junit.Assert.*;
+
+public class TSMapLexerTest {
+    @Test
+    public void testAllLexPatterns() throws Exception {
+        assertEquals(
+                Arrays.asList(
+                        TokenBuilder.of(TokenType.JIDENT,"abc",0)
+//                        TokenBuilder.of(TokenType.ANGLE_OPEN,"<")
+                ),
+                new Lexer().lex(" abc <T>->abc"));
+    }
 }

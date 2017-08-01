@@ -23,5 +23,14 @@ package dz.jtsgen.processor.dsl;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public abstract class TSMappedTerminal {
+abstract class Token {
+
+    @Value.Parameter
+    abstract TokenType type();
+
+    @Value.Parameter
+    abstract String data();
+
+    @Value.Parameter
+    abstract Integer index();
 }

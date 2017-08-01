@@ -20,8 +20,26 @@
 
 package dz.jtsgen.processor.dsl;
 
-import org.immutables.value.Value;
+import java.util.regex.Pattern;
 
-@Value.Immutable
-public abstract class TSMappedTerminal {
+enum TokenType {
+    // Token types cannot have underscores
+    WHITESPACE("[ \t\f]+"),
+    JIDENT("[a-zA-Z_]+[a-zA-Z_]*"),
+    ANGLEOPEN("\\<"),
+    ANGLECLOSE("\\>"),
+    DELIM(","),
+    ARROW("-\\>"),
+    DARROW("\\|-\\>"),
+    INVALID(".+");
+
+    private final Pattern pattern;
+
+    TokenType(String pattern) {
+        this.pattern = Pattern.compile(pattern);
+    }
+
+    public Pattern getPattern() {
+        return pattern;
+    }
 }
