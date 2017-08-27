@@ -23,5 +23,18 @@ package dz.jtsgen.processor.dsl.model;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public abstract class TSMappedTerminal {
+public abstract class TSMappedTerminal implements TSExpressionElement {
+
+    @Override
+    @Value.Default
+    public boolean isLiteral() {
+        return true;
+    }
+
+    @Override
+    @Value.Default
+    public boolean isVariable() {
+        return false;
+    }
+    
 }

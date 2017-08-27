@@ -18,22 +18,22 @@
  *
  */
 
-package dz.jtsgen.processor.dsl.model;
+package dz.jtsgen.processor.dsl.parser;
 
-import org.immutables.value.Value;
+import org.junit.Test;
 
-@Value.Immutable
-public abstract class TSMappedTypeVar implements TSExpressionElement {
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-    @Override
-    @Value.Default
-    public boolean isLiteral() {
-        return false;
+import static org.junit.Assert.*;
+
+public class TokenTypeTest {
+    @Test
+    public void groupName() throws Exception {
+        Set<String> names = Arrays.stream(TokenType.values()).map(Enum::name).collect(Collectors.toSet());
+        Set<String> groups = Arrays.stream(TokenType.values()).map(TokenType::groupName).collect(Collectors.toSet());
+        assertEquals("groupnames must me unique",names.size(),groups.size());
     }
 
-    @Override
-    @Value.Default
-    public boolean isVariable() {
-        return true;
-    }
 }

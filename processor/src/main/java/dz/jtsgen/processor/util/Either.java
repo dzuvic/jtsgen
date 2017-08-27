@@ -27,6 +27,8 @@ import java.util.Objects;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import static dz.jtsgen.processor.util.ToDo.todo;
 
@@ -36,7 +38,7 @@ import static dz.jtsgen.processor.util.ToDo.todo;
  * @param <L>  type of the left value
  * @param <R>  type of he right value
  */
-interface Either<L, R> extends Iterable<R> {
+public interface Either<L, R> extends Iterable<R> {
 
     boolean isRight();
 
@@ -83,6 +85,79 @@ interface Either<L, R> extends Iterable<R> {
         return this.isLeft() ? new EmptyIterator() : new EitherIterator<>(value());
     }
 
+
+    /**
+     * map only the right side
+     *
+     * @param f the function
+     * @param <T> the type
+     * @return mapped either
+     */
+    @SuppressWarnings("unchecked")
+    default <T> Either<L, T> map(Function<? super R, ? extends T> f) {
+        Objects.requireNonNull(f, "function must not be null");
+        if (isRight()) {
+            return Either.right(f.apply(value()));
+        } else {
+            return (Either<L, T>) this;
+        }
+    }
+
+    /**
+     * flatmap like in Haskel. Either is a box...
+     * @param f  function from R to U (maps only right side)
+     * @param <T> the type to convert
+     * @return a mapped either or the left side
+     */
+    @SuppressWarnings("unchecked")
+    default <T> Either<L, T> flatMap(Function<? super R, ? extends Either<L, ? extends T>> f) {
+        Objects.requireNonNull(f, "mapper is null");
+        if (isRight()) {
+            return (Either<L, T>) f.apply(value());
+        } else {
+            return (Either<L, T>) this;
+        }
+    }
+
+    default Either<L, R> check(L l, Predicate<? super R> p) {
+        Objects.requireNonNull(p, "predicate must not be null");
+        Objects.requireNonNull(l, "possible left value must not be null");
+        return (isLeft() || (p.test(value()))) ? this : Either.left(l);
+    }
+
+    /**
+     * either return the left value if the predicate does not hold or null
+     * used in testing, where the left value is extracted because of an error
+     */
+
+    default L checkOrLeft(L l, Predicate<? super R> p) {
+        Either<L, R> result = check(l,p);
+        return result.isLeft() ? result.leftValue() : null ;
+    }
+
+    default R orElse(R other) {
+        return this.isRight() ? value() : other;
+    }
+
+
+    default R orElseGet(Supplier<? extends R> other) {
+        return this.isRight() ? value() : other.get();
+    }
+
+    default <X extends Throwable> R orElseThrow(Supplier<? extends X> exceptionSupplier) throws X {
+        if (this.isRight()) {
+            return value();
+        } else {
+            throw exceptionSupplier.get();
+        }
+    }
+
+    /**
+     * return null if Right else the left value
+     */
+    default L leftOrNull() {
+       return isLeft() ? this.leftValue() : null;
+    }
 }
 
 /**
@@ -116,6 +191,14 @@ final class Left<L, R> implements Either<L, R>  {
     public L leftValue() {
         return this.value;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Left{");
+        sb.append("value=").append(value);
+        sb.append('}');
+        return sb.toString();
+    }
 }
 
 /**
@@ -148,6 +231,14 @@ final class Right<L, R>  implements Either<L, R>  {
     @Override
     public L leftValue() {
         throw new IllegalStateException("Right has not Left Value");
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Right{");
+        sb.append("value=").append(value);
+        sb.append('}');
+        return sb.toString();
     }
 }
 

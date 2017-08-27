@@ -20,22 +20,9 @@
 
 package dz.jtsgen.processor.dsl;
 
-import dz.jtsgen.processor.dsl.parser.Lexer;
-import dz.jtsgen.processor.dsl.parser.TokenType;
-import org.junit.Test;
+import dz.jtsgen.processor.dsl.model.TypeMappingExpression;
+import dz.jtsgen.processor.util.Either;
 
-import java.util.Arrays;
-
-import static org.junit.Assert.*;
-
-public class TSMapLexerTest {
-    @Test
-    public void testAllLexPatterns() throws Exception {
-        assertEquals(
-                Arrays.asList(
-                        TokenBuilder.of(TokenType.JIDENT,"abc",0)
-//                        TokenBuilder.of(TokenType.ANGLE_OPEN,"<")
-                ),
-                new Lexer().lex(" abc <T>->abc"));
-    }
+public interface CustomMappingParser {
+    Either<String, TypeMappingExpression> parse(String expression);
 }

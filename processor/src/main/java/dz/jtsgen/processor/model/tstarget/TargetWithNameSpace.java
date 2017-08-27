@@ -18,22 +18,8 @@
  *
  */
 
-package dz.jtsgen.processor.dsl.model;
+package dz.jtsgen.processor.model.tstarget;
 
-import org.immutables.value.Value;
-
-@Value.Immutable
-public abstract class TSMappedTypeVar implements TSExpressionElement {
-
-    @Override
-    @Value.Default
-    public boolean isLiteral() {
-        return false;
-    }
-
-    @Override
-    @Value.Default
-    public boolean isVariable() {
-        return true;
-    }
+public interface TargetWithNameSpace {
+    String tsNameSpace();
 }

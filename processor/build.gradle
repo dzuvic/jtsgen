@@ -45,6 +45,7 @@ dependencies {
     testCompile "org.mockito:mockito-core:2.7.21"
     testCompile "commons-io:commons-io:2.5"
     testCompile 'com.google.guava:guava:21.0'
+    testCompile 'com.github.mifmif:generex:1.0.2'
     
 
     apt "org.immutables:value:2.5.3" // for annotation processor

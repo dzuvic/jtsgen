@@ -22,18 +22,10 @@ package dz.jtsgen.processor.dsl.model;
 
 import org.immutables.value.Value;
 
-@Value.Immutable
-public abstract class TSMappedTypeVar implements TSExpressionElement {
+public interface TSExpressionElement {
+    boolean isLiteral();
+    boolean isVariable();
 
-    @Override
-    @Value.Default
-    public boolean isLiteral() {
-        return false;
-    }
-
-    @Override
-    @Value.Default
-    public boolean isVariable() {
-        return true;
-    }
+    @Value.Parameter
+    String value();
 }

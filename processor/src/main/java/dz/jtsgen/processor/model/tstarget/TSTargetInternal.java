@@ -23,7 +23,7 @@ package dz.jtsgen.processor.model.tstarget;
 /**
  * the factory needs access to the inner data, this is ensured by implementing TSTargetInternal
  */
-interface TSTargetInternal {
+public interface TSTargetInternal {
     
     String tsTypeName();
 

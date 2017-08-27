@@ -18,22 +18,13 @@
  *
  */
 
-package dz.jtsgen.processor.dsl.model;
+package dz.jtsgen.processor.dsl.parser;
 
-import org.immutables.value.Value;
+import dz.jtsgen.processor.dsl.CustomMappingParser;
 
-@Value.Immutable
-public abstract class TSMappedTypeVar implements TSExpressionElement {
+public class CustomMappingParserFactory {
 
-    @Override
-    @Value.Default
-    public boolean isLiteral() {
-        return false;
-    }
-
-    @Override
-    @Value.Default
-    public boolean isVariable() {
-        return true;
+    public static CustomMappingParser parser() {
+        return new CustomMappingParserImpl(new Lexer()) ;
     }
 }

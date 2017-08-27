@@ -21,7 +21,9 @@
 package dz.jtsgen.processor.dsl.model;
 
 import dz.jtsgen.processor.model.ConversionCoverage;
+import org.immutables.value.Value;
 
+import java.util.List;
 import java.util.Optional;
 
 import static dz.jtsgen.processor.model.ConversionCoverage.DIRECT;
@@ -31,27 +33,20 @@ import static dz.jtsgen.processor.util.StringUtils.notEmptytrimmed;
 /**
  * simple representation of parsed arrow expression
  */
-final class TypeMappingExpression {
-    private final String first;
-    private final String second;
-    private final ConversionCoverage conversionCoverage;
+@Value.Immutable
+public abstract class TypeMappingExpression {
 
-    private TypeMappingExpression(String first, String second, ConversionCoverage conversionCoverage) {
-        this.first = first;
-        this.second = second;
-        this.conversionCoverage = conversionCoverage;
-    }
+    @Value.Parameter
+    public abstract List<String> typeVariables();
 
-    public String getFirst() {
-        return first;
-    }
+    @Value.Parameter
+    public abstract List<String> names();
 
-    public String getSecond() {
-        return second;
-    }
+    @Value.Parameter
+    public abstract List<TSExpressionElement> tsExpressionElements();
 
-    public ConversionCoverage getConversionCoverage() {
-        return conversionCoverage;
-    }
+
+    @Value.Parameter
+    public abstract ConversionCoverage conversionCoverage();
 
 }

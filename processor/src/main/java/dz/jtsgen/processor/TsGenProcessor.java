@@ -108,7 +108,7 @@ public class TsGenProcessor extends AbstractProcessorWithLogging {
 
     // process all annotations
     private void processElements(TypeElement annotation, RoundEnvironment roundEnv) {
-        LOG.fine( () -> String.format("P: Processing Annotation %s", annotation.getSimpleName()));
+        LOG.info( () -> String.format("P: Processing Annotation %s", annotation.getSimpleName()));
         if (annotation.getSimpleName().contentEquals(TypeScript.class.getSimpleName())) {
             processTypeScriptAnnotation(annotation, roundEnv);
         } else if (annotation.getSimpleName().contentEquals(TSModule.class.getSimpleName())) {
@@ -123,13 +123,13 @@ public class TsGenProcessor extends AbstractProcessorWithLogging {
         }
     }
 
-    // process TypeScript Annotation
+    // process TypeScript Annotation this is after processing @TSModule
     private void processTypeScriptAnnotation(TypeElement annotation, RoundEnvironment roundEnv) {
 
-        // TODO remove this after calculating name space mapping in renderer
+        // ignore classes with TSIgnore
         Set<Element> annotatedElements = filteredTypeSriptElements(roundEnv);
 
-        // this is needed for: updating data from CLI and calculating a name space mapping, if needed
+        // this is needed for updating data from CLI and calculating a name space mapping, if needed
         new TSModuleInfoEnforcer(this.processingEnv,this.typeScriptModel).createUpdatedTSModuleInfo(annotatedElements).ifPresent( x -> {
             typeScriptModel.addModuleInfo(x);
             final TSProcessingInfo TSProcessingInfo = TSProcessingInfoBuilder.of(annotation, this.processingEnv, typeScriptModel) ;// new TSProcessingInfoImpl(annotation, this.processingEnv, typeScriptModel);

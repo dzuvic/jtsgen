@@ -20,26 +20,43 @@
 
 package dz.jtsgen.processor.dsl.parser;
 
+import java.util.*;
 import java.util.regex.Pattern;
 
 enum TokenType {
     // Token types cannot have underscores
-    WHITESPACE("[ \t\f]+"),
-    JIDENT("[a-zA-Z_]+[a-zA-Z_]*"),
-    ANGLEOPEN("\\<"),
-    ANGLECLOSE("\\>"),
-    DELIM(","),
-    ARROW("-\\>"),
-    DARROW("\\|-\\>"),
-    INVALID(".+");
+    WHITESPACE("^[ \t\f]+"),
+    ANGLE_OPEN("^\\<"),
+    ANGLE_CLOSE("^\\>"),
+    BACKTICK("^`"),
+    DELIM("^,"),
+    DOT("^\\."),
+    ARROW("^-\\>"),
+    DARROW("^\\|-\\>"),
+    TSLIT("^[\\p{Graph}\\p{Blank}&&[^<>,`]]+", TokenType.ARROW, TokenType.DARROW),
+    JIDENT("^[a-zA-Z_]+[a-zA-Z_]*"),
+    INVALID("^.+") // the rest should be invisible or non ascii
+    ;
 
     private final Pattern pattern;
+    private final Set<TokenType> mustPreviouslyMatched;
 
-    TokenType(String pattern) {
+    TokenType(String pattern, TokenType ... previousTokens) {
         this.pattern = Pattern.compile(pattern);
+        this.mustPreviouslyMatched = Collections.unmodifiableSet(  new HashSet<>(Arrays.asList(previousTokens) ));
     }
+
+
 
     public Pattern getPattern() {
         return pattern;
+    }
+
+    public String groupName() {
+        return this.name().replaceAll("_","x0x");
+    }
+
+    public Set<TokenType> getMustPreviouslyMatched() {
+        return mustPreviouslyMatched;
     }
 }

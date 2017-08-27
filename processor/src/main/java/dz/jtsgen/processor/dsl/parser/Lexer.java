@@ -20,42 +20,48 @@
 
 package dz.jtsgen.processor.dsl.parser;
 
-import dz.jtsgen.processor.dsl.ExpLexer;
-import dz.jtsgen.processor.dsl.TokenBuilder;
-
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+/**
+ *
+ * this is the lexer for the mapping DSL. Due to an ambiguity after an ARROW or DARROW the matching
+ * character classes differ if an ARROW occured or not. This is because, the user should have nearly the complete
+ * control, of what after an ARROW (and between an equal)
+ */
 class Lexer {
+
+//    private final  Pattern tokenPatterns = Pattern.compile(
+//            Arrays.stream(TokenType.values())
+//            .map( x-> String.format("(?<%s>%s)", x.groupName(), x.getPattern()) )
+//            .collect(Collectors.joining("|"))
+//    );
 
     List<Token> lex(String input) {
 
         List<Token> tokens = new ArrayList<>();
 
-        // Lexer logic begins here
-        StringBuffer tokenPatternsBuffer = new StringBuffer();
-        for (TokenType tokenType : TokenType.values())
-            tokenPatternsBuffer.append(String.format("|(?<%s>%s)", tokenType.name(), tokenType.getPattern()));
-        Pattern tokenPatterns = Pattern.compile(tokenPatternsBuffer.substring(1));
+        EnumSet<TokenType> tokenTypeSet = EnumSet.noneOf(TokenType.class);
+        int idx=0;
+        String restString = input;
+//        Matcher matcher = tokenPatterns.matcher(input);
 
-        // Begin matching tokens
-        Matcher matcher = tokenPatterns.matcher(input);
-//        while (matcher.find()) {
-//            if (matcher.group(TokenType.NUMBER.name()) != null) {
-//                tokens.add(new Token(TokenType.NUMBER, matcher.group(TokenType.NUMBER.name())));
-//            } else if (matcher.group(TokenType.BINARYOP.name()) != null) {
-//                tokens.add(new Token(TokenType.BINARYOP, matcher.group(TokenType.BINARYOP.name())));
-//            } else if (matcher.group(TokenType.WHITESPACE.name()) != null) {
-//            }
-//        }
-        while (matcher.find()) {
+        while ( ! restString.isEmpty())  {
             for (TokenType tk : TokenType.values()) {
-                if (matcher.group(ExpLexer.TokenType.WHITESPACE.name()) != null)
-                    continue;
-                else if (matcher.group(tk.name()) != null) {
-                    tokens.add( TokenBuilder.of(tk, matcher.group(tk.name()), matcher.start(tk.name())) );
+                Matcher m = tk.getPattern().matcher(restString);
+                Boolean pstream = tk.getMustPreviouslyMatched().stream().anyMatch(tokenTypeSet::contains)  ;
+                final boolean found = m.find();
+//                System.out.println("l " +  tk + " p= " + tk.getMustPreviouslyMatched() +  " prev=" + tokenTypeSet +  "stream=" + pstream + " find=" + found);
+                if ( (tk.getMustPreviouslyMatched().isEmpty() || tk.getMustPreviouslyMatched().stream().anyMatch(tokenTypeSet::contains) ) && found) {
+                    final String group = m.group(0);
+                    tokens.add( TokenBuilder.of(tk, group, idx ) );
+                    tokenTypeSet.add(tk);
+                    idx=idx+ group.length();
+//                    System.out.println("=" + group + " - " + tk);
+                    restString=restString.substring(group.length());
+
                     break;
                 }
             }
