@@ -21,10 +21,7 @@
 package dz.jtsgen.processor.util;
 
 
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Spliterator;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -57,8 +54,7 @@ public interface Either<L, R> extends Iterable<R> {
     L leftValue();
 
 
-    @Override
-    default void forEach(Consumer<? super R> action) {
+    default void ifPresent(Consumer<? super R> action) {
         Objects.requireNonNull(action, "action MUST NOT be null");
         for (R t : this) {
             action.accept(t);
@@ -157,6 +153,20 @@ public interface Either<L, R> extends Iterable<R> {
      */
     default L leftOrNull() {
        return isLeft() ? this.leftValue() : null;
+    }
+
+    /**
+     * return null if Right else the left value
+     */
+    default R rightOrNull() {
+       return isRight() ? this.value() : null;
+    }
+
+    /**
+     * @return return optional od right value if set or optional.empty
+     */
+    default Optional<R> toOptional() {
+        return Optional.ofNullable(rightOrNull());
     }
 }
 

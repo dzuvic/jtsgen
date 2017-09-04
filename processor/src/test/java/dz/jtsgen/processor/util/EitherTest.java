@@ -24,7 +24,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.NoSuchElementException;
-import java.util.function.Function;
 
 import static org.junit.Assert.*;
 
@@ -69,8 +68,9 @@ public class EitherTest {
     }
 
     @Test
-    public void either_forEach() throws Exception {
-        Either.right("20").forEach( x -> assertEquals(x,"20"));
+    public void either_idPresent() throws Exception {
+        Either.right("20").ifPresent(x -> assertEquals(x,"20"));
+        Either.left("20").ifPresent(x -> fail("should not be called"));
     }
 
     @Test

@@ -23,6 +23,7 @@ package dz.jtsgen.processor.model;
 /**
  * A mapper that maps a namespace of string
  */
+@FunctionalInterface
 public interface NameSpaceMapper {
 
     /**

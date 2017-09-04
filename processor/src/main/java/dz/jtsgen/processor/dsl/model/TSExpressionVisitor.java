@@ -18,8 +18,14 @@
  *
  */
 
-package dz.jtsgen.processor.model.tstarget;
+package dz.jtsgen.processor.dsl.model;
 
-public interface TargetWithNameSpace {
-    String tsNameSpace();
+public interface  TSExpressionVisitor<B> {
+
+    B visitTerminal(TSMappedTerminal t);
+
+    B visitTypeVar(TSMappedTypeVar t);
+
+    B visitTypeContainer(TSMappedTypeContainer t);
+
 }

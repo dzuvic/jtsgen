@@ -49,7 +49,7 @@ import static org.junit.Assert.*;
 @RunWith(JUnit4.class)
 public class TsGenProcessorTest {
 
-    private final boolean DUMP_FILES = false;
+    private final boolean DUMP_FILES = true;
 
     @Test
     public void check_simple_interface_Full_Logging() {

@@ -60,5 +60,20 @@ public interface TSTargetType {
      * @return a map of type variables types
      */
     Map<String,TSTargetType> typeParameterTypes();
+
+    /**
+     * @return an instance, that has the namespace mapped
+     */
+    default TSTargetType mapNameSpace(NameSpaceMapper nsm) {
+        return this;
+    }
+
+    /**
+     * @param typeParams the new type params
+     * @return an instance, with changed type params
+     */
+    default TSTargetType withTypeParams(Map<String,TSTargetType> typeParams) {
+        return this;
+    }
 }
 

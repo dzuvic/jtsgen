@@ -20,45 +20,54 @@
 
 package dz.jtsgen.processor.model.tstarget;
 
+import dz.jtsgen.processor.dsl.model.*;
+import dz.jtsgen.processor.dsl.model.TypeMappingExpression;
 import dz.jtsgen.processor.model.ConversionCoverage;
+import dz.jtsgen.processor.model.NameSpaceMapper;
 import dz.jtsgen.processor.model.TSTargetType;
 import dz.jtsgen.processor.util.StringUtils;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static dz.jtsgen.processor.model.tstarget.TSTargetFactory.mapNamespaces;
+import static dz.jtsgen.processor.util.LilltleLazy.lazy;
+
 /**
- *  represents a simple type direct conversion for declaration types
+ * represents a simple type direct conversion for declaration types
  */
-final class TSTargetDeclType implements TSTargetType, TSTargetInternal {
+final class TSTargetDeclType implements TSTargetType {
 
-    private  final String javaType;
+    //the canonical java type, lazyly evaluated
+    private final Supplier<String> javaType;
+    private final Supplier<String> nameSpace;
 
-    /**
-     * the resulting target type name, currently as String
-     */
-    private  final String tsTypeName;
-    private final String tsNameSpace;
-    private final List<String> typeParameters;
-    private  final Map<String,TSTargetType> typeParametersTypes;
-    private final ConversionCoverage conversionCoverage;
+    private final TypeMappingExpression mappingExpression;
+    private final Map<String, TSTargetType> typeParametersTypes;
 
-    TSTargetDeclType(String javaType, String tsTypeName, List<String> typeParameters, Map<String, TSTargetType> typeParametersTypes, ConversionCoverage conversionCoverage, String tsNameSpace) {
-        this.javaType = javaType;
-        this.tsNameSpace = tsNameSpace == null ? StringUtils.untill(javaType) : tsNameSpace;
-        this.tsTypeName = tsTypeName;
-        this.typeParameters = typeParameters == null ? Collections.emptyList() : typeParameters;
-        this.conversionCoverage = conversionCoverage == null ? ConversionCoverage.DIRECT : conversionCoverage;
+    private TSTargetDeclType(TypeMappingExpression mappingExpression, Map<String, TSTargetType> typeParametersTypes, Supplier<String> javaType, Supplier<String> namespace) {
+        assert mappingExpression != null;
+        this.javaType = javaType == null ? lazy(() -> mappingExpression.names().stream().collect(Collectors.joining("."))) : javaType;
+        this.mappingExpression = mappingExpression;
         this.typeParametersTypes = typeParametersTypes == null ? new HashMap<>() : typeParametersTypes;
+        this.nameSpace = namespace == null ? lazy(() -> StringUtils.untill(javaType())) : namespace;
     }
 
+    TSTargetDeclType(TypeMappingExpression mappingExpression, Map<String, TSTargetType> typeParametersTypes, boolean ignoreSelfNamespace) {
+        this(mappingExpression, typeParametersTypes, null, ignoreSelfNamespace ? lazy(() -> "") : null);
+    }
+
+
     public String getJavaType() {
-        return javaType;
+        return this.javaType.get();
     }
 
     @Override
     public ConversionCoverage conversionCoverage() {
-        return this.conversionCoverage;
+        return this.mappingExpression.conversionCoverage();
     }
 
     /**
@@ -66,18 +75,16 @@ final class TSTargetDeclType implements TSTargetType, TSTargetInternal {
      */
     @Override
     public String toString() {
-        StringBuilder result=new StringBuilder();
-        if (!"".equals(this.tsNameSpace())) result.append(this.tsNameSpace()).append(".");
-        result.append(tsTypeName);
-        if (typeParametersTypes.size() > 0) {
-            result.append("<");
-            result.append(
-                    typeParameters.stream().map(x -> (typeParametersTypes.get(x) != null) ? typeParametersTypes.get(x).toString() : null)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.joining(", ")));
-            result.append(">");
-        }
+        StringBuilder result = new StringBuilder();
+        // IMPROVE: add implicit name space to DSL and dont't do the following if not specified
+        if (!"".equals(this.nameSpace.get())) result.append(this.nameSpace.get()).append(".");
+        result.append(tsLiteralsToString(mappingExpression.tsExpressionElements(), typeParametersTypes));
         return result.toString();
+    }
+
+    private static String tsLiteralsToString(List<TSExpressionElement> tsExpressionElements, Map<String, TSTargetType> typeParametersTypes) {
+        TSExpressionVisitor<String> visitor = new TSExpressionVisitorToStringConverter<String>(typeParametersTypes);
+        return tsExpressionElements.stream().map(x -> x.accept(visitor)).collect(Collectors.joining(""));
     }
 
     @Override
@@ -87,7 +94,7 @@ final class TSTargetDeclType implements TSTargetType, TSTargetInternal {
 
     @Override
     public List<String> typeParameters() {
-        return this.typeParameters;   
+        return this.mappingExpression.typeVariables();
     }
 
     @Override
@@ -95,14 +102,47 @@ final class TSTargetDeclType implements TSTargetType, TSTargetInternal {
         return this.typeParametersTypes;
     }
 
-    @Override
-    public String tsTypeName() {
-        return this.tsTypeName;
+    private String javaType() {
+        return this.javaType.get();
     }
 
     @Override
-    public String tsNameSpace() {
-        return this.tsNameSpace;
+    public TSTargetType mapNameSpace(NameSpaceMapper nsm) {
+        final String newNameSpace = nsm.mapNameSpace(this.nameSpace.get());
+        return new TSTargetDeclType(
+                this.mappingExpression
+                , mapNamespaces(this.typeParametersTypes, nsm), this.javaType, () -> newNameSpace);
+    }
+
+    @Override
+    public TSTargetType withTypeParams(Map<String, TSTargetType> typeParams) {
+        return new TSTargetDeclType(this.mappingExpression, typeParams, this.javaType, this.nameSpace);
+    }
+
+}
+
+class TSExpressionVisitorToStringConverter<T> implements TSExpressionVisitor<String> {
+
+    private final Map<String, TSTargetType> resolvedTypeVars;
+
+    TSExpressionVisitorToStringConverter(Map<String, TSTargetType> typeParametersTypes) {
+        this.resolvedTypeVars = typeParametersTypes;
+    }
+
+    @Override
+    public String visitTerminal(TSMappedTerminal t) {
+        return t.value();
+    }
+
+    @Override
+    public String visitTypeVar(TSMappedTypeVar t) {
+        return resolvedTypeVars.get(t.value()) != null ? resolvedTypeVars.get(t.value()).toString() : "";
+    }
+
+    @Override
+    public String visitTypeContainer(TSMappedTypeContainer t) {
+        return t.expressions().stream().map( x -> x.accept(this)).collect(Collectors.joining(""));
     }
 }
+
 

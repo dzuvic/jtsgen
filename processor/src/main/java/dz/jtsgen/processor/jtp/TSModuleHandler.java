@@ -25,6 +25,7 @@ import dz.jtsgen.annotations.OutputType;
 import dz.jtsgen.annotations.TSModule;
 import dz.jtsgen.processor.model.*;
 import dz.jtsgen.processor.model.tstarget.TSTargetFactory;
+import dz.jtsgen.processor.util.Either;
 import dz.jtsgen.processor.util.StringUtils;
 
 import javax.annotation.processing.ProcessingEnvironment;
@@ -180,10 +181,10 @@ public final class TSModuleHandler {
                 return vals.stream()
                         .map(x -> {
                             String value = (String) x.getValue();
-                            Optional<TSTargetType> result = TSTargetFactory.createTSTargetByMapping(value);
-                            if (!result.isPresent())
-                                env.getMessager().printMessage(Diagnostic.Kind.ERROR, "param not valid. Expecting origin and target type separated by '->'. Got:" + x, element);
-                            return result;
+                            Either<String,TSTargetType> result = TSTargetFactory.createTSTargetByDSL(value);
+                            if (result.isLeft())
+                                env.getMessager().printMessage(Diagnostic.Kind.ERROR, "param not valid:" + x + "error: " + result.leftValue(), element);
+                            return result.toOptional();
                         })
                         .filter(Optional::isPresent)
                         .map(Optional::get)

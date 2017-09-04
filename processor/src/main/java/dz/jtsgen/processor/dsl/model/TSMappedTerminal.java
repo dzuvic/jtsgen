@@ -22,19 +22,14 @@ package dz.jtsgen.processor.dsl.model;
 
 import org.immutables.value.Value;
 
+/**
+ * Represents a terminal symbol
+ */
 @Value.Immutable
 public abstract class TSMappedTerminal implements TSExpressionElement {
 
     @Override
-    @Value.Default
-    public boolean isLiteral() {
-        return true;
+    public <B> B accept(TSExpressionVisitor<B> v) {
+        return v.visitTerminal(this);
     }
-
-    @Override
-    @Value.Default
-    public boolean isVariable() {
-        return false;
-    }
-    
 }

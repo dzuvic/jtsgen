@@ -34,7 +34,7 @@ enum TokenType {
     ARROW("^-\\>"),
     DARROW("^\\|-\\>"),
     TSLIT("^[\\p{Graph}\\p{Blank}&&[^<>,`]]+", TokenType.ARROW, TokenType.DARROW),
-    JIDENT("^[a-zA-Z_]+[a-zA-Z_]*"),
+    JIDENT("^[a-zA-Z_]+[a-zA-Z_0-9]*"),
     INVALID("^.+") // the rest should be invisible or non ascii
     ;
 

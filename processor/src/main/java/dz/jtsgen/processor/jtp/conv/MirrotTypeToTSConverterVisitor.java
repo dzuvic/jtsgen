@@ -24,7 +24,6 @@ package dz.jtsgen.processor.jtp.conv;
 import dz.jtsgen.processor.model.TSTargetType;
 import dz.jtsgen.processor.model.TSType;
 import dz.jtsgen.processor.model.TypeScriptModel;
-import dz.jtsgen.processor.model.tstarget.TSTargetFactory;
 import dz.jtsgen.processor.model.tstarget.TSTargets;
 import dz.jtsgen.processor.util.StreamUtils;
 import dz.jtsgen.processor.util.Tuple;
@@ -41,7 +40,8 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static dz.jtsgen.processor.model.tstarget.TSTargetFactory.createTSTargetByMapping;
+import static dz.jtsgen.processor.model.tstarget.TSTargetFactory.createTSTargetByDSL;
+import static dz.jtsgen.processor.model.tstarget.TSTargetFactory.createTSTargetByDSLWithNS;
 import static dz.jtsgen.processor.model.tstarget.TSTargets.*;
 import static dz.jtsgen.processor.util.StreamUtils.firstOptional;
 import static dz.jtsgen.processor.util.StringUtils.withoutTypeArgs;
@@ -138,7 +138,8 @@ class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTargetType, 
                                     return new Tuple<>(it.getSecond(), tsTargetType);
                     })
                     .collect(Collectors.toMap(Tuple::getFirst, Tuple::getSecond));
-            return TSTargetFactory.copyWithTypeParams(tstype, typeParamMap, null);
+            //return TSTargetFactory.copyWithTypeParams(tstype, typeParamMap, null);
+            return tstype.withTypeParams(typeParamMap);
         }
         return tstype;
     }
@@ -151,12 +152,12 @@ class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTargetType, 
         Element javaElement = env().getTypeUtils().asElement(t);
         LOG.finest(() -> "TCSV: not in Model " + javaElement);
         //add a dummy type, to stop endless recursive calls
-        createTSTargetByMapping("" + nameOfType + "->" + "any").ifPresent(x -> model().addTSTarget(x));
+        createTSTargetByDSL("" + nameOfType + "->" + "any").ifPresent(x -> model().addTSTarget(x));
         final Optional<TypeElement> typeElement = Optional.ofNullable( (javaElement instanceof TypeElement) ? (TypeElement) javaElement :null);
         final Optional<TSType> tsType = typeElement.flatMap( x -> new TypeScriptAnnotationProcessor(TSProcessingInfo).convertJavaType(x));
         final Optional<TSTargetType> result = tsType.flatMap(x -> {
             model().addTSTypes(Collections.singletonList(x));
-            return createTSTargetByMapping("" + nameOfType + "->" + ("".equals(x.getNamespace())? "" : x.getNamespace()+".") +x.getName());
+            return createTSTargetByDSLWithNS("" + nameOfType + "->" + x.getName()).toOptional();
         });
         LOG.finest(() -> "TCSV: converted " + t + " to " + tsType );
         // afterwards change the created mapping info accordingly
@@ -172,6 +173,8 @@ class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTargetType, 
             LOG.finest(() -> "TCSV: declared Type in conversion List:" + nameOfType);
             return Optional.of(this.declaredTypeConversions.get(nameOfType));
         }
+
+        LOG.finest(() -> "TCSV: declared Type NOT in conversion List:" + nameOfType);
 
         // exclude the mother of all java types, any will be resolved later
         List<? extends TypeMirror> supertypes = env().getTypeUtils().directSupertypes(t).stream().filter(

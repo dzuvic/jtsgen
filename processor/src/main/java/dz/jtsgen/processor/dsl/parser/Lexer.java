@@ -26,41 +26,31 @@ import java.util.List;
 import java.util.regex.Matcher;
 
 /**
- *
  * this is the lexer for the mapping DSL. Due to an ambiguity after an ARROW or DARROW the matching
  * character classes differ if an ARROW occured or not. This is because, the user should have nearly the complete
  * control, of what after an ARROW (and between an equal)
  */
 class Lexer {
 
-//    private final  Pattern tokenPatterns = Pattern.compile(
-//            Arrays.stream(TokenType.values())
-//            .map( x-> String.format("(?<%s>%s)", x.groupName(), x.getPattern()) )
-//            .collect(Collectors.joining("|"))
-//    );
-
     List<Token> lex(String input) {
 
         List<Token> tokens = new ArrayList<>();
 
         EnumSet<TokenType> tokenTypeSet = EnumSet.noneOf(TokenType.class);
-        int idx=0;
+        int idx = 0;
         String restString = input;
-//        Matcher matcher = tokenPatterns.matcher(input);
 
-        while ( ! restString.isEmpty())  {
+        while (!restString.isEmpty()) {
             for (TokenType tk : TokenType.values()) {
                 Matcher m = tk.getPattern().matcher(restString);
-                Boolean pstream = tk.getMustPreviouslyMatched().stream().anyMatch(tokenTypeSet::contains)  ;
+                final Boolean prevMatchedAny = tk.getMustPreviouslyMatched().stream().anyMatch(tokenTypeSet::contains);
                 final boolean found = m.find();
-//                System.out.println("l " +  tk + " p= " + tk.getMustPreviouslyMatched() +  " prev=" + tokenTypeSet +  "stream=" + pstream + " find=" + found);
-                if ( (tk.getMustPreviouslyMatched().isEmpty() || tk.getMustPreviouslyMatched().stream().anyMatch(tokenTypeSet::contains) ) && found) {
+                if ((tk.getMustPreviouslyMatched().isEmpty() || prevMatchedAny) && found) {
                     final String group = m.group(0);
-                    tokens.add( TokenBuilder.of(tk, group, idx ) );
+                    tokens.add(TokenBuilder.of(tk, group, idx));
                     tokenTypeSet.add(tk);
-                    idx=idx+ group.length();
-//                    System.out.println("=" + group + " - " + tk);
-                    restString=restString.substring(group.length());
+                    idx = idx + group.length();
+                    restString = restString.substring(group.length());
 
                     break;
                 }

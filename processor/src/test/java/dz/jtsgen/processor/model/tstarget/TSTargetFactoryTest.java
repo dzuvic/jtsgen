@@ -26,13 +26,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 
-import static dz.jtsgen.processor.model.tstarget.TSTargetFactory.createTSTargetByMapping;
+import static dz.jtsgen.processor.model.tstarget.TSTargetFactory.createTSTargetByDSL;
 import static org.junit.Assert.*;
 
 public class TSTargetFactoryTest {
     @Test
     public void test_createTSTargetByMapping_Type_Param() throws Exception {
-        createTSTargetByMapping("java.util.Collection<T> -> Array<T>").map(
+        createTSTargetByDSL("java.util.Collection<T> -> Array<T>").map(
             x -> {
                 assertEquals(x.typeParameters(), Collections.singletonList("T"));
                 assertEquals(x.getJavaType(),"java.util.Collection");
@@ -45,10 +45,10 @@ public class TSTargetFactoryTest {
 
     @Test
     public void test_createTSTargetByMapping_Type_TS_Literal() throws Exception {
-        createTSTargetByMapping("java.util.Collection<T> -> `T`[]").map(
+        createTSTargetByDSL("java.util.List<T> -> `T`[]").map(
             x -> {
                 assertEquals(x.typeParameters(), Collections.singletonList("T"));
-                assertEquals(x.getJavaType(),"java.util.Collection");
+                assertEquals(x.getJavaType(),"java.util.List");
                 assertEquals(x.isReferenceType(),true);
                 assertEquals(x.typeParameterTypes(), new HashMap<>());
                 return x;
@@ -58,7 +58,7 @@ public class TSTargetFactoryTest {
 
     @Test
     public void test_createTSTargetByMapping_Two_Types_Param() throws Exception {
-        createTSTargetByMapping("java.util.Map<K,V> -> Map<K,V>").map(
+        createTSTargetByDSL("java.util.Map<K,V> -> Map<K,V>").map(
             x -> {
                 assertEquals(x.typeParameters(), Arrays.asList("K","V"));
                 assertEquals(x.getJavaType(),"java.util.Map");

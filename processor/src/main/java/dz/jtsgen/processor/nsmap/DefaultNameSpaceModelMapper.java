@@ -21,7 +21,6 @@
 package dz.jtsgen.processor.nsmap;
 
 import dz.jtsgen.processor.model.*;
-import dz.jtsgen.processor.model.tstarget.TSTargetFactory;
 
 import javax.lang.model.element.Element;
 import java.util.ArrayList;
@@ -65,7 +64,10 @@ final class DefaultNameSpaceModelMapper implements NameSpaceModelMapper {
 
     private List<TSMember> mapMembers(List<TSMember> members, NameSpaceMapper mapper) {
         return members.stream().map (x -> {
-            TSTargetType newTSTarget = TSTargetFactory.changeNameSpace(x.getType(),mapper);
+            //TODO
+//            ToDo.todo("check");
+//            TSTargetType newTSTarget = TSTargetFactory.changeNameSpace(x.getType(),mapper);
+            TSTargetType newTSTarget = x.getType().mapNameSpace(mapper);
             LOG.finest(() -> "DNSM mapping member " + x.getName() + ": " + x.getType() + " -> " + newTSTarget);
             return x.changedTSTarget(newTSTarget);
         }).collect(Collectors.toList());

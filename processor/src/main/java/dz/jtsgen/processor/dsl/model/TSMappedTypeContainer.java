@@ -22,11 +22,18 @@ package dz.jtsgen.processor.dsl.model;
 
 import org.immutables.value.Value;
 
-public interface TSExpressionElement {
+import java.util.List;
 
-    @Value.Parameter
-    String value();
+/**
+ * represents several type variables including the angle bracket
+ */
+@Value.Immutable
+public abstract class TSMappedTypeContainer implements TSExpressionElement {
 
-    <B> B accept(TSExpressionVisitor<B> v);
-    
+    public abstract List<TSExpressionElement> expressions();
+
+    @Override
+    public <B> B accept(TSExpressionVisitor<B> v) {
+        return v.visitTypeContainer(this);
+    }
 }

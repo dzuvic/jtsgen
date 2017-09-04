@@ -48,10 +48,10 @@ dependencies {
     testCompile 'com.github.mifmif:generex:1.0.2'
     
 
-    apt "org.immutables:value:2.5.3" // for annotation processor
+    apt "org.immutables:value:2.5.5" // for annotation processor
 //    apt 'org.immutables:value-processor:2.5.3'
-    implementation "org.immutables:value:2.5.3" // for annotations
-    implementation "org.immutables:builder:2.5.3" // for annotations
+    implementation "org.immutables:value:2.5.5" // for annotations
+    implementation "org.immutables:builder:2.5.5" // for annotations
     
     compileOnly  files(Jvm.current().toolsJar)
 

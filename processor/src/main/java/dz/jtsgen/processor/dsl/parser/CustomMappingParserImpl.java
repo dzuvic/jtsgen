@@ -25,10 +25,7 @@ import dz.jtsgen.processor.dsl.model.*;
 import dz.jtsgen.processor.model.ConversionCoverage;
 import dz.jtsgen.processor.util.Either;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -50,6 +47,7 @@ public class CustomMappingParserImpl implements CustomMappingParser {
     private final List<String> javaTypevars = new LinkedList<>();
     private final List<String> javaNames = new LinkedList<>();
     private final List<TSExpressionElement> tsLiterals = new LinkedList<>();
+    private final Deque<List<TSExpressionElement>> tsTypeExpr = new LinkedList<>();
 
     private String errorMsg = "";
 
@@ -63,10 +61,10 @@ public class CustomMappingParserImpl implements CustomMappingParser {
     @Override
     public Either<String, TypeMappingExpression> parse(String expression) {
         final List<Token> lexed = lexer.lex(expression);
-        LOG.finest( () -> "CMP tokens of '" + expression + "' = " + lexed);
+        // LOG.finest( () -> "CMP tokens of '" + expression + "' = " + lexed);
         label:
         for (Token token : lexed) {
-            LOG.finest( () -> "CMP ( " + pState.ordinal() + "): token=" + token);
+            // LOG.finest( () -> "CMP ( " + pState.ordinal() + "): token=" + token);
             if (token.type() == INVALID)
                 return Either.left("Invalid token '" + token.data() + "' at pos " + token.index() + " of expression " + expression);
             switch (token.type())  {
@@ -105,22 +103,30 @@ public class CustomMappingParserImpl implements CustomMappingParser {
     private void processAngleClose(Token token) {
         if (pState == JAVA_TYPES) this.pState = JAVA_NAMES;
         else if (pState == TS_TYPES) {
-            addTsLit(token);
+            this.tsLiterals.add(newTypeContainer(tsTypeExpr.pop(),token));
             this.pState = TS_PARSING;
         }
         else errorMsg = "closing angle bracket without opening";
 
     }
 
+    private TSExpressionElement newTypeContainer(List<TSExpressionElement> pop, Token token) {
+        // mutable operation...
+        pop.add(TSMappedTerminalBuilder.of(token.data()));
+        return TSMappedTypeContainerBuilder
+                .of( pop.stream().map(TSExpressionElement::value).collect(Collectors.joining("")))
+                .withExpressions(pop);
+    }
+
     private void processDelim(Token token) {
-        if (pState == TS_TYPES) addTsLit(token);
+        if (pState == TS_TYPES) this.tsTypeExpr.getFirst().add(TSMappedTerminalBuilder.of( token.data()));
         else if (pState != JAVA_TYPES) this.errorMsg="unexpected separator";
     }
 
     private void processAngleOpen(Token token) {
         if (this.pState==JAVA_NAMES) this.pState = JAVA_TYPES;
         else if (this.pState==TS_PARSING) {
-            addTsLit(token);
+            this.tsTypeExpr.push(newTsTypeVarExpr(token));
             this.pState = TS_TYPES;
         }
         else this.errorMsg="unexpected bracket while " + pState;
@@ -129,22 +135,26 @@ public class CustomMappingParserImpl implements CustomMappingParser {
 
     private void processTsLit(Token token) {
         if (this.pState==TS_PARSING) tsLiterals.add(TSMappedTerminalBuilder.of( token.data()) );
-        else if (this.pState==TS_TYPES ) addTsVar(token);
+        else if (this.pState==TS_TYPES ) addTsVar(token).ifPresent( x -> this.tsTypeExpr.getFirst().add(x));
         else if (this.pState==TS_SINGLE_TYPE) {
-            addTsVar(token);
+            addTsVar(token).ifPresent(this.tsLiterals::add);
             this.pState=TS_CLOSING_SINGLE_TYPE;
         }
-        else this.errorMsg="unexpeced Type Script Identifier";
+        else this.errorMsg="unexpected Type Script Identifier";
     }
 
-    private void addTsLit(Token token) {
-        tsLiterals.add(TSMappedTerminalBuilder.of( token.data()) );
+    private List<TSExpressionElement> newTsTypeVarExpr (Token token) {
+        List<TSExpressionElement> result = new ArrayList<>();
+        result.add( TSMappedTerminalBuilder.of( token.data()) );
+        return result;
     }
 
-    private void addTsVar(Token token) {
+    private Optional<TSMappedTypeVar> addTsVar(Token token) {
         if (this.javaTypevars.stream().anyMatch(x -> x.equals(token.data())))
-          tsLiterals.add(TSMappedTypeVarBuilder.of( token.data()) );
-        else this.errorMsg="TS type variable not defined on LHS (" + this.javaTypevars.stream().collect(Collectors.joining()) + ")";
+          return Optional.of(TSMappedTypeVarBuilder.of( token.data()) );
+
+        this.errorMsg="TS type variable not defined on LHS (" + this.javaTypevars.stream().collect(Collectors.joining()) + ")";
+        return Optional.empty();
     }
 
     private void processArrow(Token token) {
@@ -164,7 +174,7 @@ public class CustomMappingParserImpl implements CustomMappingParser {
     private void processIdent(Token token) {
         if (pState==JAVA_NAMES) this.javaNames.add(token.data());
         else if (pState==JAVA_TYPES) this.javaTypevars.add(token.data());
-        else this.errorMsg="Unexpexted identifier ";
+        else this.errorMsg="Unexpected java identifier";
 
 
     }

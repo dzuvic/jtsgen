@@ -22,18 +22,14 @@ package dz.jtsgen.processor.dsl.model;
 
 import org.immutables.value.Value;
 
+/**
+ * represents a single type variable
+ */
 @Value.Immutable
 public abstract class TSMappedTypeVar implements TSExpressionElement {
 
     @Override
-    @Value.Default
-    public boolean isLiteral() {
-        return false;
-    }
-
-    @Override
-    @Value.Default
-    public boolean isVariable() {
-        return true;
+    public <B> B accept(TSExpressionVisitor<B> v) {
+        return v.visitTypeVar(this);
     }
 }

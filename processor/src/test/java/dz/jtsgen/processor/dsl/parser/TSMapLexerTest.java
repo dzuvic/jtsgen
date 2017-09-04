@@ -48,7 +48,7 @@ public class TSMapLexerTest {
                 Arrays.asList(
                         TokenBuilder.of(TokenType.JIDENT,"abc",0),
                         TokenBuilder.of(TokenType.ARROW,"->",3),
-                        TokenBuilder.of(TokenType.JIDENT,"T",5)
+                        TokenBuilder.of(TokenType.TSLIT,"T",5)
                 ),
                 lexer.lex("abc->T"));
     }
@@ -67,8 +67,8 @@ public class TSMapLexerTest {
                             TokenType.DARROW
                     }) {
             Generex generex = new Generex(t.getPattern().pattern());
-            generex.setSeed(2);
-            String random=generex.random();
+            generex.setSeed(3);
+            String random=generex.random().substring(1);
             List<Token> tokens = lexer.lex(random);
 
             assertFalse("should match at least once for input '" + random +"'",tokens.isEmpty());
@@ -110,6 +110,12 @@ public class TSMapLexerTest {
         assertEquals(TokenType.JIDENT, tokens.get(0).type());
         assertEquals(TokenType.ARROW, tokens.get(5).type());
         assertEquals(TokenType.TSLIT, tokens.get(6).type());
+    }
+
+    @Test
+    public void testJavaLidentifierWithNumber() {
+        List<Token> token = lexer.lex("jts.modules.testM1.m2.InterFaceTestModuleM2MustBeIn->jts.modules.testM1.m2.InterFaceTestModuleM2MustBeIn");
+        assertFalse(token.stream().anyMatch(x->x.type().equals(TokenType.INVALID)));
     }
 
     @Test

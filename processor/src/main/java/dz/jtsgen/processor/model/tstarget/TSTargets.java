@@ -22,7 +22,7 @@ package dz.jtsgen.processor.model.tstarget;
 
 import dz.jtsgen.processor.model.TSTargetType;
 
-import static dz.jtsgen.processor.model.tstarget.TSTargetFactory.createTSTargetByMapping;
+import static dz.jtsgen.processor.model.tstarget.TSTargetFactory.createTSTargetByDSL;
 
 /**
  * fixed Mappings
@@ -30,15 +30,16 @@ import static dz.jtsgen.processor.model.tstarget.TSTargetFactory.createTSTargetB
 public final class TSTargets {
     public static final TSTargetType NONE = new TSTargetPrimitiveType("", "Never");
     public static final TSTargetType NULL = new TSTargetPrimitiveType("null","null");
-    public static final TSTargetType ANY = createTSTargetByMapping(" any -> any").orElse(NONE);
-    public static final TSTargetType VOID = createTSTargetByMapping("java.lang.Void -> Void").orElse(NONE);
+    public static final TSTargetType ANY = createTSTargetByDSL(" any -> any").orElse(NONE);
+    public static final TSTargetType VOID = createTSTargetByDSL("java.lang.Void -> Void").orElse(NONE);
 
-    public static final TSTargetType OBJECT = createTSTargetByMapping(" java.lang.Object -> Object").orElse(NONE);
-    public static final TSTargetType STRING = createTSTargetByMapping("java.lang.String -> string").orElse(NONE);
-    public static final TSTargetType CHARACTER = createTSTargetByMapping("java.lang.Character -> string").orElse(NONE);
-    public static final TSTargetType NUMBER = createTSTargetByMapping("java.lang.Number >-> number").orElse(NONE);
-    public static final TSTargetType BOOLEAN =  createTSTargetByMapping("java.lang.Boolean -> boolean").orElse(NONE);
+    //TODO check if this is correct
+    public static final TSTargetType OBJECT = createTSTargetByDSL(" java.lang.Object -> Object").orElse(NONE);
+    public static final TSTargetType STRING = createTSTargetByDSL("java.lang.String -> string").orElse(NONE);
+    public static final TSTargetType CHARACTER = createTSTargetByDSL("java.lang.Character -> string").orElse(NONE);
+    public static final TSTargetType NUMBER = createTSTargetByDSL("java.lang.Number -> number").orElse(NONE);
+    public static final TSTargetType BOOLEAN =  createTSTargetByDSL("java.lang.Boolean -> boolean").orElse(NONE);
 
-    public static final TSTargetType COLLECTION = createTSTargetByMapping("java.util.Collection<T> -> Array<T>").orElse(NONE);
-    public static final TSTargetType MAPS = createTSTargetByMapping("java.util.Map<U,V> -> Map<U,V>").orElse(NONE);
+    public static final TSTargetType COLLECTION = createTSTargetByDSL("java.util.Collection<T> -> `T`[]").orElse(NONE);
+    public static final TSTargetType MAPS = createTSTargetByDSL("java.util.Map<U,V> -> { [key: `U`]: `V`; }").orElse(NONE);
 }
