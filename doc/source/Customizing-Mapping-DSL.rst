@@ -28,8 +28,8 @@ a literal way. After the arrow the type variables can be expresed using the back
     java.util.List<T> -> `T`[]
 
 
-**Limits**: There are some constraints using those expressions: it is not possible to express any the name spaces at the
-right hand side in a proper way. jtsgen might add a namespace to the mapping by itself. But currently acessing this name
+**Limits**: There are some constraints using those expressions: it is not possible to express the name spaces at the
+right hand side in a proper way. jtsgen adds a namespace to the java declaration types. Currently acessing this name
 space is out of scope.
 
 
@@ -45,7 +45,7 @@ The annotation processor has the following conversions for declaration types con
     * java.lang.Number \|-> number
     * java.lang.Boolean -> boolean
     * java.util.Collection<T> -> `T`[]
-    * java.util.Map<U,V> -> Map<U,V>
+    * java.util.Map<U,V> -> { [key: `U`]: `V`; }
 
 
 The Processor has no knowledge about the the necessary imports.

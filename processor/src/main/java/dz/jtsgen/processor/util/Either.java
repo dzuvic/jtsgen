@@ -27,7 +27,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static dz.jtsgen.processor.util.ToDo.todo;
+import static dz.jtsgen.processor.util.ToDo.todoEx;
 
 /**
  * Simple Either type. Right centered.
@@ -63,7 +63,7 @@ public interface Either<L, R> extends Iterable<R> {
 
     @Override
     default Spliterator<R> spliterator() {
-        return todo("not needed");
+        throw  todoEx("not needed");
     }
 
     default <U> U fold(Function<? super L, ? extends U> f_left, Function<? super R, ? extends U> f_right) {
@@ -168,6 +168,7 @@ public interface Either<L, R> extends Iterable<R> {
     default Optional<R> toOptional() {
         return Optional.ofNullable(rightOrNull());
     }
+
 }
 
 /**
@@ -209,6 +210,19 @@ final class Left<L, R> implements Either<L, R>  {
         sb.append('}');
         return sb.toString();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Left)) return false;
+        Left<?, ?> left = (Left<?, ?>) o;
+        return Objects.equals(value, left.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
+    }
 }
 
 /**
@@ -249,6 +263,19 @@ final class Right<L, R>  implements Either<L, R>  {
         sb.append("value=").append(value);
         sb.append('}');
         return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Right)) return false;
+        Right<?, ?> right = (Right<?, ?>) o;
+        return Objects.equals(value, right.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
     }
 }
 

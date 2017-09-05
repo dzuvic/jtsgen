@@ -20,31 +20,32 @@
 
 package dz.jtsgen.processor.util;
 
-import java.util.Arrays;
-import java.util.StringJoiner;
-import java.util.stream.Collectors;
+import org.junit.Test;
 
-/**
- * Simple class, that marks
- */
-public class ToDo {
-    public static <R> R todo(String ... msg) {
-        throw new NotImplented(msg);
+import static org.junit.Assert.*;
+
+// just check no NPE occurs
+public class ToDoTest {
+
+    @Test(expected = dz.jtsgen.processor.util.NotImplented.class)
+    public void test_todo1() throws Exception {
+        ToDo.todo("null");
     }
 
-    public static RuntimeException todoEx(String ... msg) {
-        return new NotImplented(msg);
-    }
-}
-
-class NotImplented extends RuntimeException {
-    NotImplented(String[] msg) {
-        super(createMessageString(msg));
+    @Test(expected = dz.jtsgen.processor.util.NotImplented.class)
+    public void test_todo0() throws Exception {
+        ToDo.todo();
     }
 
-    private static String createMessageString(String[] msg) {
-        return msg==null || msg.length == 0 || msg[0] == null ?
-                "no description"
-                : Arrays.stream(msg).collect(Collectors.joining());
+    @Test(expected = dz.jtsgen.processor.util.NotImplented.class)
+    public void test_todo2() throws Exception {
+        ToDo.todo((String) null);
     }
+
+    @Test(expected = dz.jtsgen.processor.util.NotImplented.class)
+    public void test_todo3() throws Exception {
+        ToDo.todo((String[]) null);
+    }
+
+
 }

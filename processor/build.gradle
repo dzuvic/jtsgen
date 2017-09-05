@@ -92,6 +92,11 @@ jacocoTestReport {
         classDirectories = files(classDirectories.files.collect {
             fileTree(dir: it, exclude: [
                     // exclude generated sources
+                    '/dz/jtsgen/processor/dsl/model/TSMappedTerminalBuilder*',
+                    '/dz/jtsgen/processor/dsl/model/TSMappedTypeContainerBuilder*',
+                    '/dz/jtsgen/processor/dsl/model/TSMappedTypeVarBuilder*',
+                    '/dz/jtsgen/processor/dsl/model/TypeMappingExpressionBuilder*',
+                    '/dz/jtsgen/processor/dsl/parser/TokenBuilder*',
                     '/dz/jtsgen/processor/jtp/conv/TSProcessingInfoBuilder*',
                     '/dz/jtsgen/processor/model/NameSpaceMappingBuilder*',
                     '/dz/jtsgen/processor/model/TSEnumBuilder*',

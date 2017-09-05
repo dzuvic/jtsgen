@@ -25,6 +25,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 import static dz.jtsgen.processor.util.StringUtils.*;
 import static org.junit.Assert.*;
@@ -139,6 +140,14 @@ public class StringUtilsTest {
     @Test
     public void isPackageFriendly_boundary_cases() throws Exception {
         assertFalse(isPackageFriendly(null));
+    }
+
+    @Test
+    public void test_splitInTwo() throws Exception {
+        assertEquals(Optional.empty(),StringUtils.splitIntoTwo(null));
+        assertEquals(Optional.empty(),StringUtils.splitIntoTwo(""));
+        assertEquals(Optional.empty(),StringUtils.splitIntoTwo("->->"));
+        assertEquals(Optional.of(new Tuple<>("a", "b")),StringUtils.splitIntoTwo("a->b"));
     }
 
     @Test

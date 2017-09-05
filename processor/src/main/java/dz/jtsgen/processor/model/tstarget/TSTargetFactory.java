@@ -64,30 +64,12 @@ public final class TSTargetFactory {
         return result;
     }
 
-    private static String withoutParens(String javaTypeString) {
-        if (javaTypeString == null) return "";
-        return javaTypeString.replaceAll("[<,>]","");
-    }
-
-
-    private static LinkedList<String> typeVars(String javaTypeString) {
-        final Matcher jMatcher = TYPE_PARAM_PATTERN.matcher(javaTypeString);
-        LinkedList<String> jTypeVars = new LinkedList<>();
-        if (jMatcher.find()) {
-            for (int i = 1 ; i <= jMatcher.groupCount(); i++) {
-                String item = withoutParens(jMatcher.group(i));
-                if (item!=null && !item.isEmpty()) jTypeVars.add(item);
-            }
-        }
-        return jTypeVars;
-    }
-
 
     static Map<String, TSTargetType> mapNamespaces(Map<String, TSTargetType> typeParamMap, NameSpaceMapper mapper) {
         if (mapper == IDENTITY) return  typeParamMap;
         Map<String, TSTargetType> result = new HashMap<>();
         for (Map.Entry<String, TSTargetType> x : typeParamMap.entrySet()) {
-            result.put(x.getKey(), x.getValue().withTypeParams(typeParamMap).mapNameSpace(mapper));
+            result.put(x.getKey(), x.getValue().mapNameSpace(mapper));
         }
         return result;
     }

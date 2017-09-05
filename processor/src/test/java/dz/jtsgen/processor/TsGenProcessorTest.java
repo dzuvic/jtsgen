@@ -49,7 +49,7 @@ import static org.junit.Assert.*;
 @RunWith(JUnit4.class)
 public class TsGenProcessorTest {
 
-    private final boolean DUMP_FILES = true;
+    private final boolean DUMP_FILES = false;
 
     @Test
     public void check_simple_interface_Full_Logging() {
@@ -187,9 +187,9 @@ public class TsGenProcessorTest {
     public void test_container_types() throws IOException {
         Compilation c = CompileHelper.compileJtsDev(DUMP_FILES, 0,  "MemberContainerTest.java");
         assertEquals("must have Type MemberContainerTest", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+MemberContainerTest\\s*\\{")).size());
-        assertEquals("list must be mapped to Array<string>", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("list_Of_String:\\s+Array<string>;")).size());
-        assertEquals("set must be mapped to Array<number>", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("set_Of_Int:\\s+Array<number>;")).size());
-        assertEquals("java.util.Map must be mapped to Map<..>", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("map_of_string_to_list_of_string:\\s+Map<string,\\s+Array<string>>;")).size());
+        assertEquals("java.util.Map must be mapped to { [key: string]: string[]; }", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("map_of_string_to_list_of_string:\\s+\\{\\s*\\[key:\\s*string\\]:\\s*string\\[\\];\\s*\\};")).size());
+        assertEquals("set must be mapped to number[]", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("set_Of_Int:\\s+number\\[\\];")).size());
+        assertEquals("list be mapped to []", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("list_Of_String:\\s+string\\[\\];")).size());
     }
 
 
@@ -229,7 +229,7 @@ public class TsGenProcessorTest {
         assertEquals("must have Type Person", 1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+interface\\s+Person\\s*\\{")).size());
 
         assertEquals("must be mapped to number", 1,      findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+price:\\s+number;")).size());
-        assertEquals("must be mapped to Array<Item>", 1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+items:\\s+Array<Item>;")).size());
+        assertEquals("must be mapped to Item[]", 1, findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+items:\\s+Item\\[\\];")).size());
         assertEquals("must be mapped to Person", 1,      findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+customer:\\s+Person;")).size());
         assertEquals("must be mapped to string", 1,      findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+birthdate:\\s+string;")).size());
         assertEquals("must be mapped to Sex", 1,         findSourceLine(c, folderName, tdsFilename, Pattern.compile("^\\s+sex:\\s+Sex;")).size());

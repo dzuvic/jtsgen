@@ -74,6 +74,95 @@ public class EitherTest {
     }
 
     @Test
+    public void test_flatmap() throws Exception {
+        assertEquals(
+                Either.right(20),
+                Either.right("20").flatMap( x -> Either.right(Integer.parseInt(x)))
+                );
+
+        assertEquals(
+                Either.left("20"),
+                Either.left("20").flatMap( x -> {
+                    fail("must not be called");
+                    return null;
+                }));
+    }
+
+    @Test
+    public void either_toString() throws Exception {
+        assertEquals(Either.right("20").toString(),"Right{value=20}");
+        assertEquals(Either.left("20").toString(),"Left{value=20}");
+    }
+
+    @Test
+    public void either_equals_and_hashcode() throws Exception {
+        Either<String,String> x0= Either.right("20");
+        Either<String,String> x1= Either.right("20");
+        Either<String,String> x2= Either.right("21");
+        Either<String,String> y0= Either.left("20");
+        Either<String,String> y1= Either.left("20");
+        Either<String,String> y2= Either.left("21");
+
+        assertTrue( x0.equals(x1));
+        assertTrue( y0.equals(y1));
+        assertEquals(x0.hashCode(),x1.hashCode());
+        assertEquals(y0.hashCode(),y1.hashCode());
+
+        assertFalse(x0.equals(null));
+        assertFalse(y0.equals(null));
+        assertFalse(x0.equals(""));
+        assertFalse(y0.equals(""));
+        assertFalse(x0.equals(x2));
+        assertFalse(y0.equals(y2));
+    }
+
+    @Test(expected = dz.jtsgen.processor.util.NotImplented.class)
+    public void either_splitterator_fails() throws Exception {
+        Either.right("20").spliterator();
+    }
+
+    @Test
+    public void test_orNull() throws Exception {
+        assertNull(Either.right("20").leftOrNull());
+        assertNull(Either.left("20").rightOrNull());
+        assertEquals(
+                "20",
+                Either.right("20").rightOrNull()
+        );
+        assertEquals(
+                "20",
+                Either.left("20").leftOrNull()
+        );
+    }
+
+    @Test
+    public void test_checkOrLeft() throws Exception {
+        assertEquals(
+                        "20",
+                        Either.left("20").checkOrLeft( "21", x->true)
+                );
+
+        assertEquals(
+                        "21",
+                        Either.right("20").checkOrLeft( "21", x->false)
+                );
+    }
+
+    @Test
+    public void either_or_else_get() throws Exception {
+        assertEquals("20", Either.right("20").orElse("21"));
+        assertEquals("20", Either.right("20").orElseGet( () -> "21"));
+        assertEquals("20", Either.right("20").orElseThrow( () -> new IllegalArgumentException("wrong")));
+        assertEquals("21", Either.left("20").orElse("21"));
+        assertEquals("21", Either.left("20").orElseGet(() -> "21"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void either_or_else_get_fail() throws Exception {
+        Either.left("20").orElseThrow( () -> new IllegalArgumentException("wrong"));
+    }
+
+    @Test
     public void either_fold() throws Exception {
         assertEquals( Either.right("20").fold(
                 s -> 0,
