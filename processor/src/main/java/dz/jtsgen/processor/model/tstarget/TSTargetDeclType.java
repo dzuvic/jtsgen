@@ -21,7 +21,6 @@
 package dz.jtsgen.processor.model.tstarget;
 
 import dz.jtsgen.processor.dsl.model.*;
-import dz.jtsgen.processor.dsl.model.TypeMappingExpression;
 import dz.jtsgen.processor.model.ConversionCoverage;
 import dz.jtsgen.processor.model.NameSpaceMapper;
 import dz.jtsgen.processor.model.TSTargetType;
@@ -39,7 +38,7 @@ import static dz.jtsgen.processor.util.LilltleLazy.lazy;
 /**
  * represents a simple type direct conversion for declaration types
  */
-final class TSTargetDeclType implements TSTargetType {
+class TSTargetDeclType implements TSTargetType {
 
     //the canonical java type, lazyly evaluated
     private final Supplier<String> javaType;
@@ -48,7 +47,7 @@ final class TSTargetDeclType implements TSTargetType {
     private final TypeMappingExpression mappingExpression;
     private final Map<String, TSTargetType> typeParametersTypes;
 
-    private TSTargetDeclType(TypeMappingExpression mappingExpression, Map<String, TSTargetType> typeParametersTypes, Supplier<String> javaType, Supplier<String> namespace) {
+    TSTargetDeclType(TypeMappingExpression mappingExpression, Map<String, TSTargetType> typeParametersTypes, Supplier<String> javaType, Supplier<String> namespace) {
         assert mappingExpression != null;
         this.javaType = javaType == null ? lazy(() -> mappingExpression.names().stream().collect(Collectors.joining("."))) : javaType;
         this.mappingExpression = mappingExpression;

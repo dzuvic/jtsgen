@@ -62,8 +62,7 @@ public class MirrotTypeToTSConverterVisitorTest {
     public void visitUnused() throws Exception {
 
         // currently not used
-        assertNull(testee.visitIntersection(null,null));
-        assertNull(testee.visitArray(null,null));
+        assertEquals(testee.visitIntersection(null,null), TSTargets.ANY);
         assertEquals(testee.visitNull(null,null), TSTargets.NULL);
         assertEquals(testee.visitError(null,null), TSTargets.ANY);
         assertEquals(testee.visitTypeVariable(null,null), TSTargets.ANY);

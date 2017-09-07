@@ -20,14 +20,18 @@
 
 package dz.jtsgen.processor.model.tstarget;
 
+import dz.jtsgen.processor.dsl.model.TSMappedTerminalBuilder;
+import dz.jtsgen.processor.dsl.model.TSMappedTypeVarBuilder;
+import dz.jtsgen.processor.dsl.model.TypeMappingExpression;
+import dz.jtsgen.processor.dsl.model.TypeMappingExpressionBuilder;
 import dz.jtsgen.processor.dsl.parser.CustomMappingParserFactory;
+import dz.jtsgen.processor.model.ConversionCoverage;
 import dz.jtsgen.processor.model.NameSpaceMapper;
 import dz.jtsgen.processor.model.TSTargetType;
 import dz.jtsgen.processor.util.Either;
 
 import java.util.*;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -55,6 +59,11 @@ public final class TSTargetFactory {
         return result;
     }
 
+    /**
+     *
+     * @param mappingString the mapping DSL String
+     * @return the TSTargettype with a name space from the LHS
+     */
     public static Either<String,TSTargetType> createTSTargetByDSLWithNS(String mappingString) {
         LOG.fine(() -> "creating TSTarget by DSL (with NS) " + mappingString);
 
@@ -62,6 +71,29 @@ public final class TSTargetFactory {
         Either<String, TSTargetType> result = expr.check("LHS of mapping DSL must not be empty", x -> !x.names().isEmpty())
                 .map(x -> new TSTargetDeclType(x,null, false));
         return result;
+    }
+
+    /**
+     *
+     * @param embeddedType the embedded type
+     * @return the array type
+     */
+    public static TSTargetType createTSTargetFromArray(TSTargetType embeddedType) {
+        Map<String,TSTargetType> param = new HashMap<>();
+        param.put("T",embeddedType);
+        return new TSTargetArrayType(arrayExpression(), param);
+    }
+
+    private static TypeMappingExpression arrayExpression() {
+        return TypeMappingExpressionBuilder.builder()
+                .names(new ArrayList<>())
+                .typeVariables(Collections.singleton("T"))
+                .conversionCoverage(ConversionCoverage.DIRECT)
+                .tsExpressionElements(Arrays.asList(
+                        TSMappedTypeVarBuilder.of("T")
+                        ,TSMappedTerminalBuilder.of("[]")
+                ))
+                .build();
     }
 
 

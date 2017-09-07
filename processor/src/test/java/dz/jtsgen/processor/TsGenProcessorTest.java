@@ -184,6 +184,13 @@ public class TsGenProcessorTest {
     }
 
     @Test
+    public void getter_with_array() throws IOException {
+        Compilation c = CompileHelper.compileJtsDev(DUMP_FILES, 0, "MemberWithArrayGetter.java");
+        assertEquals("must have Type MemberWithArrayGetter", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+MemberWithArrayGetter\\s*\\{")).size());
+        assertEquals("must have member number[]", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+returnTypeIsIntArray:\\s+number\\[\\];")).size());
+    }
+
+    @Test
     public void test_container_types() throws IOException {
         Compilation c = CompileHelper.compileJtsDev(DUMP_FILES, 0,  "MemberContainerTest.java");
         assertEquals("must have Type MemberContainerTest", 1, findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+MemberContainerTest\\s*\\{")).size());

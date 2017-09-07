@@ -40,8 +40,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static dz.jtsgen.processor.model.tstarget.TSTargetFactory.createTSTargetByDSL;
-import static dz.jtsgen.processor.model.tstarget.TSTargetFactory.createTSTargetByDSLWithNS;
+import static dz.jtsgen.processor.model.tstarget.TSTargetFactory.*;
 import static dz.jtsgen.processor.model.tstarget.TSTargets.*;
 import static dz.jtsgen.processor.util.StreamUtils.firstOptional;
 import static dz.jtsgen.processor.util.StringUtils.withoutTypeArgs;
@@ -82,7 +81,7 @@ class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTargetType, 
     @Override
     public TSTargetType visitIntersection(IntersectionType t, Void x) {
         this.env().getMessager().printMessage(Diagnostic.Kind.ERROR, "intersection type not supported", currentElement);
-        return null;
+        return ANY;
     }
 
     @Override
@@ -99,7 +98,8 @@ class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTargetType, 
 
     @Override
     public TSTargetType visitArray(ArrayType t, Void x) {
-        return null;
+        TSTargetType embeddedArrayType = this.visit(t.getComponentType());
+        return createTSTargetFromArray(embeddedArrayType);
     }
 
     @Override
