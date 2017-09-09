@@ -21,7 +21,7 @@ Currently the following features are supported:
    interfaces
 -  Ignoring a type using ``@TSIgnore`` annotation. Supporting
    ``readonly`` using ``@TSReadOnly`` annotation
--  creating a module with corresponding package.json. The name is
+-  creating a module with corresponding package.json is supported. The name is
    constructed if not configured
 -  Configuration of the JavaScript / TypeScript module using the
    ``@TSModule`` annotation, e.g. the module name or the author of the
@@ -35,6 +35,7 @@ Currently the following features are supported:
 -  Name Space mapping to minimize the TypeScript name spaces. It can be
    configured or calculated.
 -  Inheritance (since 0.2.0)
+-  Type variables without angle brackets in the generated TypeScript types, e.g. ``T[]``
 
 **Requirements:** The annotation processor only depends on the JDK. Only JDK 8
 is currently supported.

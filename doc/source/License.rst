@@ -1,6 +1,8 @@
 License And Legal Notes
 =======================
 
+** No Warranty **. As stated in the GPL v3 licence, there is no warranty of any kind by using this software.
+
 The following licenses apply `jtsgen`:
 
 The **annotations** are **Apache 2.0** licensed. The **other parts** of `jtsgen`,

@@ -20,4 +20,17 @@ compile time. The following simple example should extract the TypeScript output 
 Customizing the output dir
 --------------------------
 
-todo
+The output is customized by adding the source directory to the annotation processor::
+
+    def tsOutDir="${buildDir}/ts"
+
+    compileJava {
+        options.compilerArgs = [ "-s", tsOutDir ]
+        dependsOn(createTsDir)
+    }
+
+
+Generating Types for Kotlin classes
+-----------------------------------
+
+ToDo

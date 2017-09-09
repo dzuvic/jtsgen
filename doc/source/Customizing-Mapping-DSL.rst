@@ -36,7 +36,12 @@ space is out of scope.
 Default Conversions
 -------------------
 
-The annotation processor has the following conversions for declaration types configured:
+The following mappings can not be configured, for now:
+    * The numerical primitive types are mapped to ``number``
+    * The primitive boolean is mapped to ``boolean``
+    * An array is mapped to \`T\`[]
+
+The annotation processor has the following mapping for declaration types configured:
 
     * java.lang.Void -> Void
     * java.lang.Object -> Object
@@ -45,8 +50,7 @@ The annotation processor has the following conversions for declaration types con
     * java.lang.Number \|-> number
     * java.lang.Boolean -> boolean
     * java.util.Collection<T> -> `T`[]
-    * java.util.Map<U,V> -> { [key: `U`]: `V`; }
-
+    * java.util.Map<U,V> -> { [key: \`U\`]: \`V\`; }
 
 The Processor has no knowledge about the the necessary imports.
 
