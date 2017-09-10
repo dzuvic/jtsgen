@@ -110,4 +110,10 @@ public @interface TSModule {
      */
     NameSpaceMappingStrategy nameSpaceMappingStrategy() default NameSpaceMappingStrategy.ALL_TO_ROOT;
 
+
+    /**
+     * using this Option the generator also generates user defined
+     */
+    boolean generateTypeGuards() default false;
+
 }

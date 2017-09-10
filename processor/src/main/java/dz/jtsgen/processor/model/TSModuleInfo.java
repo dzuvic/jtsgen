@@ -154,5 +154,10 @@ public abstract class TSModuleInfo {
     public NameSpaceMappingStrategy getNameSpaceMappingStrategy() {
         return NameSpaceMappingStrategy.ALL_TO_ROOT;
     }
+
+    @Value.Default
+    public boolean generateTypeGuards() {
+        return false;
+    }
     
 }

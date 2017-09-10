@@ -386,6 +386,16 @@ public class TsGenProcessorTest {
     }
 
     @Test
+    public void test_type_guard1_no_module() throws IOException {
+        final String folderName = "type_guards1";
+        final String tdsFilename = "type_guards1.ts";
+        Compilation c = CompileHelper.compileForNoModule("jts/modules/type_guards1", folderName, tdsFilename, true, 0, "InterFaceTestTypeGuard1.java", "package-info.java");
+
+        assertEquals("must have Type InterFaceTestTypeGuard1", 1, countPatterns(c, folderName, tdsFilename, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTestTypeGuard1\\s*\\{")));
+
+    }
+
+    @Test
     public void test_output_type_external_module() throws IOException {
         final String folderName = "external_module";
         final String tdsFilename = "external_module.ts";

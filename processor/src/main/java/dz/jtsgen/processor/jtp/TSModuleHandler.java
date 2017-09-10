@@ -77,6 +77,7 @@ public final class TSModuleHandler {
                                     else if (isNameAndNotNull("description",entry)) tsBuilder.moduleDescription(asString(value));
                                     else if (isNameAndNotNull("authorUrl",entry)) tsBuilder.moduleAuthorUrl(asString(value));
                                     else if (isNameAndNotNull("license",entry)) tsBuilder.moduleLicense(asString(value));
+                                    else if (isNameAndNotNull("generateTypeGuards",entry)) tsBuilder.generateTypeGuards(asBoolean(value));
                                     else if (isNameAndNotNull("customTypeMappings",entry)) tsBuilder.customMappings(convertTypeMapping(entry));
                                     else if (isNameAndNotNull("excludes",entry)) tsBuilder.excludes(convertExclusion(entry.getValue(), x));
                                     else if (isNameAndNotNull("nameSpaceMapping",entry)) tsBuilder.nameSpaceMappings(convertToNameSpaceMappings(entry.getValue(), x));
@@ -91,6 +92,10 @@ public final class TSModuleHandler {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toSet());
+    }
+
+    private boolean asBoolean(AnnotationValue value) {
+        return (value.getValue() instanceof Boolean) ? (Boolean) value.getValue() : false ;
     }
 
 
