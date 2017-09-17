@@ -33,13 +33,17 @@ import java.util.stream.Collectors;
 /**
  * default renderer for TSTypes
  */
-class DefaultTSTypeVisitor implements TSTypeVisitor {
+class TSTypeVisitorDefault implements TSTypeVisitor {
     private final PrintWriter out;
     private final TSMemberVisitor tsMemberVisitor;
 
-    DefaultTSTypeVisitor(PrintWriter out) {
+    TSTypeVisitorDefault(PrintWriter out, TSMemberVisitor visitor ){
         this.out = out;
-        this.tsMemberVisitor = new DefaultTSMemberVisitor(out);
+        this.tsMemberVisitor = visitor;
+    }
+
+    TSTypeVisitorDefault(PrintWriter out) {
+        this(out,new DefaultTSMemberVisitor(out));
     }
 
 
@@ -48,8 +52,8 @@ class DefaultTSTypeVisitor implements TSTypeVisitor {
     public void visit(TSInterface x, int ident) {
         typePrefix(x, ident);
         x.getMembers().forEach(y -> {
-            out.print(IdentHelper.identPrefix(ident + 1));
-            y.accept(tsMemberVisitor);
+            getOut().print(IdentHelper.identPrefix(ident + 1));
+            y.accept(getTsMemberVisitor());
         });
         typePostFix(ident);
     }
@@ -57,35 +61,35 @@ class DefaultTSTypeVisitor implements TSTypeVisitor {
     @Override
     public void visit(TSEnum x, int ident) {
         typePrefix(x, ident);
-        out.print(IdentHelper.identPrefix(ident + 1));
+        getOut().print(IdentHelper.identPrefix(ident + 1));
         final boolean[] isFirst = {true};
         x.getMembers().forEach(y -> {
             if (isFirst[0]) {
                 isFirst[0] = false;
             } else {
-                out.print(", ");
+                getOut().print(", ");
             }
-            y.accept(tsMemberVisitor);
+            y.accept(getTsMemberVisitor());
         });
-        out.println("");
+        getOut().println("");
         typePostFix(ident);
 
     }
 
     private void typePostFix(int ident) {
-        out.print(IdentHelper.identPrefix(ident));
-        out.println("}");
-        out.println("");
+        getOut().print(IdentHelper.identPrefix(ident));
+        getOut().println("}");
+        getOut().println("");
     }
 
     private void typePrefix(TSType x, int ident) {
-        out.print(IdentHelper.identPrefix(ident));
-        out.print("export ");
-        out.print(x.getKeyword());
-        out.print(" ");
-        out.print(x.getName());
-        out.print(extendsSuperTypes(x));
-        out.println(" {");
+        getOut().print(IdentHelper.identPrefix(ident));
+        getOut().print("export ");
+        getOut().print(x.getKeyword());
+        getOut().print(" ");
+        getOut().print(x.getName());
+        getOut().print(extendsSuperTypes(x));
+        getOut().println(" {");
     }
 
     private String extendsSuperTypes(TSType x) {
@@ -94,5 +98,13 @@ class DefaultTSTypeVisitor implements TSTypeVisitor {
         return s.append(" extends ").append( x.getSuperTypes().stream().map(TSType::getName).collect(Collectors.joining(",")))
                 .toString();
 
+    }
+
+    PrintWriter getOut() {
+        return out;
+    }
+
+    private TSMemberVisitor getTsMemberVisitor() {
+        return tsMemberVisitor;
     }
 }

@@ -100,8 +100,12 @@ public final class TSDGenerator {
     private void outputTypes(TSModuleInfo module, int ident, List<TSType> types, PrintWriter out) {
         if (types.isEmpty()) return;
 
-        TSTypeVisitor tsTypeVisitor = new DefaultTSTypeVisitor(out);
+        TSTypeVisitor tsTypeVisitor = creatTypeVisitor(module, out);
         types.forEach(x -> x.accept(tsTypeVisitor, ident));
+    }
+
+    private TSTypeVisitor creatTypeVisitor(TSModuleInfo module, PrintWriter out) {
+        return module.generateTypeGuards() ? new TSTypeVisitorTypeGuards(out) : new TSTypeVisitorDefault(out);
     }
 
     private void writeHeader(TSModuleInfo module, PrintWriter out) {
