@@ -1,8 +1,8 @@
 Change Log
 ==========
 
-jtsgen-0.3.0 (UNRELEASED)
--------------------------
+`jtsgen-0.3.0 <https://github.com/dzuvic/jtsgen/tree/jtsgen-0.3.0>`__ (2017-10-30)
+----------------------------------------------------------------------------------
 
 New Features
 ~~~~~~~~~~~~
@@ -21,6 +21,40 @@ Breaking Changes
 -  The default conversion of collections and maps are changed to ``T[]`` and ``{ index: K: V; }``
 -  the artifact are distributed on maven central. Removing the custom repository used till 0.2.x releases should be
    sufficient
+
+Tickets
+~~~~~~~
+
+**Implemented enhancements:**
+
+-  Bug: Java Bean Protocol not complete
+   `#32 <https://github.com/dzuvic/jtsgen/issues/32>`__
+-  Map Collection<T> to T[] instead of List<T>
+   `#28 <https://github.com/dzuvic/jtsgen/issues/28>`__
+-  Capability generate User-Defined Type Guards (enable basic TypeCheck
+   at Runtime) `#27 <https://github.com/dzuvic/jtsgen/issues/27>`__
+
+**Fixed bugs:**
+
+-  NPE when Type Mapping is not available
+   `#34 <https://github.com/dzuvic/jtsgen/issues/34>`__
+
+**Closed issues:**
+
+-  Make it available in maven central
+   `#37 <https://github.com/dzuvic/jtsgen/issues/37>`__
+-  iInheritance: Only add member, when not in super types
+   `#30 <https://github.com/dzuvic/jtsgen/issues/30>`__
+-  TSOption or TSReadOnly Annotation
+   `#17 <https://github.com/dzuvic/jtsgen/issues/17>`__
+
+**Merged pull requests:**
+
+-  [add] support for boolean class attributes #33
+   `#35 <https://github.com/dzuvic/jtsgen/pull/35>`__
+   (`fvonberg <https://github.com/fvonberg>`__)
+
+
 
 `jtsgen-0.2.0 <https://github.com/dzuvic/jtsgen/tree/jtsgen-0.2.0>`__ (2017-07-14)
 ----------------------------------------------------------------------------------

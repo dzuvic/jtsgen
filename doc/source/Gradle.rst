@@ -2,26 +2,21 @@ Using in Gradle projects
 ========================
 
 Adding the following snippet to your gradle (sub-) project, the annotation processor should run at automatically at
-compile time. The following simple example should extract the TypeScript output to the gradle build dir::
-
-    repositories {
-        maven {
-            url "http://dl.bintray.com/dzuvic/jtsgen"
-        }
-    }
+compile time. Since 0.3.0 ``jtsgen`` has been distributed on maven central, so no other repository have to be defined.
+The following simple example should extract the TypeScript output to the gradle build dir::
 
     dependencies {
-        compileOnly "jtsgen:jtsgen-annotations:0.2.0"
-        compileOnly "jtsgen:jtsgen-processor:0.2.0"
+        compileOnly "com.github.dzuvic:jtsgen-annotations:0.3.0"
+        compileOnly "com.github.dzuvic:jtsgen-processor:0.3.0"
     }
 
 
-Since 0.3.0 ``jtsgen`` has been distributed on maven central, so no other repository have to be defined. The brave ones
-could try the current SNAPSHOT version using the following dependency::
+
+The brave ones could try the current SNAPSHOT version using the following dependency::
 
     dependencies {
-        compileOnly "jtsgen:jtsgen-annotations:0.3.0-SNAPSHOT"
-        compileOnly "jtsgen:jtsgen-processor:0.3.0-SNAPSHOT"
+        compileOnly "com.github.dzuvic:jtsgen-annotations:0.3.1-SNAPSHOT"
+        compileOnly "com.github.dzuvic:jtsgen-processor:0.3.1-SNAPSHOT"
     }
 
 

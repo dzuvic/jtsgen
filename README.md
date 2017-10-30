@@ -2,8 +2,8 @@
 
 **tl;dr** Enable code completion of Java types in your TypeScript project.
 
-Annotations: [ ![Download](https://api.bintray.com/packages/dzuvic/jtsgen/annotations/images/download.svg) ](https://bintray.com/dzuvic/jtsgen/annotations/_latestVersion)
- Processor: [ ![Download](https://api.bintray.com/packages/dzuvic/jtsgen/processor/images/download.svg) ](https://bintray.com/dzuvic/jtsgen/processor/_latestVersion)
+Annotations: [![Sonatype Nexus (Releases)](https://img.shields.io/nexus/r/https/oss.sonatype.org/com.github.dzuvic/jtsgen-annotations.svg)](https://search.maven.org/#artifactdetails|com.github.dzuvic|jtsgen-annotations)
+ Processor: [![Sonatype Nexus (Releases)](https://img.shields.io/nexus/r/https/oss.sonatype.org/com.github.dzuvic/jtsgen-processor.svg)](https://search.maven.org/#artifactdetails|com.github.dzuvic|jtsgen-processor)
  [ ![Download](https://travis-ci.org/dzuvic/jtsgen.svg?branch=master) ](https://travis-ci.org/dzuvic/jtsgen)
  [![Coverage Status](https://codecov.io/github/dzuvic/jtsgen/coverage.svg?branch=master)](https://codecov.io/github/dzuvic/jtsgen?branch=master)
  [ ![Doc](https://readthedocs.org/projects/jtsgen/badge/?version=latest )](http://jtsgen.readthedocs.io/en/latest/?badge=latest)
