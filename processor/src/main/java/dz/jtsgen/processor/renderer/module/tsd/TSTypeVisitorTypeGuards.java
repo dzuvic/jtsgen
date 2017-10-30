@@ -24,8 +24,8 @@ import dz.jtsgen.processor.helper.IdentHelper;
 import dz.jtsgen.processor.model.TSInterface;
 
 import java.io.PrintWriter;
-import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * default renderer for TSTypes
@@ -44,11 +44,14 @@ class TSTypeVisitorTypeGuards extends TSTypeVisitorDefault {
 
         guardPrefix(x, ident);
         final String ident2 = IdentHelper.identPrefix(ident + 2);
-        List<String> memberCheck = x.getMembers().stream()
-                .map (y -> ident2 + "x." + y.getName() + " !== undefined")
-                .collect(Collectors.toList());
+        Stream<String> memberChecks = x.getMembers().stream()
+                .map (y -> ident2 + "x." + y.getName() + " !== undefined");
 
-        final String joinedArgs = memberCheck.stream().collect(Collectors.joining(" &&" + System.lineSeparator()));
+        Stream<String> superTypeChecks = x.getSuperTypes().stream()
+                .map (y -> ident2 + "instanceOf" + y.getName() + "(x) === true");
+
+        final String joinedArgs = Stream.concat(superTypeChecks, memberChecks)
+                .collect(Collectors.joining(" &&" + System.lineSeparator()));
         getOut().println(joinedArgs + ";");
         guardPostFix(ident);
 
@@ -57,10 +60,14 @@ class TSTypeVisitorTypeGuards extends TSTypeVisitorDefault {
     private void guardPrefix(TSInterface x, int ident) {
         getOut().println("");
         getOut().print(IdentHelper.identPrefix(ident));
-        getOut().println("export function instanceOf" + x.getName() + "(x: any): x is " + x.getName() + "{");
+        getOut().println("export function instanceOf" + x.getName() + "(x: any): x is " + x.getName() + " {");
         getOut().print(IdentHelper.identPrefix(ident + 1));
-        getOut().println("return x" + (x.getMembers().size() > 0 ? " &&" : " && true") );
+        getOut().println("return x" + ( hasMembersOrSuperTyes(x) ? " &&" : " && true") );
 
+    }
+
+    private boolean hasMembersOrSuperTyes(TSInterface x) {
+        return x.getMembers().size() > 0 || (! x.getSuperTypes().isEmpty());
     }
 
     private void guardPostFix(int ident) {
