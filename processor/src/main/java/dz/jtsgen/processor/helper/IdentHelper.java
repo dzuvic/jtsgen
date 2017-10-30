@@ -22,7 +22,7 @@ package dz.jtsgen.processor.helper;
 
 public final class IdentHelper {
     
-    private IdentHelper() { /* no instance*/ }
+    IdentHelper() { /* no instance*/ }
 
     private static final String [] IDENT_SPACES = {
         "",

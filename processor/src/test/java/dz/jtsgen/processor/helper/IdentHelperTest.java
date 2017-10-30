@@ -26,7 +26,10 @@ import static org.junit.Assert.assertEquals;
 
 public class IdentHelperTest {
     @Test
-    public void identPrefix() throws Exception {
+    public void identPrefix() {
+        // following is not really useful
+        IdentHelper identHelper = new IdentHelper();
+
         assertEquals(IdentHelper.identPrefix(-1),"");
         assertEquals(IdentHelper.identPrefix(0),"");
         assertEquals(IdentHelper.identPrefix(1),"  ");

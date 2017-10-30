@@ -30,9 +30,22 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 public class SimpleNameSpaceMapperTest {
-    
+
     @Test
-    public void mapNameSpace() throws Exception {
+    public void checkDefaultConstructor() {
+        SimpleNameSpaceMapper x1 = new SimpleNameSpaceMapper(null);
+        assertEquals(x1, x1);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void checkNullAssertion() {
+        SimpleNameSpaceMapper testee = new SimpleNameSpaceMapper(null);
+        testee.mapNameSpace(null);
+
+    }
+
+    @Test
+    public void mapNameSpace() {
         NameSpaceMapping oneNsMapping = NameSpaceMappingBuilder.of("a.b","");
         List<NameSpaceMapping> oneMapping = Collections.singletonList(oneNsMapping);
         
@@ -44,7 +57,7 @@ public class SimpleNameSpaceMapperTest {
     }
 
     @Test
-    public void mapNameSpaceExact() throws Exception {
+    public void mapNameSpaceExact() {
         NameSpaceMapping oneNsMapping = NameSpaceMappingBuilder.of("a.b","").withExact(true);
         List<NameSpaceMapping> oneMapping = Collections.singletonList(oneNsMapping);
 

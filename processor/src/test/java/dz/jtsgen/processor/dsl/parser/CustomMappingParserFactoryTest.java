@@ -18,17 +18,26 @@
  *
  */
 
-package dz.jtsgen.processor.nsmap;
+package dz.jtsgen.processor.dsl.parser;
 
-import dz.jtsgen.processor.model.TSModuleInfo;
+import dz.jtsgen.processor.dsl.CustomMappingParser;
+import org.junit.Test;
 
-public final class NameSpaceMapperFactory {
+import static org.junit.Assert.*;
 
-    NameSpaceMapperFactory() {
-        // no instance please
+public class CustomMappingParserFactoryTest {
+
+    @Test
+    // not a useful
+    public void parser() {
+        CustomMappingParserFactory x = new CustomMappingParserFactory();
+        assertEquals(x,x);
     }
 
-    public static NameSpaceModelMapper createNameSpaceMapper(TSModuleInfo moduleInfo) {
-        return new DefaultNameSpaceModelMapper(moduleInfo);
+    @Test
+    public void checknewInstance() {
+        CustomMappingParser x1 = CustomMappingParserFactory.parser();
+        CustomMappingParser x2 = CustomMappingParserFactory.parser();
+        assertNotEquals(x1,x2);
     }
 }

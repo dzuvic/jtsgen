@@ -22,7 +22,12 @@ package dz.jtsgen.processor.dsl.parser;
 
 import dz.jtsgen.processor.dsl.CustomMappingParser;
 
-public class CustomMappingParserFactory {
+public final class CustomMappingParserFactory {
+
+    // constructor add for tests
+    CustomMappingParserFactory() {
+        // nothing to do here
+    }
 
     public static CustomMappingParser parser() {
         return new CustomMappingParserImpl(new Lexer()) ;

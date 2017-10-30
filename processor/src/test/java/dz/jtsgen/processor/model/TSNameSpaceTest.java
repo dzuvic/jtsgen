@@ -22,11 +22,11 @@ package dz.jtsgen.processor.model;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class TSNameSpaceTest {
     @Test
-    public void findOrCreate() throws Exception {
+    public void test_findOrCreate() {
         TSNameSpace testee = new TSNameSpace();
         TSNameSpace subNameSpace = testee.findOrCreate("de.dz.sample");
         assertEquals(subNameSpace.getName(),"sample");
@@ -35,4 +35,14 @@ public class TSNameSpaceTest {
         assertEquals(testee.getChildren().entrySet().iterator().next().getValue().getChildren().entrySet().iterator().next().getValue().getName(),"dz");
     }
 
+    @Test(expected = AssertionError.class)
+    public void test_findOrCreateAssertion() {
+        new TSNameSpace().findOrCreate(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testIllegalSubnameSpace() {
+        TSNameSpace testee = new TSNameSpace();
+        testee.getSubNameSapce("");
+    }
 }

@@ -20,15 +20,15 @@
 
 package dz.jtsgen.processor.nsmap;
 
-import dz.jtsgen.processor.model.TSModuleInfo;
+import org.junit.Test;
 
-public final class NameSpaceMapperFactory {
+import static org.junit.Assert.assertEquals;
 
-    NameSpaceMapperFactory() {
-        // no instance please
-    }
+public class NameSpaceMapperFactoryTest {
 
-    public static NameSpaceModelMapper createNameSpaceMapper(TSModuleInfo moduleInfo) {
-        return new DefaultNameSpaceModelMapper(moduleInfo);
+    @Test
+    public void checkDefaultConstructor() {
+        NameSpaceMapperFactory x1 = new NameSpaceMapperFactory();
+        assertEquals(x1,x1);
     }
 }
