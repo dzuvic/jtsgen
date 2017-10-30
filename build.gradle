@@ -11,7 +11,7 @@ buildscript {
 description = 'Java to TypeScript Type Emitter Parent Project'
 
 allprojects {
-    version="0.3.0-SNAPSHOT"
+    version="0.3.0"
     group="com.github.dzuvic"
 }
 
