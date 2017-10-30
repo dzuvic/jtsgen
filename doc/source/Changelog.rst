@@ -10,6 +10,7 @@ New Features
 - ``@TSReadOnly`` annotated members are exported as ``readonly``
 - support for literal mapping of types, e.g. ``Array<T>`` can be mapped to ``T[]``
 - migrated documentation from markdown to sphinx
+- migrated from bintray to maven central
 
 Breaking Changes
 ~~~~~~~~~~~~~~~~
@@ -18,6 +19,8 @@ Breaking Changes
    are visible has been removed. Use the ``@TSReadonly`` annotation to
    generate readonly members
 -  The default conversion of collections and maps are changed to ``T[]`` and ``{ index: K: V; }``
+-  the artifact are distributed on maven central. Removing the custom repository used till 0.2.x releases should be
+   sufficient
 
 `jtsgen-0.2.0 <https://github.com/dzuvic/jtsgen/tree/jtsgen-0.2.0>`__ (2017-07-14)
 ----------------------------------------------------------------------------------

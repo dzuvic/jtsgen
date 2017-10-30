@@ -44,6 +44,7 @@ public abstract class TSModuleInfo {
      * @param moduleLicense if null use current
      * @param moduleAuthorUrl if null use current
      * @param moduleName if null use current
+     * @param outputType if null use the current
      * @return return a copy with params changed
      */
     public TSModuleInfo withModuleData(
@@ -75,14 +76,13 @@ public abstract class TSModuleInfo {
     }
 
 
-//    public Optional<String> getJavaPackage() {
-//        return Optional.ofNullable(this.javaPackage);
-//    }
+
 //    @Value.Default
     public abstract Optional<String> getUmdVariableName();
 
     /**
      * the module name, package name friendly, that appears also in the declared namespace
+     * @return the module name
      */
     @Value.Default
     public String getModuleName() {

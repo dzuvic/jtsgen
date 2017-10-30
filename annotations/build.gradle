@@ -20,9 +20,12 @@
 
 apply plugin: 'java'
 apply plugin: 'java-library'
-apply plugin: 'maven'
-apply plugin: 'maven-publish'
-apply plugin: 'com.jfrog.bintray'
+
+archivesBaseName = "jtsgen-${name}"
+
+// unfortunately maven-publich does not support signing
+//apply plugin: 'maven-publish'
+//apply plugin: 'com.jfrog.bintray'
 
 description="annotions used by the jtsgen annotation processor"
 
@@ -31,68 +34,43 @@ dependencies {
 }
 
 
-task sourceJar(type: Jar) {
-  from sourceSets.main.allJava
-  classifier "sources"
-}
 
-def pomConfig = {
-    url 'https://github.com/dzuvic/jtsgen'
-    inceptionYear '2016'
-    scm { url "https://github.com/dzuvic/jtsgen.git" }
-    licenses {
-        license {
-            name "Apache License, Version 2.0"
-            url 'https://www.apache.org/licenses/LICENSE-2.0.html'
-            distribution 'repo'
-        }
-    }
-    developers {
-        developer {
-            id 'dzuvic'
-            name 'Dragan Zuvic'
-            url 'https://github.com/dzuvic'
-            email 'zuvic@w11k.de'
-            roles { role 'Developer' }
-        }
-    }
-}
 
-bintray {
-    user = project.hasProperty('bintray.user') ? project.property('bintray.user') : System.getenv('BINTRAY_USER')
-   	key = project.hasProperty('bintray.apikey') ? project.property('bintray.apikey') : System.getenv('BINTRAY_API_KEY')
-    publications = ['release']
-    dryRun = false
-    override = false
-    pkg {
-        repo = 'jtsgen'
-        name = project.name
-        licenses = ['Apache-2.0'] // The annotations itself are under Apache License
-        vcsUrl = 'https://github.com/dzuvic/jtsgen.git'
-        issueTrackerUrl = 'https://github.com/dzuvic/jtsgen/issues'
-        desc = project.description
-        version {
-                name = project.version
-                released  = new Date()
-                vcsTag = project.version
+apply from: "${rootDir}/gradle/publish.gradle"
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+
+            pom.project {
+                name 'JTSGEN Annotations'
+                packaging 'jar'
+                artifactId archivesBaseName
+                description 'The Annotation an other Types for the jtsgen annotation processor'
+                url 'http://jtsgen.readthedocs.io'
+
+                scm {
+                    connection 'scm:git:https://github.com/dzuvic/jtsgen.git'
+                    developerConnection 'scm:git:https://github.com/dzuvic/jtsgen.git'
+                    url 'https://github.com/dzuvic/jtsgen.git'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'dzuvic'
+                        name 'Dragan Zuvic'
+                        email 'git.zuvic@posteo.de'
+                    }
+                }
             }
+        }
     }
-}
-
-
-publishing {
-	publications {
-		release(MavenPublication) {
-			from components.java
-			artifact sourceJar
-            artifactId 'jtsgen-annotations'
-			pom.withXml {
-			                def root = asNode()
-			                root.appendNode('description', description)
-			                root.appendNode('name', project.name)
-			                root.children().last() + pomConfig
-			            }
-		}
-	}
 }
 

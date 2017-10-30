@@ -35,6 +35,7 @@ public class TypeScriptModel {
 
     /**
      * copy constructor for renderer
+     * @param ts the current TypeScriptModel
      */
     protected TypeScriptModel(TypeScriptModel ts) {
         this(ts.getTsTypes(), ts.getTsTargetTypes(), ts.getModuleInfo());

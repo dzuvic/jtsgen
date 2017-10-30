@@ -1,13 +1,13 @@
 License And Legal Notes
 =======================
 
-** No Warranty **. As stated in the GPL v3 licence, there is no warranty of any kind by using this software.
+**No Warranty**. As stated in the GPL v3 licence, there is no warranty of any kind by using this software.
 
-The following licenses apply `jtsgen`:
+The following licenses apply ``jtsgen``:
 
-The **annotations** are **Apache 2.0** licensed. The **other parts** of `jtsgen`,
+The **annotations** are **Apache 2.0** licensed. The **other parts** of ``jtsgen``,
 especially the processor, are **GPLv3** licensed. The license texts are
-included in the file `LICENSE`. Because `jtsgen` as a sort of a compiler
+included in the file ``LICENSE``. Because ``jtsgen`` as a sort of a compiler
 plugin you shouldn't redistribute the compiler in your projects. It's
 just like using OpenJDK: the generated code is *not* affected by
 it's license, so it should be safe using it in most cases. Everything in

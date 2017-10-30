@@ -16,6 +16,14 @@ compile time. The following simple example should extract the TypeScript output 
     }
 
 
+Since 0.3.0 ``jtsgen`` has been distributed on maven central, so no other repository have to be defined. The brave ones
+could try the current SNAPSHOT version using the following dependency::
+
+    dependencies {
+        compileOnly "jtsgen:jtsgen-annotations:0.3.0-SNAPSHOT"
+        compileOnly "jtsgen:jtsgen-processor:0.3.0-SNAPSHOT"
+    }
+
 
 Customizing the output dir
 --------------------------

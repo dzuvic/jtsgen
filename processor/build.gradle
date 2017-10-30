@@ -22,11 +22,8 @@ import org.gradle.internal.jvm.Jvm
 
 apply plugin: 'java'
 apply plugin: 'java-library'
-apply plugin: 'maven'
-apply plugin: 'maven-publish'
 apply plugin: 'jacoco'
 apply plugin: 'idea'
-apply plugin: 'com.jfrog.bintray'
 
 description="The jtsgen annotation processor"
 
@@ -70,7 +67,7 @@ idea {
 compileJava {
     options.annotationProcessorPath = configurations.apt
     options.compilerArgs << "-s" << aptOutDir
-    options.verbose = true
+    options.verbose = false
     doFirst {
         delete aptOutDir  // workaround for Bug https://github.com/immutables/immutables/issues/134
         mkdir(aptOutDir)
@@ -80,11 +77,6 @@ compileJava {
 
 clean {
     delete aptOutDir
-}
-
-task sourceJar(type: Jar) {
-  from sourceSets.main.allJava
-  classifier "sources"
 }
 
 jacocoTestReport {
@@ -109,64 +101,41 @@ jacocoTestReport {
     }
 }
 
-def pomConfig = {
-    url 'https://github.com/dzuvic/jtsgen'
-    inceptionYear '2016'
-    scm { url "https://github.com/dzuvic/jtsgen.git" }
-    licenses {
-        license {
-            name "GNU GENERAL PUBLIC LICENSE, Version 3"
-            url 'https://www.gnu.org/licenses/gpl-3.0.txt'
-            distribution 'repo'
-        }
-    }
-    developers {
-        developer {
-            id 'dzuvic'
-            name 'Dragan Zuvic'
-            url 'https://github.com/dzuvic'
-            email 'zuvic@w11k.de'
-            roles { role 'Developer' }
-        }
-    }
-}
+apply from: "${rootDir}/gradle/publish.gradle"
 
+uploadArchives {
+    repositories {
+        mavenDeployer {
 
-bintray {
-    user = project.hasProperty('bintray.user') ? project.property('bintray.user') : System.getenv('BINTRAY_USER')
-   	key = project.hasProperty('bintray.apikey') ? project.property('bintray.apikey') : System.getenv('BINTRAY_API_KEY')
-    publications = ['release']
-    dryRun = false
-    override = false
-    pkg {
-        repo = 'jtsgen'
-        name = project.name
-        licenses = ['GPL-3.0']
-        vcsUrl = 'https://github.com/dzuvic/jtsgen.git'
-        issueTrackerUrl = 'https://github.com/dzuvic/jtsgen/issues'
-        desc = project.description
-        version {
-                name = project.version
-                released  = new Date()
-                vcsTag = project.version
+            pom.project {
+                name 'JTSGEN Annotation Processor'
+                packaging 'jar'
+                artifactId archivesBaseName
+                description 'The Annotation an other Types for the jtsgen annotation processor'
+                url 'http://jtsgen.readthedocs.io'
+
+                scm {
+                    connection 'scm:git:https://github.com/dzuvic/jtsgen.git'
+                    developerConnection 'scm:git:https://github.com/dzuvic/jtsgen.git'
+                    url 'https://github.com/dzuvic/jtsgen.git'
+                }
+
+                licenses {
+                    license {
+                        name 'GNU General Public License (GPL) version 3.0'
+                        url 'https://www.gnu.org/licenses/gpl-3.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'dzuvic'
+                        name 'Dragan Zuvic'
+                        email 'git.zuvic@posteo.de'
+                    }
+                }
             }
+        }
     }
 }
 
-
-publishing {
-	publications {
-		release(MavenPublication) {
-			from components.java
-            artifact sourceJar
-            artifactId 'jtsgen-processor'
-            pom.withXml {
-            			                def root = asNode()
-            			                root.appendNode('description', description)
-            			                root.appendNode('name', project.name)
-            			                root.children().last() + pomConfig
-            			            }
-		}
-
-	}
-}

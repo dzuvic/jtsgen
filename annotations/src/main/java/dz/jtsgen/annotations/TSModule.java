@@ -32,33 +32,34 @@ import java.lang.annotation.Target;
 public @interface TSModule {
 
     /**
-     * The module name of the JavaScript/TypeScript Module. This must be a java package friendly name.
+     * @return The module name of the JavaScript/TypeScript Module. This must be a java package friendly name.
      */
     String moduleName();
 
     /**
-     * The author number for the package.json file
+     * @return The author number for the package.json file
+     *
      */
     String author() default "unknown";
 
     /**
-     * The authorUrl number for the package.json file
+     * @return The authorUrl number for the package.json file
      */
     String authorUrl() default "unknown";
 
     /**
-     * The license for the package.json file
+     * @return The license for the package.json file
      */
     String license() default "unknown";
 
     /**
-     * The description for the package.json file
+     * @return The description for the package.json file
      */
     String description() default "unknown";
 
 
     /**
-     * The version number for the package.json file
+     * @return The version number for the package.json file
      */
     String version() default "1.0.0";
 
@@ -80,11 +81,13 @@ public @interface TSModule {
      *   a type parameter the converted type parameter will be inserted accordingly.
      *
      *   The Processor has no knowledge about the the necessary imports.
+     *
+     *   @return an array of custom mappings
      */
     String[] customTypeMappings() default {};
 
     /**
-     * regular expression to exclude type conversion.
+     * @return an array of regular expression to exclude type conversion.
      */
     String[] excludes() default {"^sun", "^jdk.internal", "^java.lang.Comparable"};
 
@@ -96,23 +99,25 @@ public @interface TSModule {
      *
      *  {@code "a.b.c -> " }: Maps a.b.c to root
      *
+     *  @return an array of name space mappings
+     *
      */
     String[] nameSpaceMapping() default {};
 
 
     /**
-     *  defines the output format
+     *  @return the output format of the module
      */
     OutputType outputType() default OutputType.NAMESPACE_AMBIENT_TYPE;
 
     /**
-     * defines the name space mapping strategy
+     * @return name space mapping strategy
      */
     NameSpaceMappingStrategy nameSpaceMappingStrategy() default NameSpaceMappingStrategy.ALL_TO_ROOT;
 
 
     /**
-     * using this Option the generator also generates user defined
+     * @return true if generator also generates user defined type guards
      */
     boolean generateTypeGuards() default false;
 

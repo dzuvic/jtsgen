@@ -3,7 +3,6 @@ buildscript {
         jcenter()
     }
     dependencies {
-   		classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1+"
         classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1"
    	}
 }
@@ -13,7 +12,7 @@ description = 'Java to TypeScript Type Emitter Parent Project'
 
 allprojects {
     version="0.3.0-SNAPSHOT"
-    group="jtsgen"
+    group="com.github.dzuvic"
 }
 
 subprojects {
@@ -21,7 +20,7 @@ subprojects {
     apply plugin: 'jacoco'
     
     repositories {
-        jcenter()
+        mavenCentral()
     }
     sourceCompatibility = 1.8
     targetCompatibility = 1.8

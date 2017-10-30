@@ -62,6 +62,7 @@ public interface TSTargetType {
     Map<String,TSTargetType> typeParameterTypes();
 
     /**
+     * @param nsm some namespace mapper instance
      * @return an instance, that has the namespace mapped
      */
     default TSTargetType mapNameSpace(NameSpaceMapper nsm) {

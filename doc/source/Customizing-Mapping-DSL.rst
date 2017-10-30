@@ -49,7 +49,7 @@ The annotation processor has the following mapping for declaration types configu
     * java.lang.Character -> string
     * java.lang.Number \|-> number
     * java.lang.Boolean -> boolean
-    * java.util.Collection<T> -> `T`[]
+    * java.util.Collection<T> -> \`T\`[]
     * java.util.Map<U,V> -> { [key: \`U\`]: \`V\`; }
 
 The Processor has no knowledge about the the necessary imports.
@@ -73,3 +73,4 @@ The Mapping DSL defined in ANTLR BNF variant:
 
     jident :  ('a'-'z' | 'A' - 'Z' | '_' )  ('a'-'z' | 'A' - 'Z' | '_'  |  '0' - '9')*
     tsChar :  * all chars expecpt '<' | '>' | '`' *
+

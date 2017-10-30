@@ -37,8 +37,14 @@ import static dz.jtsgen.processor.util.ToDo.todoEx;
  */
 public interface Either<L, R> extends Iterable<R> {
 
+    /**
+     * @return true if right value
+     */
     boolean isRight();
 
+    /**
+     * @return true if left value
+     */
     boolean isLeft();
 
     static <L, R>  Either<L, R> left(L l) {
@@ -78,7 +84,7 @@ public interface Either<L, R> extends Iterable<R> {
 
     @Override
     default Iterator<R> iterator() {
-        return this.isLeft() ? new EmptyIterator() : new EitherIterator<>(value());
+        return this.isLeft() ? new EmptyIterator<>() : new EitherIterator<R>(value());
     }
 
 
@@ -124,6 +130,9 @@ public interface Either<L, R> extends Iterable<R> {
     /**
      * either return the left value if the predicate does not hold or null
      * used in testing, where the left value is extracted because of an error
+     * @param l the left value to return if predicate fails
+     * @param p the predicate checking the right value
+     * @return the left value or null if predicate holds
      */
 
     default L checkOrLeft(L l, Predicate<? super R> p) {
@@ -149,14 +158,14 @@ public interface Either<L, R> extends Iterable<R> {
     }
 
     /**
-     * return null if Right else the left value
+     * @return null if Right else the left value
      */
     default L leftOrNull() {
        return isLeft() ? this.leftValue() : null;
     }
 
     /**
-     * return null if Right else the left value
+     * @return null if Right else the left value
      */
     default R rightOrNull() {
        return isRight() ? this.value() : null;
