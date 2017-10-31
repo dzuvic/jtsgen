@@ -23,7 +23,8 @@ Element, like this::
 The following annotation parameters are supported:
 
 -  **moduleName**: The module name of the JavaScript/TypeScript Module.
-   This must be a java package friendly name.
+   This must be a java package friendly name. This is a required parameter, if the
+   ``TSModule`` annotation is used
 -  **author**: The author number for the package.json file
 -  **authorUrl**: The authorURL for the package.json file
 -  **version**: The version number for the package.json file, default is
@@ -40,25 +41,9 @@ The following annotation parameters are supported:
 -  **nameSpaceMappingStrategy**: Defines how the default name space is
    calculated. Default is ``NameSpaceMappingStrategy.ALL_TO_ROOT``
    (since 0.2.0)
+-  **generateTypeGuards**: Defines if typescript type gards should be generated as well. The default is false
+   (since 0.3.0)
 
-
-Processing Parameters
----------------------
-
-with the following annotation processor parameters some of the settings
-made using the `TSModule` annotation can be overridden:
-
-* jtsgenLogLevel: enable additional logging. Use ine of the following
-  `j.u.Logging` levels: ,`OFF` ,`SEVERE` ,`WARNING` ,`INFO` ,`CONFIG`
-  ,`FINE` ,`FINER` ,`FINEST` ,`ALL`
-* jtsgenModuleName: the name of the module, that should be exported
-* jtsgenModuleVersion: the version number of the module
-* jtsgenModuleDescription: the description of the module
-* jtsgenModuleAuthor: the module author
-* jtsgenModuleLicense: the npm license string of the module
-* jtsgenModuleAuthorUr: the URL of the author
-
-To use one of them, use the javac prefix `-A`, e.g.
-
-    javac -AjtsgenLogLevel=FINEST MyClass.java`
+Note: The Processing Parameters ``jtsgen`` may override some of these settings. See :ref:`processing-parameters`
+for details.
 

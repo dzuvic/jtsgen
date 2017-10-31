@@ -1,6 +1,15 @@
 Change Log
 ==========
 
+`jtsgen-0.3.1-SNAPSHOT` (UNRELEASED)
+------------------------------------
+
+New Features
+~~~~~~~~~~~~
+
+- Added documentation for Maven projects
+
+
 `jtsgen-0.3.0 <https://github.com/dzuvic/jtsgen/tree/jtsgen-0.3.0>`__ (2017-10-30)
 ----------------------------------------------------------------------------------
 

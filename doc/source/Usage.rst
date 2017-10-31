@@ -28,3 +28,26 @@ class path or excluding it from the transitive dependencies, e.g. using
 The generated sources are currently beneath the java source output folder.
 The output can be redirected using the regular ``-s`` option of javac.
 
+.. _processing-parameters:
+
+Processing Parameters
+---------------------
+
+
+The ``jtsgen`` annotation processor supports with the following parameters:
+
+* jtsgenLogLevel: enable additional logging. Use ine of the following
+  ``j.u.Logging`` levels: ``OFF`` , ``SEVERE`` , ``WARNING`` , ``INFO`` , ``CONFIG``
+  , ``FINE`` , ``FINER`` , ``FINEST`` , ``ALL``
+* jtsgenModuleName: the name of the module, that should be exported
+* jtsgenModuleVersion: the version number of the module
+* jtsgenModuleDescription: the description of the module
+* jtsgenModuleAuthor: the module author
+* jtsgenModuleLicense: the npm license string of the module
+* jtsgenModuleAuthorUr: the URL of the author
+
+To use one of them, use the javac prefix ``-A``, e.g. ::
+
+    javac -AjtsgenLogLevel=FINEST MyClass.java
+
+All these settings do override everything set via an annotation, e.g. ``TSModule``.
