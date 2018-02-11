@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Dragan Zuvic
+ * Copyright (c) 2018 Dragan Zuvic
  *
  * This file is part of jtsgen.
  *
@@ -17,24 +17,27 @@
  * along with jtsgen.  If not, see http://www.gnu.org/licenses/
  *
  */
+package jts.dev;
 
-package dz.jtsgen.processor.util;
+import dz.jtsgen.annotations.TSIgnore;
+import dz.jtsgen.annotations.TypeScript;
 
+@TypeScript
+public interface InterFaceTestGenerics<T> {
+    T getMyGeneric();
+    MyPair<String, Integer> getMyPair();
+}
 
-import org.junit.jupiter.api.Test;
+class MyPair<U,V> {
+    private final U u;
+    private final V v;
 
-import java.util.Optional;
-import java.util.regex.Pattern;
+    public U getU() { return u;}
 
-import static org.junit.jupiter.api.Assertions.*;
+    public V getV() { return v;}
 
-class RegExHelperTest {
-    @Test
-    void compileToPattern() {
-        assertEquals(RegExHelper.compileToPattern(""), Optional.empty());
-        assertEquals(RegExHelper.compileToPattern(null), Optional.empty());
-        assertEquals(RegExHelper.compileToPattern("["), Optional.empty());
-        assertEquals(RegExHelper.compileToPattern("abc\\s+").map(Pattern::pattern), Optional.of(Pattern.compile("abc\\s+")).map(Pattern::pattern));
+    MyPair (U u, V v) {
+        this.u = u;
+        this.v = v;
     }
-
 }

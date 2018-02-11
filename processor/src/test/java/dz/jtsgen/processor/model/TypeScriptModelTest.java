@@ -22,26 +22,26 @@ package dz.jtsgen.processor.model;
 
 
 import dz.jtsgen.processor.util.StringUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
 
 import static java.util.Collections.singletonList;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class TypeScriptModelTest {
+class TypeScriptModelTest {
     @Test
-    public void testAddOne() {
+    void testAddOne() {
         TypeScriptModel tsm = TypeScriptModel.newModelWithDefaultModule();
         tsm.addTSTypes(singletonList(createTsType("a.B")));
         assertEquals(1,tsm.getTsTypes().size());
     }
 
     @Test
-    public void testAddTwoDifferent() {
+    void testAddTwoDifferent() {
         TypeScriptModel tsm = TypeScriptModel.newModelWithDefaultModule();
         tsm.addTSTypes(singletonList(createTsType("a.B")));
         tsm.addTSTypes(singletonList(createTsType("a.A")));
@@ -49,7 +49,7 @@ public class TypeScriptModelTest {
     }
 
     @Test
-    public void testAddTwoSame() {
+    void testAddTwoSame() {
         TypeScriptModel tsm = TypeScriptModel.newModelWithDefaultModule();
         tsm.addTSTypes(singletonList(createTsType("a.B")));
         tsm.addTSTypes(singletonList(createTsType("a.B")));

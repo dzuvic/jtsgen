@@ -20,14 +20,14 @@
 
 package dz.jtsgen.processor.nsmap;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NameSpaceMapperFactoryTest {
+class NameSpaceMapperFactoryTest {
 
     @Test
-    public void checkDefaultConstructor() {
+    void checkDefaultConstructor() {
         NameSpaceMapperFactory x1 = new NameSpaceMapperFactory();
         assertEquals(x1,x1);
     }

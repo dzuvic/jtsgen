@@ -37,7 +37,7 @@ final class SimpleNameSpaceMapper implements NameSpaceMapper {
 
     @Override
     public String mapNameSpace(String originNameSpace) {
-        assert originNameSpace != null;
+        if (originNameSpace == null) throw new IllegalArgumentException("mapName got null parameer");
         return mappings.stream()
                 .filter(x ->
                         (originNameSpace.startsWith(x.originNameSpace()) && !x.exact())

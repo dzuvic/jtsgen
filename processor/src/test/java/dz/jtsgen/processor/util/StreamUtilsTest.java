@@ -20,17 +20,18 @@
 
 package dz.jtsgen.processor.util;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class StreamUtilsTest {
+class StreamUtilsTest {
     @Test
-    public void test_stream_zip() throws Exception {
+    void test_stream_zip() {
 
         Map<Integer, Integer> testee = StreamUtils.zip(
                 IntStream.range(0, 3).boxed(),
@@ -40,7 +41,7 @@ public class StreamUtilsTest {
     }
 
     @Test
-    public void test_stream_zip_second_loger() throws Exception {
+    void test_stream_zip_second_loger() {
 
         Map<Integer, Integer> testee = StreamUtils.zip(
                 IntStream.range(0, 3).boxed(),
@@ -50,7 +51,7 @@ public class StreamUtilsTest {
     }
 
     @Test
-    public void test_stream_zip_first_loger() throws Exception {
+    void test_stream_zip_first_loger() {
 
         Map<Integer, Integer> testee = StreamUtils.zip(
                 IntStream.range(0, 4).boxed(),
@@ -66,13 +67,17 @@ public class StreamUtilsTest {
         assertEquals(testee.get(2).intValue(),4);
     }
 
-    @Test(expected = AssertionError.class)
-    public void checkAssertionA() throws Exception {
-        StreamUtils.zip(null,null);
+    @Test
+    void checkAssertionA() {
+        assertThrows(IllegalArgumentException.class,
+                () -> StreamUtils.zip(null,null)
+        );
     }
 
-    @Test(expected = AssertionError.class)
-    public void checkAssertionB() throws Exception {
-        StreamUtils.zip(IntStream.range(0, 4).boxed(),null);
+    @Test
+    void checkAssertionB() {
+        assertThrows(IllegalArgumentException.class,
+                () -> StreamUtils.zip(IntStream.range(0, 4).boxed(),null)
+        );
     }
 }

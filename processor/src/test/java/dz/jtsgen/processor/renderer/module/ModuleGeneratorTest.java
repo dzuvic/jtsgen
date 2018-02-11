@@ -22,7 +22,7 @@ package dz.jtsgen.processor.renderer.module;
 
 import dz.jtsgen.processor.model.TypeScriptModel;
 import dz.jtsgen.processor.renderer.model.TypeScriptRenderModel;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
@@ -30,16 +30,15 @@ import javax.annotation.processing.ProcessingEnvironment;
 
 import java.io.IOException;
 
-import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class ModuleGeneratorTest {
+class ModuleGeneratorTest {
 
     @Test
-    public void writeModule() throws Exception {
+    void writeModule() throws Exception {
         TypeScriptRenderModel model = new TypeScriptRenderModel(TypeScriptModel.newModelWithDefaultModule());
         ProcessingEnvironment env = mock(ProcessingEnvironment.class);
         Filer filer = mock(Filer.class);

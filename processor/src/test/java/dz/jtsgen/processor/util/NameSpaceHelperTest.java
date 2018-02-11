@@ -23,13 +23,13 @@ package dz.jtsgen.processor.util;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import dz.jtsgen.processor.nsmap.NameSpaceHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NameSpaceHelperTest {
+class NameSpaceHelperTest {
     @Test
-    public void topPackages() throws Exception {
+    void topPackages() {
         assertEquals(
                 Sets.newHashSet("a.b.c"),
                 NameSpaceHelper.topPackages(Lists.newArrayList("a.b.c","a.b.c.d.e.f","a.b.c.d.g"))

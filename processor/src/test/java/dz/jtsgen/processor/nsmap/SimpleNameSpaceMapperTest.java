@@ -22,30 +22,35 @@ package dz.jtsgen.processor.nsmap;
 
 import dz.jtsgen.processor.model.NameSpaceMapping;
 import dz.jtsgen.processor.model.NameSpaceMappingBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class SimpleNameSpaceMapperTest {
+class SimpleNameSpaceMapperTest {
 
     @Test
-    public void checkDefaultConstructor() {
+    void checkDefaultConstructor() {
         SimpleNameSpaceMapper x1 = new SimpleNameSpaceMapper(null);
         assertEquals(x1, x1);
     }
 
-    @Test(expected = AssertionError.class)
-    public void checkNullAssertion() {
-        SimpleNameSpaceMapper testee = new SimpleNameSpaceMapper(null);
-        testee.mapNameSpace(null);
+    @Test
+    void checkNullAssertion() {
+        assertThrows(IllegalArgumentException.class,
+                () -> {
+                    SimpleNameSpaceMapper testee = new SimpleNameSpaceMapper(null);
+                    testee.mapNameSpace(null);
+                }
+        );
 
     }
 
     @Test
-    public void mapNameSpace() {
+    void mapNameSpace() {
         NameSpaceMapping oneNsMapping = NameSpaceMappingBuilder.of("a.b","");
         List<NameSpaceMapping> oneMapping = Collections.singletonList(oneNsMapping);
         
@@ -57,7 +62,7 @@ public class SimpleNameSpaceMapperTest {
     }
 
     @Test
-    public void mapNameSpaceExact() {
+    void mapNameSpaceExact() {
         NameSpaceMapping oneNsMapping = NameSpaceMappingBuilder.of("a.b","").withExact(true);
         List<NameSpaceMapping> oneMapping = Collections.singletonList(oneNsMapping);
 

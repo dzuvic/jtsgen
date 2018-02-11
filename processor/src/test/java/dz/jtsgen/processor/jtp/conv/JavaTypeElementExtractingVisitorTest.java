@@ -20,15 +20,15 @@
 
 package dz.jtsgen.processor.jtp.conv;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import javax.lang.model.element.TypeElement;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class JavaTypeElementExtractingVisitorTest {
+class JavaTypeElementExtractingVisitorTest {
 
     private TypeElement typeElement;
 
@@ -36,8 +36,8 @@ public class JavaTypeElementExtractingVisitorTest {
 
     private TSProcessingInfo param;
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         this.typeElement = Mockito.mock(TypeElement.class);
         this.param = Mockito.mock(TSProcessingInfo.class);
         this.testee = new JavaTypeElementExtractingVisitor(this.typeElement,this.param) ;
@@ -45,7 +45,7 @@ public class JavaTypeElementExtractingVisitorTest {
 
 
     @Test
-    public void visitType() throws Exception {
+    void visitType() {
 
         // currently not used
         assertNull(testee.visitType(this.typeElement,null));

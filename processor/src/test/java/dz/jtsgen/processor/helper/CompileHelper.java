@@ -33,8 +33,8 @@ import static com.google.testing.compile.Compiler.javac;
 import static dz.jtsgen.processor.helper.StringConstForTest.JTS_DEV;
 import static dz.jtsgen.processor.helper.StringConstForTest.JTS_DEV_D_TS;
 import static dz.jtsgen.processor.helper.StringConstForTest.PACKAGE_JSON;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Some Compile Helper for testing

@@ -44,10 +44,11 @@ public final class StreamUtils {
      * @param y second stream to zip
      * @param <X> type of the first stream
      * @param <Y> type of the second stream
+     * @throws IllegalArgumentException if one of the arguments is null
      * @return a Stream of type Tuple&lt;X,Y&gt;
      */
     public static <X, Y> Stream<Tuple<X, Y>> zip(Stream<X> x, Stream<Y> y) {
-        assert x != null && y != null;
+        if ( x == null || y == null) throw new IllegalArgumentException("one zip arguments null");
         return zip(x, y, Tuple::new);
     }
 

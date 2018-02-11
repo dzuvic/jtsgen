@@ -20,18 +20,18 @@
 
 package dz.jtsgen.processor.model.tstarget; 
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 
 import static dz.jtsgen.processor.model.tstarget.TSTargetFactory.createTSTargetByDSL;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class TSTargetFactoryTest {
+class TSTargetFactoryTest {
     @Test
-    public void test_createTSTargetByMapping_Type_Param() throws Exception {
+    void test_createTSTargetByMapping_Type_Param() {
         createTSTargetByDSL("java.util.Collection<T> -> Array<T>").map(
             x -> {
                 assertEquals(x.typeParameters(), Collections.singletonList("T"));
@@ -44,7 +44,7 @@ public class TSTargetFactoryTest {
     }
 
     @Test
-    public void test_createTSTargetByMapping_Type_TS_Literal() throws Exception {
+    void test_createTSTargetByMapping_Type_TS_Literal() {
         createTSTargetByDSL("java.util.List<T> -> `T`[]").map(
             x -> {
                 assertEquals(x.typeParameters(), Collections.singletonList("T"));
@@ -57,7 +57,7 @@ public class TSTargetFactoryTest {
     }
 
     @Test
-    public void test_createTSTargetByMapping_Two_Types_Param() throws Exception {
+    void test_createTSTargetByMapping_Two_Types_Param() {
         createTSTargetByDSL("java.util.Map<K,V> -> Map<K,V>").map(
             x -> {
                 assertEquals(x.typeParameters(), Arrays.asList("K","V"));

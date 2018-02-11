@@ -21,9 +21,8 @@
 package dz.jtsgen.processor.nsmap;
 
 import com.google.common.collect.Lists;
-import dz.jtsgen.processor.model.NameSpaceMapping;
 import dz.jtsgen.processor.model.NameSpaceMappingBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
@@ -31,12 +30,12 @@ import java.lang.annotation.Annotation;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class TopLevelNameSpaceMapperCalculatorTest {
+class TopLevelNameSpaceMapperCalculatorTest {
 
     @Test
-    public void testOnePackage() throws Exception {
+    void testOnePackage() {
         assertEquals(
                 Collections.singletonList(NameSpaceMappingBuilder.of("a.b", "")),
                 new TopLevelNameSpaceMapperCalculator().computeNameSpaceMapping(createDataSet("a.b.X", "a.b.Y"))
@@ -44,7 +43,7 @@ public class TopLevelNameSpaceMapperCalculatorTest {
     }
 
     @Test
-    public void testTwoPackageClashing_NoMapping() throws Exception {
+    void testTwoPackageClashing_NoMapping() {
         assertEquals(
                 new ArrayList<>(),
                 new TopLevelNameSpaceMapperCalculator().computeNameSpaceMapping(createDataSet("a.b.X", "a.c.X"))
@@ -52,7 +51,7 @@ public class TopLevelNameSpaceMapperCalculatorTest {
     }
 
     @Test
-    public void testTwoPackage() throws Exception {
+    void testTwoPackage() {
         assertEquals(
                 Lists.newArrayList(
                         NameSpaceMappingBuilder.of("a.b",""),

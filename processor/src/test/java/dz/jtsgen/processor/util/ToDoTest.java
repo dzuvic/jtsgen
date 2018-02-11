@@ -20,31 +20,39 @@
 
 package dz.jtsgen.processor.util;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 // just check no NPE occurs
-public class ToDoTest {
+class ToDoTest {
 
-    @Test(expected = dz.jtsgen.processor.util.NotImplented.class)
-    public void test_todo1() throws Exception {
-        ToDo.todo("null");
+    @Test
+    void test_todo1() {
+        assertThrows(dz.jtsgen.processor.util.NotImplented.class,
+                () -> ToDo.todo("null")
+        );
     }
 
-    @Test(expected = dz.jtsgen.processor.util.NotImplented.class)
-    public void test_todo0() throws Exception {
-        ToDo.todo();
+    @Test
+    void test_todo0() {
+        assertThrows(dz.jtsgen.processor.util.NotImplented.class,
+                ToDo::todo
+        );
     }
 
-    @Test(expected = dz.jtsgen.processor.util.NotImplented.class)
-    public void test_todo2() throws Exception {
-        ToDo.todo((String) null);
+    @Test
+    void test_todo2() {
+        assertThrows(dz.jtsgen.processor.util.NotImplented.class,
+                () -> ToDo.todo((String) null)
+        );
     }
 
-    @Test(expected = dz.jtsgen.processor.util.NotImplented.class)
-    public void test_todo3() throws Exception {
-        ToDo.todo((String[]) null);
+    @Test
+    void test_todo3() {
+        assertThrows(dz.jtsgen.processor.util.NotImplented.class,
+                () -> ToDo.todo((String[]) null)
+        );
     }
 
 

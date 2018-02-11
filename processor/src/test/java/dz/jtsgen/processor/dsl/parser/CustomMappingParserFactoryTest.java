@@ -21,21 +21,21 @@
 package dz.jtsgen.processor.dsl.parser;
 
 import dz.jtsgen.processor.dsl.CustomMappingParser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class CustomMappingParserFactoryTest {
+class CustomMappingParserFactoryTest {
 
     @Test
     // not a useful
-    public void parser() {
+    void parser() {
         CustomMappingParserFactory x = new CustomMappingParserFactory();
         assertEquals(x,x);
     }
 
     @Test
-    public void checknewInstance() {
+    void checknewInstance() {
         CustomMappingParser x1 = CustomMappingParserFactory.parser();
         CustomMappingParser x2 = CustomMappingParserFactory.parser();
         assertNotEquals(x1,x2);

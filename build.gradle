@@ -1,9 +1,28 @@
+
 buildscript {
+    ext {
+        // version numbers, mostly for testing
+        junit4_Version            = '4.12'
+        junitVintage_Version      = '4.12.3'
+        junitPlatform_Version     = '1.0.3'
+        junitJupiter_Version      = '5.0.3'
+        mockito_Version           = '2.7.21'
+        compile_testing_Version   = '0.13'
+        commons_io_Version        = '2.5'
+        guava_Version             = '21.0'
+        generex_Verson            = '1.0.2'
+        jacoco_Version            = '0.8.0'
+
+        immutables_Version        = '2.5.5'
+
+    }
+
     repositories {
         jcenter()
     }
     dependencies {
         classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1"
+        classpath "org.junit.platform:junit-platform-gradle-plugin:${junitPlatform_Version}"
    	}
 }
 
@@ -11,7 +30,7 @@ buildscript {
 description = 'Java to TypeScript Type Emitter Parent Project'
 
 allprojects {
-    version="0.3.1-SNAPSHOT"
+    version="0.4.0-SNAPSHOT"
     group="com.github.dzuvic"
 }
 
@@ -31,9 +50,33 @@ subprojects {
     }
 
 
+    // following is just a hack from https://stackoverflow.com/a/44907857 until jacoco reporting is fixed
+    configurations {
+        testAgent {
+            transitive = false
+        }
+    }
+    dependencies {
+        testAgent("org.jacoco:org.jacoco.agent:${jacoco_Version}:runtime")
+    }
+    tasks.withType(JavaExec) {
+        if (it.name == 'junitPlatformTest') {
+            doFirst {
+                jvmArgs "-javaagent:${configurations.testAgent.singleFile}=destfile=${project.buildDir.name}/jacoco/test.exec"
+            }
+        }
+    }
+
+    jacoco {
+        toolVersion = "${jacoco_Version}"
+//        applyTo junitPlatformTest
+    }
+
+
     jacocoTestReport {
         reports {
             xml.enabled = true
+            xml.destination file("${buildDir}/reports/jacoco/report.xml")
             html.enabled = false
         }
     }

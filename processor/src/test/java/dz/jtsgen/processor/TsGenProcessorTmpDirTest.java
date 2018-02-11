@@ -23,11 +23,9 @@ package dz.jtsgen.processor;
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
 import dz.jtsgen.processor.helper.StringConstForTest;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.tools.JavaFileObject;
 import javax.tools.StandardLocation;
@@ -41,25 +39,24 @@ import java.nio.file.attribute.BasicFileAttributes;
 import static com.google.testing.compile.Compiler.javac;
 import static java.nio.file.FileVisitResult.CONTINUE;
 import static java.nio.file.FileVisitResult.TERMINATE;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**
  * test that need a tomporary directory, e.g. testing the -d Option
  */
-@RunWith(JUnit4.class)
-public class TsGenProcessorTmpDirTest {
+class TsGenProcessorTmpDirTest {
 
     private Path tmpDir;
 
-    @Before
-    public void createTmpDir() throws IOException {
+    @BeforeEach
+    void createTmpDir() throws IOException {
         this.tmpDir = Files.createTempDirectory("jtsgen-test");
     }
 
-    @After
-    public void deleteTmpDir() throws IOException {
+    @AfterEach
+    void deleteTmpDir() throws IOException {
         Files.walkFileTree(this.tmpDir, new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult postVisitDirectory(final Path theDir, final IOException e) throws IOException {
@@ -78,11 +75,11 @@ public class TsGenProcessorTmpDirTest {
 
 
     @Test
-    public void test_simple_interface_minus_d_option() throws IOException {
+    void test_simple_interface_minus_d_option() {
         JavaFileObject[] files = {JavaFileObjects.forResource("InterFaceTestNoPackage.java")};
         Compilation c = javac()
                 .withProcessors(new TsGenProcessor())
-                .withOptions(new Object[]{"-d", tmpDir.toAbsolutePath().toString()})
+                .withOptions("-d", tmpDir.toAbsolutePath().toString())
                 .compile(files);
 
         assertEquals(0, c.errors().size());

@@ -22,8 +22,8 @@ package dz.jtsgen.processor.jtp;
 
 import dz.jtsgen.annotations.NameSpaceMappingStrategy;
 import dz.jtsgen.annotations.OutputType;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
@@ -33,8 +33,8 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -42,7 +42,7 @@ import static org.mockito.Mockito.when;
 /**
  * Some additional unit tests
  */
-public class TSModuleHandlerTest {
+class TSModuleHandlerTest {
 
     private TSModuleHandler testee;
 
@@ -57,8 +57,8 @@ public class TSModuleHandlerTest {
 
     //processingEnv.getElementUtils().getTypeElement(TSModule.class.getName()).asType();
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         Messager messenger = mock(Messager.class);
 
         this.annotationValue = mock(AnnotationValue.class);
@@ -81,27 +81,27 @@ public class TSModuleHandlerTest {
     }
 
     @Test
-    public void test_asString() throws Exception {
+    void test_asString() {
         assertEquals("",testee.asString(annotationValue));
         when(this.annotationValue.getValue()).thenReturn("");
         assertEquals("",testee.asString(annotationValue));
     }
 
     @Test
-    public void moduleNameHandling_null_empty() {
+    void moduleNameHandling_null_empty() {
         assertEquals("unknown",testee.processModuleName(this.executableElement, this.annotationValue));
         when(this.annotationValue.getValue()).thenReturn("");
         assertEquals("unknown",testee.processModuleName(this.executableElement, this.annotationValue));
     }
 
     @Test
-    public void moduleNameHandling_null_not_package_friendly() {
+    void moduleNameHandling_null_not_package_friendly() {
         when(this.annotationValue.getValue()).thenReturn("-a");
         assertEquals("unknown",testee.processModuleName(this.executableElement, this.annotationValue));
     }
 
     @Test
-    public void testOutputType_invalid() throws Exception {
+    void testOutputType_invalid() {
         assertNull(testee.convertOutputType(null));
         assertNull(testee.convertOutputType(this.annotationValue));
         when(this.annotationValue.getValue()).thenReturn("XXX");
@@ -109,13 +109,13 @@ public class TSModuleHandlerTest {
     }
 
     @Test
-    public void testOutputType_valid() throws Exception {
+    void testOutputType_valid() {
         when(this.annotationValue.getValue()).thenReturn(OutputType.MODULE.name());
         assertEquals(OutputType.MODULE, testee.convertOutputType(this.annotationValue));
     }
 
     @Test
-    public void testStrategy_invalid() throws Exception {
+    void testStrategy_invalid() {
         assertNull(testee.convertNameSpaceMappingStrategy(null));
         assertNull(testee.convertNameSpaceMappingStrategy(this.annotationValue));
         when(this.annotationValue.getValue()).thenReturn("XXX");
@@ -123,7 +123,7 @@ public class TSModuleHandlerTest {
     }
 
     @Test
-    public void testStrategy_valid() throws Exception {
+    void testStrategy_valid() {
         when(this.annotationValue.getValue()).thenReturn(NameSpaceMappingStrategy.MANUAL.name());
         assertEquals(NameSpaceMappingStrategy.MANUAL, testee.convertNameSpaceMappingStrategy(this.annotationValue));
     }

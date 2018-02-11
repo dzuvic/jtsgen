@@ -21,17 +21,17 @@
 package dz.jtsgen.processor.model.tstarget;
 
 import dz.jtsgen.processor.model.ConversionCoverage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.HashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TSTargetPrimitiveTypeTest {
+class TSTargetPrimitiveTypeTest {
 
     @Test
-    public void test_primitiveMapping_info() throws Exception {
+    void test_primitiveMapping_info() {
         TSTargetPrimitiveType testee = new TSTargetPrimitiveType("null","null");
         assertEquals(testee.conversionCoverage(), ConversionCoverage.DIRECT);
         assertEquals(testee.getJavaType(),"null");

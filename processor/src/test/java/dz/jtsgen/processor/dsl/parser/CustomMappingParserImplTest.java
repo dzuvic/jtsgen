@@ -27,23 +27,23 @@ import dz.jtsgen.processor.dsl.model.TypeMappingExpression;
 import dz.jtsgen.processor.model.ConversionCoverage;
 import dz.jtsgen.processor.util.Either;
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static dz.jtsgen.processor.dsl.parser.CustomMappingParserFactory.parser;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class CustomMappingParserImplTest {
+class CustomMappingParserImplTest {
 
     private CustomMappingParser testee = parser();
     private Either<String, TypeMappingExpression> t = null;
 
     @Before
-    public void init() {
+    void init() {
         this.testee = parser();
     }
 
     @Test
-    public void parse_noTypeVars() {
+    void parse_noTypeVars() {
         t=testee.parse("a.b.c->a");
         assertTrue(t.isRight());
         assertEquals(
@@ -56,7 +56,7 @@ public class CustomMappingParserImplTest {
     }
 
     @Test
-    public void parse_AngleTypeVars() {
+    void parse_AngleTypeVars() {
         t=testee.parse("a.b.c<T,U> |-> a<T,U>");
         assertEquals(
                 t.check("bad names", x -> x.names().contains("a"))
@@ -80,7 +80,7 @@ public class CustomMappingParserImplTest {
     }
 
     @Test
-    public void parse_backtickTypeVar () {
+    void parse_backtickTypeVar() {
         t=testee.parse("Collection<T> -> `T`[]");
         assertEquals(
                 t.check("java type must be Collection", x -> x.names().contains("Collection"))
@@ -94,25 +94,25 @@ public class CustomMappingParserImplTest {
     }
 
     @Test
-    public void check_error_closing_bracket() {
+    void check_error_closing_bracket() {
         t=testee.parse("List >T -> error");
         assertEquals(t.leftValue(),"closing angle bracket without opening'>' at pos 5 of expression List >T -> error");
     }
 
     @Test
-    public void check_error_closing_bracket2() {
+    void check_error_closing_bracket2() {
         t=testee.parse("List <T -> error");
         assertEquals(t.leftValue(),"unexpected Type Script Identifier'error' at pos 11 of expression List <T -> error");
     }
 
     @Test
-    public void check_error_typevar_not_defined() {
+    void check_error_typevar_not_defined() {
         t=testee.parse("List <T> -> error<U,V>");
         assertEquals(t.leftValue(),"TS type variable not defined on LHS (T)'U' at pos 18 of expression List <T> -> error<U,V>");
     }
 
     @Test
-    public void check_error_no_java_identifier() {
+    void check_error_no_java_identifier() {
         t=testee.parse("0List <T> -> error<U,V>");
         assertEquals(t.leftValue(),"Invalid token '0List <T> -> error<U,V>' at pos 0 of expression 0List <T> -> error<U,V>");
     }

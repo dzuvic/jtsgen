@@ -22,20 +22,19 @@ package dz.jtsgen.processor.jtp.conv;
 
 import dz.jtsgen.processor.model.TypeScriptModel;
 import dz.jtsgen.processor.model.tstarget.TSTargets;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.TypeElement;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class MirrotTypeToTSConverterVisitorTest {
+class MirrotTypeToTSConverterVisitorTest {
 
     private TypeElement typeElement;
 
@@ -43,8 +42,8 @@ public class MirrotTypeToTSConverterVisitorTest {
 
     private TSProcessingInfo param;
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         this.typeElement = Mockito.mock(TypeElement.class);
         this.param = Mockito.mock(TSProcessingInfo.class);
         when(this.param.getTsModel()).thenReturn(TypeScriptModel.newModelWithDefaultModule());
@@ -59,7 +58,7 @@ public class MirrotTypeToTSConverterVisitorTest {
 
 
     @Test
-    public void visitUnused() throws Exception {
+    void visitUnused() {
 
         // currently not used
         assertEquals(testee.visitIntersection(null,null), TSTargets.ANY);

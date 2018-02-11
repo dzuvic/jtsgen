@@ -21,22 +21,21 @@
 package dz.jtsgen.processor.model.tstarget;
 
 
-
 import dz.jtsgen.processor.model.ConversionCoverage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.HashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Quite useless. At least it checks the contract.
  */
-public class TSTargetEnumValueTypeTest {
+class TSTargetEnumValueTypeTest {
 
     @Test
-    public void checkTstargetEnumContract() throws Exception {
+    void checkTstargetEnumContract() {
         TSTargetEnumValueType testee=new TSTargetEnumValueType();
         assertEquals(testee.conversionCoverage(), ConversionCoverage.DIRECT);
         assertEquals(testee.getJavaType(),"");

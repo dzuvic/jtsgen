@@ -20,13 +20,13 @@
 
 package dz.jtsgen.processor.util;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class TupleTest {
+class TupleTest {
     @Test
-    public void test_Tuple_equals() throws Exception {
+    void test_Tuple_equals() {
         Tuple same=new Tuple<>("a", "b");
         assertTrue(same.equals(same));
         assertFalse(same.equals(new Integer(0)));
@@ -36,7 +36,7 @@ public class TupleTest {
     }
 
     @Test
-    public void tuple_hashCode() throws Exception {
+    void tuple_hashCode() {
         assertEquals(new Tuple<>("a", "b").hashCode(),new Tuple<>("a", "b").hashCode());
         assertNotEquals(new Tuple<>("a", "b").hashCode(),new Tuple<>("a", "c").hashCode());
     }

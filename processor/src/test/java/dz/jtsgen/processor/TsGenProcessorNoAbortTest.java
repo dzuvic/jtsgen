@@ -20,18 +20,17 @@
 
 package dz.jtsgen.processor;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import java.util.HashSet;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class TsGenProcessorNoAbortTest {
+class TsGenProcessorNoAbortTest {
     @Test
-    public void test_Exception_process() throws Exception {
+    void test_Exception_process() {
         TsGenProcessor testee=new TsGenProcessor();
         ProcessingEnvironment processingEnvMock = mock(ProcessingEnvironment.class);
         Messager messenger = mock(Messager.class);
