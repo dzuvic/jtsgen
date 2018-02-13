@@ -175,9 +175,20 @@ class TsGenProcessorTest {
 
     @Test
     @DisplayName("Generate type parameters for generic classes")
-    @Disabled("Implementing Generics")
     void test_simple_interface_with_generics() throws IOException {
-        Compilation c = CompileHelper.compileJtsDev(true, 0, "InterFaceTestGenerics.java");
+        Compilation c = CompileHelper.compileJtsDev(DUMP_FILES, 3, "InterFaceTestGenerics.java");
+        assertEquals(
+                1,
+                findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+MyPair<U,V>")).size(),
+                "Pair class must have type parameters"
+        );
+    }
+
+    @Test
+    @DisplayName("Generate type parameters for generic classes with one bound")
+    @Disabled("Implementing Generics")
+    void test_simple_interface_with_co_varian_generics() throws IOException {
+        Compilation c = CompileHelper.compileJtsDev(DUMP_FILES, 0, "InterFaceTestGenericsOneBound.java");
         assertEquals(
                 1,
                 findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\sexport interface MyPair<U,V>")).size(),
@@ -193,6 +204,7 @@ class TsGenProcessorTest {
         );
 
     }
+
 
     @Test
     void test_multi_interface_with_inheritance_and_namespaces() throws IOException {

@@ -88,6 +88,11 @@ class TSTypeVisitorDefault implements TSTypeVisitor {
         getOut().print(x.getKeyword());
         getOut().print(" ");
         getOut().print(x.getName());
+        if (!x.getTypeParams().isEmpty()) {
+            getOut().print("<");
+            getOut().print(x.getTypeParams().stream().map(z -> z.getName()).collect(Collectors.joining(",")));
+            getOut().print("> ");
+        }
         getOut().print(extendsSuperTypes(x));
         getOut().println(" {");
     }

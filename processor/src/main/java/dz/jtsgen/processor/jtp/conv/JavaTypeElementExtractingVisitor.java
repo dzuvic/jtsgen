@@ -22,6 +22,7 @@ package dz.jtsgen.processor.jtp.conv;
 
 import dz.jtsgen.annotations.TSIgnore;
 import dz.jtsgen.annotations.TSReadOnly;
+import dz.jtsgen.processor.jtp.conv.visitors.JavaTypeConverter;
 import dz.jtsgen.processor.model.TSMember;
 import dz.jtsgen.processor.model.TSRegularMemberBuilder;
 import dz.jtsgen.processor.model.TSTargetType;
@@ -36,7 +37,7 @@ import java.util.stream.Collectors;
 import static dz.jtsgen.processor.helper.ExecutableElementHelper.*;
 
 /**
- * processes the Elements of an java interface or class.
+ * processes the Elements of an java interface or class, members and variables.
  * <p>
  * <p>
  * because of beans this Visitor is stateful: return type is void.
@@ -57,12 +58,16 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
     // the environment
     private TSProcessingInfo tsProcessingInfo;
 
+    // the converter for unkown types
+    private JavaTypeConverter javaTypeConverter;
 
 
-    JavaTypeElementExtractingVisitor(TypeElement typeElementToConvert, TSProcessingInfo visitorParam) {
+
+    JavaTypeElementExtractingVisitor(TypeElement typeElementToConvert, TSProcessingInfo visitorParam, JavaTypeConverter javaTypeConverter) {
         assert typeElementToConvert != null && visitorParam != null;
         this.typeElementToConvert = typeElementToConvert;
         this.tsProcessingInfo = visitorParam;
+        this.javaTypeConverter = javaTypeConverter;
 
     }
 
@@ -124,12 +129,12 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
     }
 
 
-    private TSTargetType convertTypeMirrorToTsType(ExecutableElement theElement, TSProcessingInfo TSProcessingInfo) {
-        return new MirrotTypeToTSConverterVisitor(theElement, TSProcessingInfo).visit(theElement.getReturnType());
+    private TSTargetType convertTypeMirrorToTsType(ExecutableElement theElement, TSProcessingInfo tsProcessingInfo) {
+        return new MirrotTypeToTSConverterVisitor(theElement, tsProcessingInfo, javaTypeConverter).visit(theElement.getReturnType());
     }
 
     private TSTargetType convertTypeMirrorOfMemberToTsType(VariableElement theElement, TSProcessingInfo TSProcessingInfo) {
-        return new MirrotTypeToTSConverterVisitor(theElement, TSProcessingInfo).visit(theElement.asType());
+        return new MirrotTypeToTSConverterVisitor(theElement, TSProcessingInfo, javaTypeConverter).visit(theElement.asType());
     }
 
     List<TSMember> getMembers() {

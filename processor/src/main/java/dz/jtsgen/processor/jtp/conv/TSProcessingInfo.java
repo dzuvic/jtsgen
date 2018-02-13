@@ -27,11 +27,12 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.TypeElement;
 
 /**
- * holds information needed acessing the model when traversing the AST
+ * holds information needed accessing the model when traversing the AST
  */
 @Value.Immutable
 public abstract class TSProcessingInfo {
 
+    /** the annotation that is beeing processed, usually, e.g. TyeScript */
     @Value.Parameter
     public abstract TypeElement getAnnotation();
 

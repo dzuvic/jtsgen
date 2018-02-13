@@ -40,7 +40,7 @@ class JavaTypeElementExtractingVisitorTest {
     void init() {
         this.typeElement = Mockito.mock(TypeElement.class);
         this.param = Mockito.mock(TSProcessingInfo.class);
-        this.testee = new JavaTypeElementExtractingVisitor(this.typeElement,this.param) ;
+        this.testee = new JavaTypeElementExtractingVisitor(this.typeElement,this.param, null) ;
     }
 
 

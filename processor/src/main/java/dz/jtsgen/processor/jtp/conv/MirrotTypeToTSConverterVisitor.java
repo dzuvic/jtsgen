@@ -21,6 +21,7 @@
 package dz.jtsgen.processor.jtp.conv;
 
 
+import dz.jtsgen.processor.jtp.conv.visitors.JavaTypeConverter;
 import dz.jtsgen.processor.model.TSTargetType;
 import dz.jtsgen.processor.model.TSType;
 import dz.jtsgen.processor.model.TypeScriptModel;
@@ -59,18 +60,21 @@ class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTargetType, 
 
     private final Element currentElement;
 
-    private final TSProcessingInfo TSProcessingInfo;
+    private final TSProcessingInfo tsProcessingInfo;
 
-    MirrotTypeToTSConverterVisitor(Element currentElement, TSProcessingInfo TSProcessingInfo) {
-        this.TSProcessingInfo = TSProcessingInfo;
+    private final JavaTypeConverter javaTypeConverter;
+
+    MirrotTypeToTSConverterVisitor(Element currentElement, TSProcessingInfo tsProcessingInfo, JavaTypeConverter javaTypeConverternverter) {
+        this.tsProcessingInfo = tsProcessingInfo;
         this.declaredTypeConversions = new LinkedHashMap<>();
-        this.declaredTypeConversions.putAll(TSProcessingInfo.getTsModel().getModuleInfo().getCustomMappings());
+        this.declaredTypeConversions.putAll(tsProcessingInfo.getTsModel().getModuleInfo().getCustomMappings());
         this.declaredTypeConversions.putAll(
                 createDefaultDeclaredTypeConversion().stream()
-                        .filter(x -> ! TSProcessingInfo.getTsModel().getModuleInfo().getCustomMappings().containsKey(x.getJavaType()))
+                        .filter(x -> ! tsProcessingInfo.getTsModel().getModuleInfo().getCustomMappings().containsKey(x.getJavaType()))
                         .collect(Collectors.toMap(TSTargetType::getJavaType,Function.identity()))
         );
         this.currentElement = currentElement;
+        this.javaTypeConverter = javaTypeConverternverter;
     }
 
     private List<TSTargetType> createDefaultDeclaredTypeConversion() {
@@ -154,7 +158,7 @@ class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTargetType, 
         //add a dummy type, to stop endless recursive calls
         createTSTargetByDSL("" + nameOfType + "->" + "any").ifPresent(x -> model().addTSTarget(x));
         final Optional<TypeElement> typeElement = Optional.ofNullable( (javaElement instanceof TypeElement) ? (TypeElement) javaElement :null);
-        final Optional<TSType> tsType = typeElement.flatMap( x -> new TypeScriptAnnotationProcessor(TSProcessingInfo).convertJavaType(x));
+        final Optional<TSType> tsType = typeElement.flatMap(javaTypeConverter::convertJavaType);
         final Optional<TSTargetType> result = tsType.flatMap(x -> {
             model().addTSTypes(Collections.singletonList(x));
             return createTSTargetByDSLWithNS("" + nameOfType + "->" + x.getName()).toOptional();
@@ -227,10 +231,10 @@ class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTargetType, 
     }
 
     private ProcessingEnvironment env() {
-        return this.TSProcessingInfo.getpEnv();
+        return this.tsProcessingInfo.getpEnv();
     }
 
     private TypeScriptModel model() {
-        return this.TSProcessingInfo.getTsModel();
+        return this.tsProcessingInfo.getTsModel();
     }
 }

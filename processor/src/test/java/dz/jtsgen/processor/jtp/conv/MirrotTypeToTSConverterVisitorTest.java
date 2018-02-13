@@ -53,7 +53,7 @@ class MirrotTypeToTSConverterVisitorTest {
         when(this.param.getpEnv()).thenReturn(processingEnvMock);
 
 
-        this.testee = new MirrotTypeToTSConverterVisitor(this.typeElement,this.param) ;
+        this.testee = new MirrotTypeToTSConverterVisitor(this.typeElement,this.param, null) ;
     }
 
 
