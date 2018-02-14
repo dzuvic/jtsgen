@@ -12,6 +12,7 @@ buildscript {
         guava_Version             = '21.0'
         generex_Verson            = '1.0.2'
         jacoco_Version            = '0.8.0'
+        log4j_Version             = '2.9.0'
 
         immutables_Version        = '2.5.5'
 
@@ -50,23 +51,6 @@ subprojects {
     }
 
 
-    // following is just a hack from https://stackoverflow.com/a/44907857 until jacoco reporting is fixed
-    configurations {
-        testAgent {
-            transitive = false
-        }
-    }
-    dependencies {
-        testAgent("org.jacoco:org.jacoco.agent:${jacoco_Version}:runtime")
-    }
-    tasks.withType(JavaExec) {
-        if (it.name == 'junitPlatformTest') {
-            doFirst {
-                jvmArgs "-javaagent:${configurations.testAgent.singleFile}=destfile=${project.buildDir.name}/jacoco/test.exec"
-            }
-        }
-    }
-
     jacoco {
         toolVersion = "${jacoco_Version}"
 //        applyTo junitPlatformTest
@@ -77,7 +61,7 @@ subprojects {
         reports {
             xml.enabled = true
             xml.destination file("${buildDir}/reports/jacoco/test/jacocoTestReport.xml")
-            html.enabled = false
+            html.enabled = true
         }
     }
 }

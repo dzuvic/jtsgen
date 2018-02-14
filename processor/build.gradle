@@ -43,6 +43,8 @@ dependencies {
     testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiter_Version}")
     testCompileOnly('org.apiguardian:apiguardian-api:1.0.0')
     testRuntime("org.junit.platform:junit-platform-launcher:${junitPlatform_Version}")
+    testRuntime("org.apache.logging.log4j:log4j-core:${log4j_Version}")
+    testRuntime("org.apache.logging.log4j:log4j-jul:${log4j_Version}")
 
     testCompile "com.google.testing.compile:compile-testing:${compile_testing_Version}"
     testCompile "org.mockito:mockito-core:${mockito_Version}"
@@ -81,6 +83,10 @@ compileJava {
     }
 }
 
+jacoco {
+    toolVersion = "${jacoco_Version}"
+    applyTo junitPlatformTest
+}
 
 junitPlatform {
     // platformVersion '1.0.3'
@@ -93,10 +99,11 @@ junitPlatform {
         }
         // includeClassNamePattern '.*Test'
     }
+    details 'summary'
     // configurationParameter 'junit.jupiter.conditions.deactivate', '*'
     // enableStandardTestTask true
     // reportsDir file('build/test-results/junit-platform') // this is the default
-    // logManager 'org.apache.logging.log4j.jul.LogManager'
+    logManager 'org.apache.logging.log4j.jul.LogManager'
 }
 
 clean {
@@ -105,6 +112,11 @@ clean {
 
 
 jacocoTestReport {
+    test {
+        jacoco {
+            destinationFile = file("${buildDir}/jacoco/junitPlatformTest.exec")
+        }
+    }
     afterEvaluate {
         classDirectories = files(classDirectories.files.collect {
             fileTree(dir: it, exclude: [
@@ -120,7 +132,8 @@ jacocoTestReport {
                     '/dz/jtsgen/processor/model/TSEnumMemberBuilder*',
                     '/dz/jtsgen/processor/model/TSInterfaceBuilder*',
                     '/dz/jtsgen/processor/model/TSModuleInfoBuilder*',
-                    '/dz/jtsgen/processor/model/TSRegularMemberBuilder*'
+                    '/dz/jtsgen/processor/model/TSRegularMemberBuilder*',
+                    '/dz/jtsgen/processor/model/TSTypeVariableBuilder.*'
             ] )
         })
     }
