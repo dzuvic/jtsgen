@@ -182,6 +182,34 @@ class TsGenProcessorTest {
                 findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+MyPair<U,V>")).size(),
                 "Pair class must have type parameters"
         );
+        assertEquals(
+                1,
+                findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+u:\\s*U\\s*;")).size(),
+                "Variable u must be of generic type U"
+        );
+        assertEquals(
+                1,
+                findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+v:\\s*V\\s*;")).size(),
+                "Variable v must be of generic type V"
+        );
+
+        assertEquals(
+                1,
+                findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTestGenerics<T>")).size(),
+                "InterFaceTestGenerics must have type parameter T"
+        );
+
+        assertEquals(
+                1,
+                findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+myGeneric:\\s*T\\s*;")).size(),
+                "Variable myGeneric must be of generic type T"
+        );
+
+//        assertEquals(
+//                1,
+//                findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+myPair:\\s*MyPair<String,String>\\s*;")).size(),
+//                "Variable myPair must be parameterized with <String,String>"
+//        );
     }
 
     @Test

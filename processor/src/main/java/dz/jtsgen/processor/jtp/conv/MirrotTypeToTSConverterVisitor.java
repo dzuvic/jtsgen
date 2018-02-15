@@ -25,6 +25,7 @@ import dz.jtsgen.processor.jtp.conv.visitors.JavaTypeConverter;
 import dz.jtsgen.processor.model.TSTargetType;
 import dz.jtsgen.processor.model.TSType;
 import dz.jtsgen.processor.model.TypeScriptModel;
+import dz.jtsgen.processor.model.tstarget.TSTargetFactory;
 import dz.jtsgen.processor.model.tstarget.TSTargets;
 import dz.jtsgen.processor.util.StreamUtils;
 import dz.jtsgen.processor.util.Tuple;
@@ -41,10 +42,12 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static dz.jtsgen.processor.helper.TypeMirrorHelper.extractTypeVariablename;
 import static dz.jtsgen.processor.model.tstarget.TSTargetFactory.*;
 import static dz.jtsgen.processor.model.tstarget.TSTargets.*;
 import static dz.jtsgen.processor.util.StreamUtils.firstOptional;
 import static dz.jtsgen.processor.util.StringUtils.withoutTypeArgs;
+import static java.lang.String.format;
 import static javax.tools.Diagnostic.Kind.WARNING;
 
 /**
@@ -204,8 +207,10 @@ class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTargetType, 
     public TSTargetType visitTypeVariable(TypeVariable t, Void x) {
         LOG.fine(() -> "TSCV: visitTypeVariable " + t);
         this.env().getMessager().printMessage(WARNING, "arrays partially supported", currentElement);
-        return TSTargets.ANY;
+        final String varName = extractTypeVariablename(t);
+        return TSTargetFactory.createTSTargetByDSL(format("%s->%s", varName, varName)).orElse(TSTargets.ANY);
     }
+
 
     @Override
     public TSTargetType visitWildcard(WildcardType t, Void x) {
