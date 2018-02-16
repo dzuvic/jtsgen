@@ -174,8 +174,29 @@ class TsGenProcessorTest {
 
 
     @Test
-    @DisplayName("Generate type parameters for generic classes")
+    @DisplayName("Generate type parameters in return type")
     void test_simple_interface_with_generics() throws IOException {
+        Compilation c = CompileHelper.compileJtsDev(DUMP_FILES, 0, "InterFaceTestGenericsConsumer.java");
+        assertEquals(
+                1,
+                findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+Consumer<T>")).size(),
+                "Consumer<T> must be defined"
+        );
+        assertEquals(
+                1,
+                findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTestGenericsConsumer\\s*\\{")).size(),
+                "InterFaceTestGenericsConsumer must be defined"
+        );
+        assertEquals(
+                1,
+                findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+consumerOfString:\\s*Consumer<string>\\s*;")).size(),
+                "Variable consumerOfString must be of type Consumer<string>"
+        );
+    }
+
+    @Test
+    @DisplayName("Generate type parameters for generic classes")
+    void test_own_interface_with_generics() throws IOException {
         Compilation c = CompileHelper.compileJtsDev(DUMP_FILES, 3, "InterFaceTestGenerics.java");
         assertEquals(
                 1,
@@ -205,11 +226,11 @@ class TsGenProcessorTest {
                 "Variable myGeneric must be of generic type T"
         );
 
-//        assertEquals(
-//                1,
-//                findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+myPair:\\s*MyPair<String,String>\\s*;")).size(),
-//                "Variable myPair must be parameterized with <String,String>"
-//        );
+        assertEquals(
+                1,
+                findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+myPair:\\s*MyPair<string,string>\\s*;")).size(),
+                "Variable myPair must be parameterized with <String,String>"
+        );
     }
 
     @Test

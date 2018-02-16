@@ -36,6 +36,7 @@ Currently the following features are supported:
    configured or calculated.
 -  Inheritance (since 0.2.0)
 -  Type variables without angle brackets in the generated TypeScript types, e.g. ``T[]``
+-  Generics: type variables or the mapped types are supported
 
 **Requirements:** The annotation processor only depends on the JDK. Only JDK 8
 is currently supported.
@@ -66,13 +67,13 @@ An example is currently in development: jtsgen-examples
 
 
 .. toctree::
-	:maxdepth: 2
-	:caption: Miscellaneous
+   :maxdepth: 2
+   :caption: Miscellaneous
 
-	License
-	Changelog
-	Test cases <https://github.com/dzuvic/jtsgen/tree/master/processor/src/test>
-	TypeScript <https://www.typescriptlang.org/docs/>
+   License
+   Changelog
+   Test cases <https://github.com/dzuvic/jtsgen/tree/master/processor/src/test>
+   TypeScript <https://www.typescriptlang.org/docs/>
 
 
 Indices and tables

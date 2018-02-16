@@ -19,25 +19,12 @@
  */
 package jts.dev;
 
-import dz.jtsgen.annotations.TSIgnore;
 import dz.jtsgen.annotations.TypeScript;
+import java.util.function.Consumer;
 
 @TypeScript
-public interface InterFaceTestGenerics<T> {
-    T getMyGeneric();
-    MyPair<String, String> getMyPair();
-}
+public interface InterFaceTestGenericsConsumer {
 
-class MyPair<U,V> {
-    private final U u;
-    private final V v;
-
-    public U getU() { return u;}
-
-    public V getV() { return v;}
-
-    MyPair (U u, V v) {
-        this.u = u;
-        this.v = v;
-    }
+    // Allthough this is type would never be used in an JSON structure, it's a helpful simple Type with a type variable
+    Consumer<String> getConsumerOfString();
 }

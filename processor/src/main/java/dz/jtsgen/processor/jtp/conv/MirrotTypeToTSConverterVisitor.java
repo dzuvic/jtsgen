@@ -24,6 +24,7 @@ package dz.jtsgen.processor.jtp.conv;
 import dz.jtsgen.processor.jtp.conv.visitors.JavaTypeConverter;
 import dz.jtsgen.processor.model.TSTargetType;
 import dz.jtsgen.processor.model.TSType;
+import dz.jtsgen.processor.model.TSTypeVariable;
 import dz.jtsgen.processor.model.TypeScriptModel;
 import dz.jtsgen.processor.model.tstarget.TSTargetFactory;
 import dz.jtsgen.processor.model.tstarget.TSTargets;
@@ -164,7 +165,14 @@ class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTargetType, 
         final Optional<TSType> tsType = typeElement.flatMap(javaTypeConverter::convertJavaType);
         final Optional<TSTargetType> result = tsType.flatMap(x -> {
             model().addTSTypes(Collections.singletonList(x));
-            return createTSTargetByDSLWithNS("" + nameOfType + "->" + x.getName()).toOptional();
+            // added type variables on both sides
+            final String typeVars = x.getTypeParams().size() == 0 ? "" :
+                    "<" + x.getTypeParams().stream().map(TSTypeVariable::getName).collect(Collectors.joining(",")) + ">";
+            return createTSTargetByDSLWithNS(
+                    "" + nameOfType + typeVars
+                            + "->"
+                            + x.getName() + typeVars
+                    ).toOptional();
         });
         LOG.finest(() -> "TCSV: converted " + t + " to " + tsType );
         // afterwards change the created mapping info accordingly

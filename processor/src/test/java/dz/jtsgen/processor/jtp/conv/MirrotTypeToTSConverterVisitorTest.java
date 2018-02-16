@@ -64,7 +64,6 @@ class MirrotTypeToTSConverterVisitorTest {
         assertEquals(testee.visitIntersection(null,null), TSTargets.ANY);
         assertEquals(testee.visitNull(null,null), TSTargets.NULL);
         assertEquals(testee.visitError(null,null), TSTargets.ANY);
-        assertEquals(testee.visitTypeVariable(null,null), TSTargets.ANY);
         assertEquals(testee.visitWildcard(null,null), TSTargets.ANY);
         assertEquals(testee.visitExecutable(null,null), TSTargets.ANY);
         assertEquals(testee.visitUnion(null,null), TSTargets.ANY);
