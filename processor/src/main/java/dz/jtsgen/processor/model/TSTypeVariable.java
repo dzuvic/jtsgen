@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Dragan Zuvic
+ * Copyright (c) 2018 Dragan Zuvic
  *
  * This file is part of jtsgen.
  *
@@ -18,23 +18,16 @@
  *
  */
 
-package dz.jtsgen.processor.util;
+package dz.jtsgen.processor.model;
 
+import org.immutables.value.Value;
 
-import org.junit.jupiter.api.Test;
+import java.util.List;
 
-import java.util.Optional;
-import java.util.regex.Pattern;
+@Value.Immutable
+public abstract class TSTypeVariable {
 
-import static org.junit.jupiter.api.Assertions.*;
+    public abstract String getName();
 
-class RegExHelperTest {
-    @Test
-    void compileToPattern() {
-        assertEquals(RegExHelper.compileToPattern(""), Optional.empty());
-        assertEquals(RegExHelper.compileToPattern(null), Optional.empty());
-        assertEquals(RegExHelper.compileToPattern("["), Optional.empty());
-        assertEquals(RegExHelper.compileToPattern("abc\\s+").map(Pattern::pattern), Optional.of(Pattern.compile("abc\\s+")).map(Pattern::pattern));
-    }
-
+    public abstract List<TSType> getBounds();
 }

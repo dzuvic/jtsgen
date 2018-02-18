@@ -52,7 +52,8 @@ The annotation processor has the following mapping for declaration types configu
     * java.util.Collection<T> -> \`T\`[]
     * java.util.Map<U,V> -> { [key: \`U\`]: \`V\`; }
 
-The Processor has no knowledge about the the necessary imports.
+The processor has no knowledge about the the necessary imports.
+
 
 Mapping-DSL
 -----------

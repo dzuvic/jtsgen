@@ -21,17 +21,17 @@
 package dz.jtsgen.processor.util;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.NoSuchElementException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class EitherTest {
+class EitherTest {
 
 
     @Test
-    public void either_isLeft_isRight() throws Exception {
+    void either_isLeft_isRight() {
         Assert.assertTrue( Either.left(1).isLeft());
         Assert.assertFalse( Either.left(1).isRight());
         Assert.assertTrue( Either.right(1).isRight());
@@ -39,42 +39,44 @@ public class EitherTest {
     }
 
     @Test
-    public void either_values() throws Exception {
+    void either_values() {
         assertEquals(Either.left("a").leftValue(),"a");
         assertEquals(Either.right("a").value(),"a");
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void either_values_err1() throws Exception {
-        Either.left("a").value();
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void either_values_err2() throws Exception {
-        Either.right("a").leftValue();
-    }
-
-
-    @Test(expected = NoSuchElementException.class)
-    public void either_iterator_error() throws Exception {
-        Assert.assertFalse(Either.left("20").iterator().hasNext());
-        Either.left("20").iterator().next();
+    @Test
+    void either_values_err1() {
+        assertThrows(IllegalStateException.class, () -> Either.left("a").value());
     }
 
     @Test
-    public void iterator() throws Exception {
+    void either_values_err2() {
+        assertThrows(IllegalStateException.class, () -> Either.right("a").leftValue() );
+    }
+
+
+    @Test
+    void either_iterator_error() {
+        Assert.assertFalse(Either.left("20").iterator().hasNext());
+        assertThrows(NoSuchElementException.class,
+                () -> Either.left("20").iterator().next()
+        );
+    }
+
+    @Test
+    void iterator() {
         Assert.assertTrue(Either.right("20").iterator().hasNext());
         assertEquals(Either.right("20").iterator().next(),"20");
     }
 
     @Test
-    public void either_idPresent() throws Exception {
+    void either_idPresent() {
         Either.right("20").ifPresent(x -> assertEquals(x,"20"));
         Either.left("20").ifPresent(x -> fail("should not be called"));
     }
 
     @Test
-    public void test_flatmap() throws Exception {
+    void test_flatmap() {
         assertEquals(
                 Either.right(20),
                 Either.right("20").flatMap( x -> Either.right(Integer.parseInt(x)))
@@ -89,13 +91,13 @@ public class EitherTest {
     }
 
     @Test
-    public void either_toString() throws Exception {
+    void either_toString() {
         assertEquals(Either.right("20").toString(),"Right{value=20}");
         assertEquals(Either.left("20").toString(),"Left{value=20}");
     }
 
     @Test
-    public void either_equals_and_hashcode() throws Exception {
+    void either_equals_and_hashcode() {
         Either<String,String> x0= Either.right("20");
         Either<String,String> x1= Either.right("20");
         Either<String,String> x2= Either.right("21");
@@ -116,13 +118,16 @@ public class EitherTest {
         assertFalse(y0.equals(y2));
     }
 
-    @Test(expected = dz.jtsgen.processor.util.NotImplented.class)
-    public void either_splitterator_fails() throws Exception {
-        Either.right("20").spliterator();
+    @Test
+    void either_splitterator_fails() {
+        assertThrows(
+                dz.jtsgen.processor.util.NotImplented.class,
+                () -> Either.right("20").spliterator()
+        );
     }
 
     @Test
-    public void test_orNull() throws Exception {
+    void test_orNull() {
         assertNull(Either.right("20").leftOrNull());
         assertNull(Either.left("20").rightOrNull());
         assertEquals(
@@ -136,7 +141,7 @@ public class EitherTest {
     }
 
     @Test
-    public void test_checkOrLeft() throws Exception {
+    void test_checkOrLeft() {
         assertEquals(
                         "20",
                         Either.left("20").checkOrLeft( "21", x->true)
@@ -149,7 +154,7 @@ public class EitherTest {
     }
 
     @Test
-    public void either_or_else_get() throws Exception {
+    void either_or_else_get() {
         assertEquals("20", Either.right("20").orElse("21"));
         assertEquals("20", Either.right("20").orElseGet( () -> "21"));
         assertEquals("20", Either.right("20").orElseThrow( () -> new IllegalArgumentException("wrong")));
@@ -157,13 +162,15 @@ public class EitherTest {
         assertEquals("21", Either.left("20").orElseGet(() -> "21"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void either_or_else_get_fail() throws Exception {
-        Either.left("20").orElseThrow( () -> new IllegalArgumentException("wrong"));
+    @Test
+    void either_or_else_get_fail() {
+        assertThrows(IllegalArgumentException.class,
+                () ->  Either.left("20").orElseThrow( () -> new IllegalArgumentException("wrong"))
+        );
     }
 
     @Test
-    public void either_fold() throws Exception {
+    void either_fold() {
         assertEquals( Either.right("20").fold(
                 s -> 0,
                 Integer::valueOf
@@ -175,20 +182,27 @@ public class EitherTest {
         ), Integer.valueOf(0) );
     }
 
-    @Test(expected = NullPointerException.class)
-    public void either_notnull_1() throws Exception {
-        Either.left("0").fold(null,null);
+    @Test
+    void either_notnull_1() {
+        assertThrows(NullPointerException.class,
+                () -> Either.left("0").fold(null, null)
+        );
     }
 
-    @Test(expected = NullPointerException.class)
-     public void either_notnull_2() throws Exception {
-         Either.left("0").fold(x->0,null);
+    @Test
+    void either_notnull_2() {
+        assertThrows(
+                NullPointerException.class,
+                () -> Either.left("0").fold(x->0,null)
+        );
      }
 
 
-    @Test(expected = NotImplented.class)
-    public void spliterator() throws Exception {
-        Either.right("20").spliterator();
+    @Test
+    void spliterator() {
+        assertThrows(NotImplented.class,
+                () -> Either.right("20").spliterator()
+        );
     }
 
 }

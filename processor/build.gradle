@@ -24,6 +24,7 @@ apply plugin: 'java'
 apply plugin: 'java-library'
 apply plugin: 'jacoco'
 apply plugin: 'idea'
+apply plugin: 'org.junit.platform.gradle.plugin'
 
 description="The jtsgen annotation processor"
 
@@ -37,18 +38,25 @@ def aptOutTestDir="${projectDir}/src/test/generated"
 dependencies {
     api project(':annotations')
 
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-    testCompile "com.google.testing.compile:compile-testing:0.10"
-    testCompile "org.mockito:mockito-core:2.7.21"
-    testCompile "commons-io:commons-io:2.5"
-    testCompile 'com.google.guava:guava:21.0'
-    testCompile 'com.github.mifmif:generex:1.0.2'
+    // JUnit 5 Jupiter
+    testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiter_Version}")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiter_Version}")
+    testCompileOnly('org.apiguardian:apiguardian-api:1.0.0')
+    testRuntime("org.junit.platform:junit-platform-launcher:${junitPlatform_Version}")
+    testRuntime("org.apache.logging.log4j:log4j-core:${log4j_Version}")
+    testRuntime("org.apache.logging.log4j:log4j-jul:${log4j_Version}")
+
+    testCompile "com.google.testing.compile:compile-testing:${compile_testing_Version}"
+    testCompile "org.mockito:mockito-core:${mockito_Version}"
+    testCompile "commons-io:commons-io:${commons_io_Version}"
+    testCompile "com.google.guava:guava:${guava_Version}"
+    testCompile "com.github.mifmif:generex:${generex_Verson}"
     
 
-    apt "org.immutables:value:2.5.5" // for annotation processor
+    apt "org.immutables:value:${immutables_Version}" // for annotation processor
 //    apt 'org.immutables:value-processor:2.5.3'
-    implementation "org.immutables:value:2.5.5" // for annotations
-    implementation "org.immutables:builder:2.5.5" // for annotations
+    implementation "org.immutables:value:${immutables_Version}" // for annotations
+    implementation "org.immutables:builder:${immutables_Version}" // for annotations
     
     compileOnly  files(Jvm.current().toolsJar)
 
@@ -67,6 +75,7 @@ idea {
 compileJava {
     options.annotationProcessorPath = configurations.apt
     options.compilerArgs << "-s" << aptOutDir
+    options.compilerArgs += '-parameters'
     options.verbose = false
     doFirst {
         delete aptOutDir  // workaround for Bug https://github.com/immutables/immutables/issues/134
@@ -74,12 +83,40 @@ compileJava {
     }
 }
 
+jacoco {
+    toolVersion = "${jacoco_Version}"
+    applyTo junitPlatformTest
+}
+
+junitPlatform {
+    // platformVersion '1.0.3'
+    filters {
+        engines {
+            include 'junit-jupiter'
+        }
+        tags {
+            exclude 'slow'
+        }
+        // includeClassNamePattern '.*Test'
+    }
+    details 'summary'
+    // configurationParameter 'junit.jupiter.conditions.deactivate', '*'
+    // enableStandardTestTask true
+    // reportsDir file('build/test-results/junit-platform') // this is the default
+    logManager 'org.apache.logging.log4j.jul.LogManager'
+}
 
 clean {
     delete aptOutDir
 }
 
+
 jacocoTestReport {
+    test {
+        jacoco {
+            destinationFile = file("${buildDir}/jacoco/junitPlatformTest.exec")
+        }
+    }
     afterEvaluate {
         classDirectories = files(classDirectories.files.collect {
             fileTree(dir: it, exclude: [
@@ -95,7 +132,8 @@ jacocoTestReport {
                     '/dz/jtsgen/processor/model/TSEnumMemberBuilder*',
                     '/dz/jtsgen/processor/model/TSInterfaceBuilder*',
                     '/dz/jtsgen/processor/model/TSModuleInfoBuilder*',
-                    '/dz/jtsgen/processor/model/TSRegularMemberBuilder*'
+                    '/dz/jtsgen/processor/model/TSRegularMemberBuilder*',
+                    '/dz/jtsgen/processor/model/TSTypeVariableBuilder.*'
             ] )
         })
     }

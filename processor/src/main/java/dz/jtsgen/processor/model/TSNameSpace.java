@@ -48,7 +48,7 @@ public class TSNameSpace {
     }
 
     public TSNameSpace findOrCreate(String namespace) {
-        assert namespace!=null;
+        if (namespace==null) throw new IllegalArgumentException("namepsave arg is null");
 
         if (this.name.equals(namespace)) return this;
 

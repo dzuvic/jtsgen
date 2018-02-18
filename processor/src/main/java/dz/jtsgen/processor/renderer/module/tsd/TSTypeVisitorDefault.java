@@ -24,6 +24,7 @@ import dz.jtsgen.processor.helper.IdentHelper;
 import dz.jtsgen.processor.model.TSEnum;
 import dz.jtsgen.processor.model.TSInterface;
 import dz.jtsgen.processor.model.TSType;
+import dz.jtsgen.processor.model.TSTypeVariable;
 import dz.jtsgen.processor.model.rendering.TSMemberVisitor;
 import dz.jtsgen.processor.model.rendering.TSTypeVisitor;
 
@@ -88,8 +89,20 @@ class TSTypeVisitorDefault implements TSTypeVisitor {
         getOut().print(x.getKeyword());
         getOut().print(" ");
         getOut().print(x.getName());
+        if (!x.getTypeParams().isEmpty()) {
+            getOut().print("<");
+            getOut().print(x.getTypeParams().stream().map(this::nameWithBounds).collect(Collectors.joining(", ")));
+            getOut().print("> ");
+        }
         getOut().print(extendsSuperTypes(x));
         getOut().println(" {");
+    }
+
+    private String nameWithBounds(TSTypeVariable z) {
+        return z.getName() +
+                (z.getBounds().isEmpty() ? "" :
+                    " extends " + z.getBounds().stream().map(TSType::getName).collect(Collectors.joining(" & "))
+                );
     }
 
     private String extendsSuperTypes(TSType x) {

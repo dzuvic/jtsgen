@@ -20,13 +20,15 @@
 
 package dz.jtsgen.processor.model;
 
-import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class TSNameSpaceTest {
+class TSNameSpaceTest {
     @Test
-    public void test_findOrCreate() {
+    void test_findOrCreate() {
         TSNameSpace testee = new TSNameSpace();
         TSNameSpace subNameSpace = testee.findOrCreate("de.dz.sample");
         assertEquals(subNameSpace.getName(),"sample");
@@ -35,14 +37,22 @@ public class TSNameSpaceTest {
         assertEquals(testee.getChildren().entrySet().iterator().next().getValue().getChildren().entrySet().iterator().next().getValue().getName(),"dz");
     }
 
-    @Test(expected = AssertionError.class)
-    public void test_findOrCreateAssertion() {
-        new TSNameSpace().findOrCreate(null);
+    @Test
+    @DisplayName("TSNamespace: Check namespace not null")
+    void test_findOrCreateAssertion() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new TSNameSpace().findOrCreate(null)
+        );
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testIllegalSubnameSpace() {
-        TSNameSpace testee = new TSNameSpace();
-        testee.getSubNameSapce("");
+    @Test
+    void testIllegalSubnameSpace() {
+        assertThrows(IllegalArgumentException.class,
+                () -> {
+                    TSNameSpace testee = new TSNameSpace();
+                    testee.getSubNameSapce("");
+                }
+        );
+
     }
 }

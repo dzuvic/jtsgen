@@ -24,9 +24,7 @@ package dz.jtsgen.processor;
 import com.google.common.collect.ImmutableSet;
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
@@ -37,15 +35,14 @@ import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.testing.compile.Compiler.javac;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-@RunWith(JUnit4.class)
-public class DummyProcessorTest {
+class DummyProcessorTest {
 
 
     @Test
-    public void check_if_processors_are_tested() {
+    void check_if_processors_are_tested() {
         final JavaFileObject HELLO_WORLD = JavaFileObjects.forResource("DummyForDummyProcessor.java");
         DummyProcessor processor = new DummyProcessor();
         Object[] dummyOptions = {"-Agone=nowhere"};
@@ -80,7 +77,7 @@ class DummyProcessor extends AbstractProcessor {
         return SourceVersion.latestSupported();
     }
 
-    public boolean isCalled() {
+    boolean isCalled() {
         return isCalled;
     }
 }

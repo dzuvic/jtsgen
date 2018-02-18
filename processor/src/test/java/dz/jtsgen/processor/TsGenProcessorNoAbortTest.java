@@ -20,18 +20,38 @@
 
 package dz.jtsgen.processor;
 
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.HashSet;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class TsGenProcessorNoAbortTest {
+class TsGenProcessorNoAbortTest {
+    static private PrintStream err = System.err;
+
+    @BeforeAll
+    static void mute_std() {
+        System.err.println("muting stderr for " + TsGenProcessorNoAbortTest.class.getSimpleName());
+        System.setErr(new PrintStream(new OutputStream() {
+            public void write(int b) {
+            }
+        }));
+    }
+
+    @AfterAll
+    static void un_mute_std() {
+        System.setErr(err);
+        System.err.println("stderr unmuted");
+    }
+
     @Test
-    public void test_Exception_process() throws Exception {
+    void test_Exception_process() {
         TsGenProcessor testee=new TsGenProcessor();
         ProcessingEnvironment processingEnvMock = mock(ProcessingEnvironment.class);
         Messager messenger = mock(Messager.class);

@@ -30,6 +30,9 @@ import java.util.Optional;
 import static dz.jtsgen.processor.util.StringUtils.lastOf;
 import static dz.jtsgen.processor.util.StringUtils.untill;
 
+/**
+ * This type contains all iformation about a converted type
+ */
 public abstract class TSType implements TSTypeElement {
 
 
@@ -48,6 +51,8 @@ public abstract class TSType implements TSTypeElement {
     public abstract Optional<String> getDocumentString();
 
     public abstract List<TSType> getSuperTypes();
+
+    public abstract List<TSTypeVariable> getTypeParams();
 
     @Value.Parameter
     public abstract Element getElement();

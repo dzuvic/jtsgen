@@ -20,22 +20,19 @@
 
 package dz.jtsgen.processor.util;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Optional;
 
 import static dz.jtsgen.processor.util.StringUtils.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 
-@RunWith(JUnit4.class)
-public class StringUtilsTest {
+class StringUtilsTest {
 
     @Test
-    public void testCountMatches() throws Exception {
+    void testCountMatches() {
         assertEquals(countMatches("a.b.c"),2);
         assertEquals(countMatches("a"),0);
         assertEquals(countMatches(""),0);
@@ -43,7 +40,7 @@ public class StringUtilsTest {
     }
 
     @Test
-     public void tesrCarOfString() throws Exception {
+    void tesrCarOfString() {
          assertEquals("de", car("de.dz"));
          assertEquals("de", car("de"));
          assertEquals("", car(""));
@@ -51,7 +48,7 @@ public class StringUtilsTest {
      }
 
     @Test
-    public void testMessageWithNulls() throws Exception {
+    void testMessageWithNulls() {
         assertEquals("", arrayFormat("", new Object[]{"a"}));
         assertEquals("", arrayFormat(null, new Object[]{"a"}));
         assertEquals("", arrayFormat("{}", new Object[]{""}));
@@ -60,7 +57,7 @@ public class StringUtilsTest {
     }
 
     @Test
-    public void testMessageWithSomeObjects() throws Exception {
+    void testMessageWithSomeObjects() {
         assertEquals("a", arrayFormat("{}", new Object[]{"a"}));
         assertEquals("1", arrayFormat("{}", new Object[]{1}));
         assertEquals("1?", arrayFormat("{}{}", new Object[]{1}));
@@ -70,19 +67,19 @@ public class StringUtilsTest {
     }
 
     @Test
-    public void testMessageWithList() throws Exception {
+    void testMessageWithList() {
         assertEquals("1,2,3", arrayFormat("{}", new Object[]{  Arrays.asList(1, 2, 3) } ));
     }
 
     @Test
-    public void testRemoveTypeArgs() {
+    void testRemoveTypeArgs() {
         assertEquals("",withoutTypeArgs(null));
         assertEquals("a",withoutTypeArgs("a<b>"));
         assertEquals("a",withoutTypeArgs("a<b<c>>"));
     }
 
     @Test
-    public void qualifiedTests() throws Exception {
+    void qualifiedTests() {
        assertEquals("",lastOf(""));
        assertEquals("d",lastOf("a.b.c.d"));
        assertEquals("d",lastOf("d"));
@@ -93,7 +90,7 @@ public class StringUtilsTest {
     }
 
     @Test
-    public void lastOf_boundary_tests() {
+    void lastOf_boundary_tests() {
         assertEquals("a,b",lastOf("a,b",(String[]) null));
         assertEquals("a,b",lastOf("a,b",""));
         assertEquals("b",lastOf("a,b",","));
@@ -104,46 +101,55 @@ public class StringUtilsTest {
     }
 
     @Test
-    public void separator_null_test() throws Exception {
+    void separator_null_test() {
         assertEquals(".",separator());
     }
 
 
     @Test
-    public void testDotToDash() throws Exception {
+    void testDotToDash() {
        assertEquals("",dotToDash(""));
        assertEquals("a-b",dotToDash("a.b"));
        assertEquals("a-b-c",dotToDash("a.b.c"));
     }
 
     @Test
-    public void testCamelCaseToDash() {
+    void testCamelCaseToDash() {
         assertEquals("abc-abc",camelCaseToDash("abcAbc"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testCamelCaseToDash_Fail() {
-        camelCaseToDash(null);
+    @Test
+    void testCamelCaseToDash_Fail() {
+        assertThrows(IllegalArgumentException.class,
+                () -> camelCaseToDash(null)
+
+        );
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testdotDash_Fail() {
-        dotToDash(null);
+    @Test
+    void testdotDash_Fail() {
+        assertThrows(IllegalArgumentException.class,
+                () -> dotToDash(null)
+
+                );
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testdotToUpperCamelCase_Fail() {
-        dotToUpperCamelCase(null);
+    @Test
+    void testdotToUpperCamelCase_Fail() {
+        assertThrows(IllegalArgumentException.class,
+                () -> dotToUpperCamelCase(null)
+
+                );
     }
 
 
     @Test
-    public void isPackageFriendly_boundary_cases() throws Exception {
+    void isPackageFriendly_boundary_cases() {
         assertFalse(isPackageFriendly(null));
     }
 
     @Test
-    public void test_splitInTwo() throws Exception {
+    void test_splitInTwo() {
         assertEquals(Optional.empty(),StringUtils.splitIntoTwo(null));
         assertEquals(Optional.empty(),StringUtils.splitIntoTwo(""));
         assertEquals(Optional.empty(),StringUtils.splitIntoTwo("->->"));
@@ -151,19 +157,19 @@ public class StringUtilsTest {
     }
 
     @Test
-    public void notEmptyTrimmed_boundary_cases() throws Exception {
+    void notEmptyTrimmed_boundary_cases() {
         assertEquals("",notEmptytrimmed(null));
     }
 
     @Test
-    public void testDotToCamelUpperCase() {
+    void testDotToCamelUpperCase() {
         assertEquals("AbCd", dotToUpperCamelCase("ab.cd"));
         assertEquals("Ab", dotToUpperCamelCase("ab"));
         assertEquals("ABCD", dotToUpperCamelCase("a.b.c.d"));
     }
 
     @Test
-    public void testCheckPackageFriendly() {
+    void testCheckPackageFriendly() {
         assertTrue(isPackageFriendly("a.b"));
         assertTrue(isPackageFriendly("a"));
         assertTrue(isPackageFriendly("a.b.c"));

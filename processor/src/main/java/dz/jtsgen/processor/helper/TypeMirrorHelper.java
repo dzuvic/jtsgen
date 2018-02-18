@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Dragan Zuvic
+ * Copyright (c) 2018 Dragan Zuvic
  *
  * This file is part of jtsgen.
  *
@@ -18,23 +18,20 @@
  *
  */
 
-package dz.jtsgen.processor.util;
+package dz.jtsgen.processor.helper;
 
+import javax.lang.model.type.TypeVariable;
 
-import org.junit.jupiter.api.Test;
+/**
+ * This offers some helper functions regarding Type Mirrors
+ */
+public final class TypeMirrorHelper {
 
-import java.util.Optional;
-import java.util.regex.Pattern;
-
-import static org.junit.jupiter.api.Assertions.*;
-
-class RegExHelperTest {
-    @Test
-    void compileToPattern() {
-        assertEquals(RegExHelper.compileToPattern(""), Optional.empty());
-        assertEquals(RegExHelper.compileToPattern(null), Optional.empty());
-        assertEquals(RegExHelper.compileToPattern("["), Optional.empty());
-        assertEquals(RegExHelper.compileToPattern("abc\\s+").map(Pattern::pattern), Optional.of(Pattern.compile("abc\\s+")).map(Pattern::pattern));
+    /**
+     * @param t the TypeVariable Mirror to inspect
+     * @return the type variable name
+     */
+    public static String extractTypeVariablename(TypeVariable t) {
+        return t.asElement().getSimpleName().toString();
     }
-
 }

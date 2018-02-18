@@ -20,9 +20,8 @@
 
 package dz.jtsgen.processor.helper;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Name;
 import javax.lang.model.type.TypeKind;
@@ -31,15 +30,15 @@ import javax.lang.model.type.TypeMirror;
 import static dz.jtsgen.processor.helper.ExecutableElementHelper.isGetter;
 import static dz.jtsgen.processor.helper.ExecutableElementHelper.isSetter;
 import static dz.jtsgen.processor.helper.ExecutableElementHelper.nameFromMethod;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ExecutableElementHelperTest {
+class ExecutableElementHelperTest {
     @Test
-    public void isGetterOrSetter() throws Exception {
+    void isGetterOrSetter() {
         assertFalse(ExecutableElementHelper.isGetterOrSetter((String) null));
         assertFalse(ExecutableElementHelper.isGetterOrSetter((ExecutableElement) null));
         assertFalse(ExecutableElementHelper.isGetterOrSetter(createDummy("set")));
@@ -52,7 +51,7 @@ public class ExecutableElementHelperTest {
     }
 
     @Test
-    public void isSetter_tests() throws Exception {
+    void isSetter_tests() {
         assertFalse(isSetter(null));
         assertTrue(isSetter(createDummy("setA")));
         assertFalse(isSetter(createDummy("set")));
@@ -61,7 +60,7 @@ public class ExecutableElementHelperTest {
     }
 
     @Test
-    public void isGetter_tests() throws Exception {
+    void isGetter_tests() {
         assertFalse(isGetter((ExecutableElement) null));
         assertTrue(isGetter(createDummy("getA")));
         assertTrue(isGetter(createBooleanDummy("isA")));
@@ -99,7 +98,7 @@ public class ExecutableElementHelperTest {
     }
 
     @Test
-    public void extract_methodName_fromGetterSetter() throws Exception {
+    void extract_methodName_fromGetterSetter() {
         assertEquals("x", nameFromMethod("setX"));
         assertEquals("x", nameFromMethod("getX"));
         assertEquals("x", nameFromMethod("isX"));

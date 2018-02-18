@@ -20,17 +20,17 @@
 
 package dz.jtsgen.processor.model;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class TSTargetTypeTest {
+class TSTargetTypeTest {
 
     @Test
-    public void test_withTypeParams_default() {
+    void test_withTypeParams_default() {
         TSTargetTypeTestee testee = new TSTargetTypeTestee();
         assertSame(testee.withTypeParams(null), testee);
     }

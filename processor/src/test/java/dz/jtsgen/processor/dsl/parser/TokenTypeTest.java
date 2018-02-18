@@ -20,20 +20,20 @@
 
 package dz.jtsgen.processor.dsl.parser;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class TokenTypeTest {
+class TokenTypeTest {
     @Test
-    public void groupName() throws Exception {
+    void groupName() {
         Set<String> names = Arrays.stream(TokenType.values()).map(Enum::name).collect(Collectors.toSet());
         Set<String> groups = Arrays.stream(TokenType.values()).map(TokenType::groupName).collect(Collectors.toSet());
-        assertEquals("groupnames must me unique",names.size(),groups.size());
+        assertEquals(names.size(),groups.size(), "groupnames must me unique");
     }
 
 }

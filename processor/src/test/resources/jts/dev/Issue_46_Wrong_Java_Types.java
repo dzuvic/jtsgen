@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Dragan Zuvic
+ * Copyright (c) 2018 Dragan Zuvic
  *
  * This file is part of jtsgen.
  *
@@ -17,24 +17,13 @@
  * along with jtsgen.  If not, see http://www.gnu.org/licenses/
  *
  */
+package jts.dev;
 
-package dz.jtsgen.processor.util;
+import dz.jtsgen.annotations.TypeScript;
 
-
-import org.junit.jupiter.api.Test;
-
-import java.util.Optional;
-import java.util.regex.Pattern;
-
-import static org.junit.jupiter.api.Assertions.*;
-
-class RegExHelperTest {
-    @Test
-    void compileToPattern() {
-        assertEquals(RegExHelper.compileToPattern(""), Optional.empty());
-        assertEquals(RegExHelper.compileToPattern(null), Optional.empty());
-        assertEquals(RegExHelper.compileToPattern("["), Optional.empty());
-        assertEquals(RegExHelper.compileToPattern("abc\\s+").map(Pattern::pattern), Optional.of(Pattern.compile("abc\\s+")).map(Pattern::pattern));
-    }
-
+// Generating bogus Java types due to not aborting the converter recursion
+// The following will lead to generating a lot of not needed Java Types:
+@TypeScript
+public interface Issue_46_Wrong_Java_Types<T extends Integer> {
+    T getUpperBound();
 }

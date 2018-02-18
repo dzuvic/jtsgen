@@ -21,28 +21,27 @@
 package dz.jtsgen.processor.dsl.parser;
 
 import com.mifmif.common.regex.Generex;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class TSMapLexerTest {
+class TSMapLexerTest {
 
     private Lexer lexer;
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         this.lexer = new Lexer();
     }
 
     @Test
-    public void testSomePatterns() throws Exception {
+    void testSomePatterns() {
 
         assertEquals(
                 Arrays.asList(
@@ -54,7 +53,7 @@ public class TSMapLexerTest {
     }
 
     @Test
-    public void testRandomRegex() throws Exception {
+    void testRandomRegex() {
         for (TokenType t: new TokenType[]{
                             TokenType.WHITESPACE,
                             TokenType.JIDENT,
@@ -71,7 +70,7 @@ public class TSMapLexerTest {
             String random=generex.random().substring(1);
             List<Token> tokens = lexer.lex(random);
 
-            assertFalse("should match at least once for input '" + random +"'",tokens.isEmpty());
+            assertFalse(tokens.isEmpty(), "should match at least once for input '" + random +"'");
             assertEquals(
                     t,
                     tokens.iterator().next().type()
@@ -81,7 +80,7 @@ public class TSMapLexerTest {
 
     @Test
     // when no arrow, instead of TS_LIT* JIDENT should be matched
-    public void testTSLits1() throws Exception {
+    void testTSLits1() {
 
         List<Token> tokens = lexer.lex("abcdefEfgH<T>");
         assertEquals(TokenType.JIDENT, tokens.get(0).type());
@@ -95,7 +94,7 @@ public class TSMapLexerTest {
 
     @Test
     // after an arrow, instead of JIDENT TSLIT should be matched
-    public void testTSLits2() throws Exception {
+    void testTSLits2() {
 
         List<Token> tokens = lexer.lex("->abcdefEfgH<T>");
 
@@ -105,7 +104,7 @@ public class TSMapLexerTest {
 
     @Test
     // after an arrow, instead of JIDENT TSLIT should be matched
-    public void testTSLits3() throws Exception {
+    void testTSLits3() {
         List<Token> tokens = lexer.lex("a.b.c->a");
         assertEquals(TokenType.JIDENT, tokens.get(0).type());
         assertEquals(TokenType.ARROW, tokens.get(5).type());
@@ -113,13 +112,13 @@ public class TSMapLexerTest {
     }
 
     @Test
-    public void testJavaLidentifierWithNumber() {
+    void testJavaLidentifierWithNumber() {
         List<Token> token = lexer.lex("jts.modules.testM1.m2.InterFaceTestModuleM2MustBeIn->jts.modules.testM1.m2.InterFaceTestModuleM2MustBeIn");
         assertFalse(token.stream().anyMatch(x->x.type().equals(TokenType.INVALID)));
     }
 
     @Test
-    public void name() throws Exception {
+    void name() {
         Pattern p = Pattern.compile("^[\\p{Graph}\\p{Blank}&&[^\\`]]+");
     }
 }

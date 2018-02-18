@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Dragan Zuvic
+ * Copyright (c) 2018 Dragan Zuvic
  *
  * This file is part of jtsgen.
  *
@@ -17,24 +17,14 @@
  * along with jtsgen.  If not, see http://www.gnu.org/licenses/
  *
  */
+package jts.dev;
 
-package dz.jtsgen.processor.util;
+import dz.jtsgen.annotations.TypeScript;
+import java.util.function.Consumer;
 
+@TypeScript
+public interface InterFaceTestGenericsConsumer {
 
-import org.junit.jupiter.api.Test;
-
-import java.util.Optional;
-import java.util.regex.Pattern;
-
-import static org.junit.jupiter.api.Assertions.*;
-
-class RegExHelperTest {
-    @Test
-    void compileToPattern() {
-        assertEquals(RegExHelper.compileToPattern(""), Optional.empty());
-        assertEquals(RegExHelper.compileToPattern(null), Optional.empty());
-        assertEquals(RegExHelper.compileToPattern("["), Optional.empty());
-        assertEquals(RegExHelper.compileToPattern("abc\\s+").map(Pattern::pattern), Optional.of(Pattern.compile("abc\\s+")).map(Pattern::pattern));
-    }
-
+    // Allthough this is type would never be used in an JSON structure, it's a helpful simple Type with a type variable
+    Consumer<String> getConsumerOfString();
 }

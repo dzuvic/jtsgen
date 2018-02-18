@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+        <Null name="Null" />
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Logger name="org.junit" level="warn"/>
+        <Root level="ALL">
+            <AppenderRef ref="Null"/>
+            <!--<AppenderRef ref="Console"/>-->
+        </Root>
+    </Loggers>
+</Configuration>

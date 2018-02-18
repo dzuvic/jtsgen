@@ -21,9 +21,12 @@
 package dz.jtsgen.processor.jtp.conv;
 
 
+import dz.jtsgen.processor.jtp.conv.visitors.JavaTypeConverter;
 import dz.jtsgen.processor.model.TSTargetType;
 import dz.jtsgen.processor.model.TSType;
+import dz.jtsgen.processor.model.TSTypeVariable;
 import dz.jtsgen.processor.model.TypeScriptModel;
+import dz.jtsgen.processor.model.tstarget.TSTargetFactory;
 import dz.jtsgen.processor.model.tstarget.TSTargets;
 import dz.jtsgen.processor.util.StreamUtils;
 import dz.jtsgen.processor.util.Tuple;
@@ -40,10 +43,12 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static dz.jtsgen.processor.helper.TypeMirrorHelper.extractTypeVariablename;
 import static dz.jtsgen.processor.model.tstarget.TSTargetFactory.*;
 import static dz.jtsgen.processor.model.tstarget.TSTargets.*;
 import static dz.jtsgen.processor.util.StreamUtils.firstOptional;
 import static dz.jtsgen.processor.util.StringUtils.withoutTypeArgs;
+import static java.lang.String.format;
 import static javax.tools.Diagnostic.Kind.WARNING;
 
 /**
@@ -59,18 +64,21 @@ class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTargetType, 
 
     private final Element currentElement;
 
-    private final TSProcessingInfo TSProcessingInfo;
+    private final TSProcessingInfo tsProcessingInfo;
 
-    MirrotTypeToTSConverterVisitor(Element currentElement, TSProcessingInfo TSProcessingInfo) {
-        this.TSProcessingInfo = TSProcessingInfo;
+    private final JavaTypeConverter javaTypeConverter;
+
+    MirrotTypeToTSConverterVisitor(Element currentElement, TSProcessingInfo tsProcessingInfo, JavaTypeConverter javaTypeConverternverter) {
+        this.tsProcessingInfo = tsProcessingInfo;
         this.declaredTypeConversions = new LinkedHashMap<>();
-        this.declaredTypeConversions.putAll(TSProcessingInfo.getTsModel().getModuleInfo().getCustomMappings());
+        this.declaredTypeConversions.putAll(tsProcessingInfo.getTsModel().getModuleInfo().getCustomMappings());
         this.declaredTypeConversions.putAll(
                 createDefaultDeclaredTypeConversion().stream()
-                        .filter(x -> ! TSProcessingInfo.getTsModel().getModuleInfo().getCustomMappings().containsKey(x.getJavaType()))
+                        .filter(x -> ! tsProcessingInfo.getTsModel().getModuleInfo().getCustomMappings().containsKey(x.getJavaType()))
                         .collect(Collectors.toMap(TSTargetType::getJavaType,Function.identity()))
         );
         this.currentElement = currentElement;
+        this.javaTypeConverter = javaTypeConverternverter;
     }
 
     private List<TSTargetType> createDefaultDeclaredTypeConversion() {
@@ -154,10 +162,17 @@ class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTargetType, 
         //add a dummy type, to stop endless recursive calls
         createTSTargetByDSL("" + nameOfType + "->" + "any").ifPresent(x -> model().addTSTarget(x));
         final Optional<TypeElement> typeElement = Optional.ofNullable( (javaElement instanceof TypeElement) ? (TypeElement) javaElement :null);
-        final Optional<TSType> tsType = typeElement.flatMap( x -> new TypeScriptAnnotationProcessor(TSProcessingInfo).convertJavaType(x));
+        final Optional<TSType> tsType = typeElement.flatMap(javaTypeConverter::convertJavaType);
         final Optional<TSTargetType> result = tsType.flatMap(x -> {
             model().addTSTypes(Collections.singletonList(x));
-            return createTSTargetByDSLWithNS("" + nameOfType + "->" + x.getName()).toOptional();
+            // added type variables on both sides
+            final String typeVars = x.getTypeParams().size() == 0 ? "" :
+                    "<" + x.getTypeParams().stream().map(TSTypeVariable::getName).collect(Collectors.joining(",")) + ">";
+            return createTSTargetByDSLWithNS(
+                    "" + nameOfType + typeVars
+                            + "->"
+                            + x.getName() + typeVars
+                    ).toOptional();
         });
         LOG.finest(() -> "TCSV: converted " + t + " to " + tsType );
         // afterwards change the created mapping info accordingly
@@ -200,8 +215,10 @@ class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTargetType, 
     public TSTargetType visitTypeVariable(TypeVariable t, Void x) {
         LOG.fine(() -> "TSCV: visitTypeVariable " + t);
         this.env().getMessager().printMessage(WARNING, "arrays partially supported", currentElement);
-        return TSTargets.ANY;
+        final String varName = extractTypeVariablename(t);
+        return TSTargetFactory.createTSTargetByDSL(format("%s->%s", varName, varName)).orElse(TSTargets.ANY);
     }
+
 
     @Override
     public TSTargetType visitWildcard(WildcardType t, Void x) {
@@ -227,10 +244,10 @@ class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTargetType, 
     }
 
     private ProcessingEnvironment env() {
-        return this.TSProcessingInfo.getpEnv();
+        return this.tsProcessingInfo.getpEnv();
     }
 
     private TypeScriptModel model() {
-        return this.TSProcessingInfo.getTsModel();
+        return this.tsProcessingInfo.getTsModel();
     }
 }

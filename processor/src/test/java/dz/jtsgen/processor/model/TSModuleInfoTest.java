@@ -20,21 +20,24 @@
 
 package dz.jtsgen.processor.model;
 
-import dz.jtsgen.annotations.OutputType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class TSModuleInfoTest {
+class TSModuleInfoTest {
 
 
-    @Test(expected = IllegalArgumentException.class)
-    public void tsPackageFriendly() throws Exception {
-        TSModuleInfoBuilder.builder().moduleName("-a").build();
+    @Test
+    void tsPackageFriendly() {
+        assertThrows(IllegalArgumentException.class,
+                () -> TSModuleInfoBuilder.builder().moduleName("-a").build()
+
+        );
     }
 
     @Test
-    public void test_TSModuleINfo_withModuleData() throws Exception {
+    void test_TSModuleINfo_withModuleData() {
         TSModuleInfo original=TSModuleInfoBuilder.builder().build();
 
         assertEquals(original, original.withModuleData(null,null,null,null,null,null,null));

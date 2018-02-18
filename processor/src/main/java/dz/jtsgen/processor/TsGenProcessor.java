@@ -132,6 +132,7 @@ public class TsGenProcessor extends AbstractProcessorWithLogging {
         // this is needed for updating data from CLI and calculating a name space mapping, if needed
         new TSModuleInfoEnforcer(this.processingEnv,this.typeScriptModel).createUpdatedTSModuleInfo(annotatedElements).ifPresent( x -> {
             typeScriptModel.addModuleInfo(x);
+
             final TSProcessingInfo TSProcessingInfo = TSProcessingInfoBuilder.of(annotation, this.processingEnv, typeScriptModel) ;// new TSProcessingInfoImpl(annotation, this.processingEnv, typeScriptModel);
             final JavaTypeProcessor handler = new TypeScriptAnnotationProcessor(TSProcessingInfo);
             handler.processAnnotations(roundEnv);

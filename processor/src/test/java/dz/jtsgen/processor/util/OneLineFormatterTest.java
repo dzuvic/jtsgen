@@ -21,16 +21,16 @@
 package dz.jtsgen.processor.util;
 
 import org.hamcrest.CoreMatchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
-public class OneLineFormatterTest {
+class OneLineFormatterTest {
     @Test
-    public void test_oneline_format() throws Exception {
+    void test_oneline_format() {
         OneLineFormatter f = new OneLineFormatter();
         LogRecord x = new LogRecord(Level.INFO,"test");
         x.setThrown(new IllegalArgumentException());

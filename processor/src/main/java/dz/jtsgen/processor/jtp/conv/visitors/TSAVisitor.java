@@ -28,7 +28,9 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/** Simple visitor that calls a JavaTypeConverter */
+/**
+ * Simple visitor that calls a JavaTypeConverter. This one is used by the processor.
+ */
 public class TSAVisitor extends SimpleElementVisitor8<Optional<TSType>, JavaTypeConverter> {
 
     private static Logger LOG = Logger.getLogger(TSAVisitor.class.getName());
@@ -39,7 +41,7 @@ public class TSAVisitor extends SimpleElementVisitor8<Optional<TSType>, JavaType
 
     @Override
     public Optional<TSType> visitType(TypeElement e, JavaTypeConverter param) {
-        LOG.log(Level.FINER,() -> String.format("visitType %s", e.toString() ));
+        LOG.log(Level.FINER,() -> String.format("TSAV visitType %s (cause @TypeScript)", e.toString() ));
         return param.convertJavaType(e);
     }
 }

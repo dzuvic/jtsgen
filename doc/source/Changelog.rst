@@ -1,13 +1,15 @@
 Change Log
 ==========
 
-`jtsgen-0.3.1-SNAPSHOT` (UNRELEASED)
+`jtsgen-0.4.0-SNAPSHOT` (UNRELEASED)
 ------------------------------------
 
 New Features
 ~~~~~~~~~~~~
 
 - Added documentation for Maven and Kotlin projects
+- Added Support for type bounds on classes and interfaces
+
 
 `jtsgen-0.3.0 <https://github.com/dzuvic/jtsgen/tree/jtsgen-0.3.0>`__ (2017-10-30)
 ----------------------------------------------------------------------------------

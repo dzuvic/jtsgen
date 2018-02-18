@@ -20,22 +20,20 @@
 
 package dz.jtsgen.processor.helper;
 
-import org.junit.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.Test;
 
 import javax.lang.model.type.DeclaredType;
 
 import java.util.Optional;
 
 import static dz.jtsgen.processor.helper.DeclTypeHelper.declaredTypeToTypeElement;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-public class DeclTypeHelperTest {
+class DeclTypeHelperTest {
 
     @Test
-    public void check_Absent_in_declaredTypeToTypeElement() {
+    void check_Absent_in_declaredTypeToTypeElement() {
 
         // following is not really useful
         DeclTypeHelper declTypeHelper = new DeclTypeHelper();
