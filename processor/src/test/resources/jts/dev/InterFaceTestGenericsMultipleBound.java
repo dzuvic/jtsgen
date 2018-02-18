@@ -21,9 +21,16 @@ package jts.dev;
 
 import dz.jtsgen.annotations.TypeScript;
 
+interface UpperOne {
+    int getIntOne();
+}
+
+interface UpperTwo {
+    int getIntTwo();
+}
+
 @TypeScript
-public interface InterFaceTestGenericsOneBound<T extends Upper> {
+public interface InterFaceTestGenericsMultipleBound<T extends UpperOne & UpperTwo> {
     T getUpperBound();
 }
 
-class Upper {};

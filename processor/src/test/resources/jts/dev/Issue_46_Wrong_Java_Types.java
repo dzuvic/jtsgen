@@ -21,9 +21,9 @@ package jts.dev;
 
 import dz.jtsgen.annotations.TypeScript;
 
+// Generating bogus Java types due to not aborting the converter recursion
+// The following will lead to generating a lot of not needed Java Types:
 @TypeScript
-public interface InterFaceTestGenericsOneBound<T extends Upper> {
+public interface Issue_46_Wrong_Java_Types<T extends Integer> {
     T getUpperBound();
 }
-
-class Upper {};

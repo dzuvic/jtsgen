@@ -200,7 +200,7 @@ class TsGenProcessorTest {
         Compilation c = CompileHelper.compileJtsDev(DUMP_FILES, 3, "InterFaceTestGenerics.java");
         assertEquals(
                 1,
-                findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+MyPair<U,V>")).size(),
+                findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+MyPair<U,\\s*V>")).size(),
                 "Pair class must have type parameters"
         );
         assertEquals(
@@ -235,24 +235,54 @@ class TsGenProcessorTest {
 
     @Test
     @DisplayName("Generate type parameters for generic classes with one bound")
-    @Disabled("Implementing Generics")
-    void test_simple_interface_with_co_varian_generics() throws IOException {
-        Compilation c = CompileHelper.compileJtsDev(DUMP_FILES, 0, "InterFaceTestGenericsOneBound.java");
+    void test_simple_interface_with_upperBound() throws IOException {
+        Compilation c = CompileHelper.compileJtsDev(DUMP_FILES, 1, "InterFaceTestGenericsOneBound.java");
         assertEquals(
                 1,
-                findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\sexport interface MyPair<U,V>")).size(),
-                "Pair class must have type parameters"
+                findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+Upper\\s+")).size(),
+                "Upper Type must be defined"
         );
-
 
         assertEquals(
                 1,
                 findSourceLine(c, JTS_DEV, JTS_DEV_D_TS,
-                        Pattern.compile("^\\export interface InterFaceTestGenerics <U>")).size(),
-                "Pair class must have type parameters"
+                        Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTestGenericsOneBound\\s*<T\\s+extends\\s+Upper>\\s*\\{")).size(),
+                "InterFaceTestGenericsOneBound must be generic with upper bound to type Upper"
+        );
+
+        assertEquals(
+                1,
+                findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+upperBound:\\s*T\\s*;")).size(),
+                "Variable upperBound must be of generic type T"
         );
 
     }
+
+    @Test
+    @DisplayName("Generate type parameters for generic classes with two bound")
+    void test_simple_interface_with_multiple_upperBound() throws IOException {
+        Compilation c = CompileHelper.compileJtsDev(DUMP_FILES, 1, "InterFaceTestGenericsMultipleBound.java");
+        assertEquals(
+                2,
+                findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+Upper(One|Two)\\s+")).size(),
+                "Upper Type must be defined"
+        );
+
+        assertEquals(
+                1,
+                findSourceLine(c, JTS_DEV, JTS_DEV_D_TS,
+                        Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTestGenericsMultipleBound\\s*<T\\s+extends\\s+UpperOne\\s+&\\s+UpperTwo\\s*>\\s*\\{")).size(),
+                "InterFaceTestGenericsOneBound must be generic with upper bound to type Upper"
+        );
+
+        assertEquals(
+                1,
+                findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+upperBound:\\s*T\\s*;")).size(),
+                "Variable upperBound must be of generic type T"
+        );
+
+    }
+
 
 
     @Test
