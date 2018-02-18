@@ -7,7 +7,8 @@ Annotations: [![Sonatype Nexus (Releases)](https://img.shields.io/nexus/r/https/
  [ ![Download](https://travis-ci.org/dzuvic/jtsgen.svg?branch=master) ](https://travis-ci.org/dzuvic/jtsgen)
  [![Coverage Status](https://codecov.io/github/dzuvic/jtsgen/coverage.svg?branch=master)](https://codecov.io/github/dzuvic/jtsgen?branch=master)
  [ ![Doc](https://readthedocs.org/projects/jtsgen/badge/?version=latest )](http://jtsgen.readthedocs.io/en/latest/?badge=latest)
-
+ [![Waffle.io - Columns and their card count](https://badge.waffle.io/dzuvic/jtsgen.svg?columns=all)](https://waffle.io/dzuvic/jtsgen)
+  
 ## Features
 
 This project emits TypeScript types from Java sources.
@@ -20,7 +21,7 @@ prominent features:
 * read only and name space support
 * configured at source the code location (package annotation)
 
-The complete list of all features and all of the documentation is available on:
+The documentation, including an introduction and a complete list of all features, is available on:
 [http://jtsgen.readthedocs.io](http://jtsgen.readthedocs.io)
 
 
