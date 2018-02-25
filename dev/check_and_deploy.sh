@@ -11,7 +11,7 @@ BRANCH="master"
 GRADLE_PROJECT_VERSION="$( ./gradlew properties | grep "^version:" | cut -f2 -d":" )"
 
 
-if   [ -z "${OSSRH_USER}" ] || [-z "${OSSRH_PASS}" ] ; then
+if   [ -z "${OSSRH_USER}" ] || [ -z "${OSSRH_PASS}" ] ; then
   echo "Skipping snapshot deployment: credentials not set"
 elif [[ "${GRADLE_PROJECT_VERSION}" != *"SNAPSHOT"* ]] ; then
   echo "skipping snapshot deployment: Not a snapshot version. Version is '${GRADLE_PROJECT_VERSION}'"
