@@ -21,16 +21,19 @@
 package dz.jtsgen.processor.model.tstarget;
 
 import dz.jtsgen.processor.model.ConversionCoverage;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class TSTargetPrimitiveTypeTest {
 
     @Test
+    @DisplayName("check some attributes of an primitive target type")
     void test_primitiveMapping_info() {
         TSTargetPrimitiveType testee = new TSTargetPrimitiveType("null","null");
         assertEquals(testee.conversionCoverage(), ConversionCoverage.DIRECT);
@@ -39,9 +42,8 @@ class TSTargetPrimitiveTypeTest {
         assertEquals(testee.tsTypeName(),"null");
         assertEquals(testee.typeParameters(), Collections.emptyList());
         assertEquals(testee.typeParameterTypes(), new HashMap<>());
+        assertFalse(testee.isReferenceType());
+        assertEquals(testee.tsTypeName(),"null");
     }
-
-
-
 
 }

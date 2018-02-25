@@ -64,7 +64,8 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
 
 
     JavaTypeElementExtractingVisitor(TypeElement typeElementToConvert, TSProcessingInfo visitorParam, JavaTypeConverter javaTypeConverter) {
-        assert typeElementToConvert != null && visitorParam != null;
+        super();
+        if (typeElementToConvert == null || visitorParam == null) throw new IllegalArgumentException();
         this.typeElementToConvert = typeElementToConvert;
         this.tsProcessingInfo = visitorParam;
         this.javaTypeConverter = javaTypeConverter;

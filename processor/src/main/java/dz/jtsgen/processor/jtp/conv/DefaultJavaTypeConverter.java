@@ -59,7 +59,7 @@ public class DefaultJavaTypeConverter implements JavaTypeConverter {
 
     @Override
     public Optional<TSType> convertJavaType(TypeElement e) {
-        LOG.log(Level.FINEST, () -> String.format("DJTC converting java type %s", e.toString()));
+        LOG.log(Level.FINEST, () -> String.format("DJTC converting java type %s", e == null ? "null" : e.toString()));
         return handleJavaType(e);
     }
 

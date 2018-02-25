@@ -21,12 +21,14 @@
 package dz.jtsgen.processor.jtp.conv;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import javax.lang.model.element.TypeElement;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class JavaTypeElementExtractingVisitorTest {
 
@@ -51,5 +53,15 @@ class JavaTypeElementExtractingVisitorTest {
         assertNull(testee.visitType(this.typeElement,null));
     }
 
+    @Test
+    @DisplayName("typeElement and Converter must not be null for JavaTypeElementVisitor")
+    void checkNullFails() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new JavaTypeElementExtractingVisitor(null,null,null));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> new JavaTypeElementExtractingVisitor(this.typeElement,null,null));
+
+    }
 
 }

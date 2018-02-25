@@ -48,7 +48,7 @@ class TSTargetDeclType implements TSTargetType {
     private final Map<String, TSTargetType> typeParametersTypes;
 
     TSTargetDeclType(TypeMappingExpression mappingExpression, Map<String, TSTargetType> typeParametersTypes, Supplier<String> javaType, Supplier<String> namespace) {
-        assert mappingExpression != null;
+        if (mappingExpression == null) throw new IllegalArgumentException("mappingExpression must not be null");
         this.javaType = javaType == null ? lazy(() -> mappingExpression.names().stream().collect(Collectors.joining("."))) : javaType;
         this.mappingExpression = mappingExpression;
         this.typeParametersTypes = typeParametersTypes == null ? new HashMap<>() : typeParametersTypes;
