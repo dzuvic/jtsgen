@@ -21,8 +21,8 @@ elif [ "${TRAVIS_JDK_VERSION}" != "${JDK}" ]; then
   echo "Skipping snapshot deployment: wrong JDK. Expected '$JDK' but was '$TRAVIS_JDK_VERSION'."
 elif [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then
   echo "Skipping snapshot deployment: was pull request."
-# elif [ "${TRAVIS_BRANCH}" != "${BRANCH}" ]; then
-#  echo "Skipping snapshot deployment: wrong branch. Expected '${BRANCH}' but was '${TRAVIS_BRANCH}'."
+elif [ "${TRAVIS_BRANCH}" != "${BRANCH}" ]; then
+  echo "Skipping snapshot deployment: wrong branch. Expected '${BRANCH}' but was '${TRAVIS_BRANCH}'."
 else
   echo "Start deploying snapshot version ${GRADLE_PROJECT_VERSION}"
   ./gradlew uploadArchives && echo "Snapshot deployed!"
