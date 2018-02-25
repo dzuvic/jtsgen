@@ -40,7 +40,8 @@ import java.util.regex.Pattern;
 public final class TSTargetFactory {
     private final static Logger LOG = Logger.getLogger(TSTargetFactory.class.getName());
     private final static Pattern TYPE_PARAM_PATTERN = Pattern.compile("<\\s*(\\w+)\\s*(,\\s*\\w+\\s*)*>");
-    private final static NameSpaceMapper IDENTITY = x -> x;
+
+    final static NameSpaceMapper IDENTITY = x -> x;
 
     /**
      * Reference:

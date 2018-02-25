@@ -20,23 +20,49 @@
 
 package dz.jtsgen.processor.model.tstarget; 
 
+import dz.jtsgen.processor.model.TSTargetType;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
+import static dz.jtsgen.processor.model.tstarget.TSTargetFactory.IDENTITY;
 import static dz.jtsgen.processor.model.tstarget.TSTargetFactory.createTSTargetByDSL;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TSTargetFactoryTest {
+
+    @Test
+    void checkConstructor() {
+        TSTargetFactory tf1 = new TSTargetFactory();
+        TSTargetFactory tf2 = new TSTargetFactory();
+
+        // check standard constructor
+        assertNotEquals(tf1,tf2);
+    }
+
+    @Test
+    @DisplayName("Check returning IDENTITY when calling TargetFactory")
+    void checkIdentity() {
+        Map<String, TSTargetType> emptyMap=new HashMap<>();
+        Map<?,?> x1 =  TSTargetFactory.mapNamespaces(emptyMap, x -> x);
+        Map<?,?> x2 =  TSTargetFactory.mapNamespaces(emptyMap, IDENTITY);
+        Map<?,?> testee =  TSTargetFactory.mapNamespaces(emptyMap, IDENTITY);
+
+        assertEquals(testee, x2);
+        assertEquals(testee, x1);
+    }
+
     @Test
     void test_createTSTargetByMapping_Type_Param() {
         createTSTargetByDSL("java.util.Collection<T> -> Array<T>").map(
             x -> {
                 assertEquals(x.typeParameters(), Collections.singletonList("T"));
                 assertEquals(x.getJavaType(),"java.util.Collection");
-                assertEquals(x.isReferenceType(),true);
+                assertTrue(x.isReferenceType());
                 assertEquals(x.typeParameterTypes(), new HashMap<>());
                 return x;
             }
@@ -49,7 +75,7 @@ class TSTargetFactoryTest {
             x -> {
                 assertEquals(x.typeParameters(), Collections.singletonList("T"));
                 assertEquals(x.getJavaType(),"java.util.List");
-                assertEquals(x.isReferenceType(),true);
+                assertTrue(x.isReferenceType());
                 assertEquals(x.typeParameterTypes(), new HashMap<>());
                 return x;
             }
@@ -62,7 +88,7 @@ class TSTargetFactoryTest {
             x -> {
                 assertEquals(x.typeParameters(), Arrays.asList("K","V"));
                 assertEquals(x.getJavaType(),"java.util.Map");
-                assertEquals(x.isReferenceType(),true);
+                assertTrue(x.isReferenceType());
                 assertEquals(x.typeParameterTypes(), new HashMap<>());
                 return x;
             }
