@@ -21,11 +21,16 @@
 package dz.jtsgen.processor.jtp.conv;
 
 import javax.annotation.processing.RoundEnvironment;
+import javax.lang.model.element.Element;
+import java.util.Set;
 
 /**
  * The handler for a specific (main) annotation cuurently on TypeScript is supported, but in the future other might be,
  * e.g. XmlRootElement
  */
 public interface JavaTypeProcessor {
+
     void processAnnotations(RoundEnvironment roundEnv);
+
+    void processElements(Set<Element> elements);
 }

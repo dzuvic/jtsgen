@@ -121,4 +121,10 @@ public @interface TSModule {
      */
     boolean generateTypeGuards() default false;
 
+
+    /**
+     * @return a list of additional Java types, that should be included, although they're not annotated
+     */
+    String[] additionalTypes() default {};
+
 }

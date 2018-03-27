@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Dragan Zuvic
+ * Copyright (c) 2018 Dragan Zuvic
  *
  * This file is part of jtsgen.
  *
@@ -18,29 +18,11 @@
  *
  */
 
-package dz.jtsgen.processor.jtp.conv;
+// Test excludion of itself, so no output should be generated
+@TSModule(
+    moduleName = "additional_test",
+    additionalTypes = {"java.net.InetAddress"}
+)
+package jts.modules.additional;
 
-import dz.jtsgen.processor.model.TypeScriptModel;
-import org.immutables.value.Value;
-
-import javax.annotation.processing.ProcessingEnvironment;
-import javax.lang.model.element.TypeElement;
-
-/**
- * holds information needed accessing the model when traversing the AST
- */
-@Value.Immutable
-public abstract class TSProcessingInfo {
-
-    @Value.Parameter
-    public abstract ProcessingEnvironment getpEnv();
-
-    @Value.Parameter
-    public abstract TypeScriptModel getTsModel();
-
-    @Value.Lazy
-    public TypeElementCache elementCache() {
-        return new TypeElementCache(this.getpEnv());
-    }
-
-}
+import dz.jtsgen.annotations.TSModule;

@@ -35,6 +35,7 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardLocation;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -564,7 +565,22 @@ class TsGenProcessorTest {
                         Pattern.compile("^\\s+sex:\\s+Sex;")).size(),
                 "must be mapped to Sex"
         );
+    }
 
+    @Test
+    @DisplayName("checking inclusion of additional types")
+    void test_default_additionalTypes() throws IOException {
+        InetAddress a;
+        final String folderName = "additional_test";
+        final String tdsFilename = "additional_test.d.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/additional", folderName, tdsFilename, DUMP_FILES, 0,  "package-info.java");
+
+        assertEquals(
+                1,
+                countPatterns(c, folderName, tdsFilename,
+                        Pattern.compile("^\\s+export\\s+interface\\s+InetAddress\\s*\\{")),
+                "must have Type InterFaceTestNameSpaceMapped"
+        );
     }
 
     @Test

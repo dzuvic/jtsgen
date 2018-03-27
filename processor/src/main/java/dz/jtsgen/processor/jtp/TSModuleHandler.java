@@ -83,6 +83,7 @@ public final class TSModuleHandler {
                                     else if (isNameAndNotNull("nameSpaceMapping",entry)) tsBuilder.nameSpaceMappings(convertToNameSpaceMappings(entry.getValue(), x));
                                     else if (isNameAndNotNull("outputType",entry)) tsBuilder.outputType(convertOutputType(entry.getValue()));
                                     else if (isNameAndNotNull("nameSpaceMappingStrategy",entry)) tsBuilder.nameSpaceMappingStrategy(convertNameSpaceMappingStrategy(entry.getValue()));
+                                    else if (isNameAndNotNull("additionalTypes",entry)) tsBuilder.addAllAdditionalTypes(convertToListOfString(entry.getValue()));
                                     else LOG.warning("unknown param on annotation TSModule " + entry.getKey());
                                 }
                                 return Optional.of( tsBuilder.build());
@@ -92,6 +93,19 @@ public final class TSModuleHandler {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toSet());
+    }
+
+    private List<String> convertToListOfString(AnnotationValue value) {
+        if (value.getValue() == null) return new ArrayList<>();
+        return new SimpleAnnotationValueVisitor8<List<String>, Void>() {
+            @Override
+            public List<String> visitArray(List<? extends AnnotationValue> vals, Void aVoid) {
+                return vals.stream()
+                        .map(x -> (String) x.getValue())
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
+            }
+        }.visit(value);
     }
 
     private boolean asBoolean(AnnotationValue value) {

@@ -159,5 +159,10 @@ public abstract class TSModuleInfo {
     public boolean generateTypeGuards() {
         return false;
     }
+
+    @Value.Default
+    public List<String> additionalTypes() {
+        return Collections.unmodifiableList(new ArrayList<>());
+    }
     
 }
