@@ -18,7 +18,9 @@
  *
  */
 
-// Test excludion of itself, so no output should be generated
+/**
+ * Test no output type "no module"
+ */
 @TSModule(
         moduleName = "simple_file",
         outputType = OutputType.NO_MODULE

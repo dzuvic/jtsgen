@@ -18,7 +18,9 @@
  *
  */
 
-// Test excludion of itself, so no output should be generated
+/**
+ *  Test excludion of itself, so no output should be generated
+ */
 @TSModule(
     moduleName = "exclusion_test",
     excludes = {"^jts.modules.exclude"}

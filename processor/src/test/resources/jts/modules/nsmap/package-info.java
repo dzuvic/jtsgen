@@ -18,7 +18,10 @@
  *
  */
 
-// Test excludion of itself, so no output should be generated
+
+/**
+ * Test simple name space strategty
+ */
 @TSModule(
         moduleName = "namespace_test",
         nameSpaceMapping = "jts.modules.nsmap -> easy"

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Dragan Zuvic
+ * Copyright (c) 2018 Dragan Zuvic
  *
  * This file is part of jtsgen.
  *
@@ -18,17 +18,21 @@
  *
  */
 
-/**
- * Test error messages
- */
-@TSModule(
-        moduleName = "tsmodule_error",
-        outputType = OutputType.NO_MODULE,
-        nameSpaceMapping = { "X<-Y"},
-        customTypeMappings = { "<- Bla"},
-        excludes = { "aaa{.*]"}
-)
-package jts.modules.tsmodule_error;
+package dz.jtsgen.processor.helper;
 
-import dz.jtsgen.annotations.OutputType;
-import dz.jtsgen.annotations.TSModule;
+import javax.lang.model.element.TypeElement;
+
+public final class ElementHelper {
+
+    /**
+     *
+     * @param typeElement the type element to check
+     * @param clazz the type the element has to be
+     * @return true if type element is represented by class clazz
+     */
+    public static boolean typeOf(TypeElement typeElement, Class<?> clazz) {
+
+        // this should be done in different way, but checking the name should be sufficient
+        return typeElement.getSimpleName().contentEquals(clazz.getSimpleName());
+    }
+}

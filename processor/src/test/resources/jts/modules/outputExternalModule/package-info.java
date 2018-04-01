@@ -18,7 +18,9 @@
  *
  */
 
-// Test excludion of itself, so no output should be generated
+/**
+ * Test outpu type Module
+ */
 @TSModule(
         moduleName = "external_module",
         outputType = OutputType.MODULE

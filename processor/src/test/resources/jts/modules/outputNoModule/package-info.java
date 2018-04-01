@@ -18,7 +18,9 @@
  *
  */
 
-// Test excludion of itself, so no output should be generated
+/**
+ * Test the ouput type namespace file
+ */
 @TSModule(
         moduleName = "no_module",
         outputType = OutputType.NAMESPACE_FILE

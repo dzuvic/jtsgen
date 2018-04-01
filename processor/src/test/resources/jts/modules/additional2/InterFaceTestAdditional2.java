@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Dragan Zuvic
+ * Copyright (c) 2018 Dragan Zuvic
  *
  * This file is part of jtsgen.
  *
@@ -17,18 +17,11 @@
  * along with jtsgen.  If not, see http://www.gnu.org/licenses/
  *
  */
+package jts.modules.additional2;
 
-/**
- * Test error messages
- */
-@TSModule(
-        moduleName = "tsmodule_error",
-        outputType = OutputType.NO_MODULE,
-        nameSpaceMapping = { "X<-Y"},
-        customTypeMappings = { "<- Bla"},
-        excludes = { "aaa{.*]"}
-)
-package jts.modules.tsmodule_error;
+import dz.jtsgen.annotations.TypeScript;
 
-import dz.jtsgen.annotations.OutputType;
-import dz.jtsgen.annotations.TSModule;
+@TypeScript
+public interface InterFaceTestAdditional2 {
+    String getMusBeIncludedInAddional2();
+}

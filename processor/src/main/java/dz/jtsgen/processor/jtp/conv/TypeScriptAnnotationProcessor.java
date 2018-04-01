@@ -19,6 +19,7 @@
  */
 package dz.jtsgen.processor.jtp.conv;
 
+import dz.jtsgen.processor.helper.Sets;
 import dz.jtsgen.processor.jtp.conv.visitors.JavaTypeConverter;
 import dz.jtsgen.processor.jtp.conv.visitors.TSAVisitor;
 
@@ -55,14 +56,19 @@ public class TypeScriptAnnotationProcessor implements JavaTypeProcessor {
 
     @Override
     public void processAnnotations(RoundEnvironment roundEnv) {
-        this.processElements(filteredTypeSriptElements(roundEnv));
+          this.processElements(
+                Sets.union(
+                        this.processingInfo.additionalTypesToConvert(),
+                        filteredTypeSriptElements(roundEnv)
+                ));
     }
+
 
     @Override
     public void processElements(Set<Element> elements) {
         TSAVisitor tsaVisitor = new TSAVisitor();
         for (Element e : elements) {
-            tsaVisitor.visit(e,javaConverter).ifPresent(     x -> {
+            tsaVisitor.visit(e, javaConverter).ifPresent(x -> {
                         processingInfo.getTsModel().addTSTypes(singletonList(x));
                         LOG.log(Level.FINEST, () -> String.format("TSAP added %s to model", x.toString()));
                     }

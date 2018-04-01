@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Dragan Zuvic
+ * Copyright (c) 2018 Dragan Zuvic
  *
  * This file is part of jtsgen.
  *
@@ -18,17 +18,19 @@
  *
  */
 
+// Test excludion of itself, so no output should be generated
+
 /**
- * Test error messages
+ * Testing additionalTypes with TypeScript annotation
+ */
+
+/**
+ * Testing additionalTypes with TypeScript annotation
  */
 @TSModule(
-        moduleName = "tsmodule_error",
-        outputType = OutputType.NO_MODULE,
-        nameSpaceMapping = { "X<-Y"},
-        customTypeMappings = { "<- Bla"},
-        excludes = { "aaa{.*]"}
+    moduleName = "additional2_test",
+    additionalTypes = {"java.net.InetAddress"}
 )
-package jts.modules.tsmodule_error;
+package jts.modules.additional2;
 
-import dz.jtsgen.annotations.OutputType;
 import dz.jtsgen.annotations.TSModule;

@@ -18,7 +18,9 @@
  *
  */
 
-// Test excludion of itself, so no output should be generated
+/**
+ * Test inheritance across sub packages
+ */
 @TSModule(
         moduleName = "inherit1_test"
 )

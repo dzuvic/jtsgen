@@ -579,7 +579,37 @@ class TsGenProcessorTest {
                 1,
                 countPatterns(c, folderName, tdsFilename,
                         Pattern.compile("^\\s+export\\s+interface\\s+InetAddress\\s*\\{")),
-                "must have Type InterFaceTestNameSpaceMapped"
+                "must have Type java.net.InternetAdress"
+        );
+
+        assertEquals(
+                1,
+                countPatterns(c, folderName, tdsFilename,
+                        Pattern.compile("^\\s+export\\s+interface")),
+                "must converted only one type."
+        );
+    }
+
+    @Test
+    @DisplayName("checking inclusion of additional types besides regular TypeScript annotation")
+    void test_default_additionalTypes_Regular() throws IOException {
+        InetAddress a;
+        final String folderName = "additional2_test";
+        final String tdsFilename = "additional2_test.d.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/additional2", folderName, tdsFilename, DUMP_FILES, 0,  "package-info.java", "InterFaceTestAdditional2.java");
+
+        assertEquals(
+                1,
+                countPatterns(c, folderName, tdsFilename,
+                        Pattern.compile("^\\s+export\\s+interface\\s+InetAddress\\s*\\{")),
+                "must have Type java.net.InetAddress"
+        );
+
+        assertEquals(
+                1,
+                countPatterns(c, folderName, tdsFilename,
+                        Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTestAdditional2\\s*\\{")),
+                "must have Type InterFaceTestAdditional2"
         );
     }
 

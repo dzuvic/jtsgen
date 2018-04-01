@@ -25,24 +25,26 @@ The following annotation parameters are supported:
 -  **moduleName**: The module name of the JavaScript/TypeScript Module.
    This must be a java package friendly name. This is a required parameter, if the
    ``TSModule`` annotation is used
+-  **additionalTypes**: Array of full qualified Java type names, that should
+   additionally be converted (since 0.4.0)
 -  **author**: The author number for the package.json file
 -  **authorUrl**: The authorURL for the package.json file
--  **version**: The version number for the package.json file, default is
-   "1.0.0"
--  **license**: The license for the package.json file
--  **description**: he description for the package.json file
 -  **customTypeMappings**: Custom Type Mapping for the module, the
    default is ``{}``
+-  **description**: he description for the package.json file
 -  **excludes**: regular expression to exclude type conversion, default
    is: ``{"^sun", "^jdk.internal", "^java.lang.Comparable"}``
+-  **generateTypeGuards**: Defines if typescript type gards should be generated as well. The default is false
+   (since 0.3.0)
+-  **license**: The license for the package.json file
 -  **nameSpaceMapping**: The name space mapping, the default is ``{}``
--  **outputType**: The type of the output. Default is
-   ``OutputType.NAMESPACE_AMBIENT_TYPE``
 -  **nameSpaceMappingStrategy**: Defines how the default name space is
    calculated. Default is ``NameSpaceMappingStrategy.ALL_TO_ROOT``
    (since 0.2.0)
--  **generateTypeGuards**: Defines if typescript type gards should be generated as well. The default is false
-   (since 0.3.0)
+-  **outputType**: The type of the output. Default is
+   ``OutputType.NAMESPACE_AMBIENT_TYPE``
+-  **version**: The version number for the package.json file, default is
+   "1.0.0"
 
 Note: The Processing Parameters ``jtsgen`` may override some of these settings. See :ref:`processing-parameters`
 for details.

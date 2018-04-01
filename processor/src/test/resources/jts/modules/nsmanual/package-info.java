@@ -18,7 +18,9 @@
  *
  */
 
-// Test excludion of itself, so no output should be generated
+/**
+ * Test manual namespace strategy
+ */
 @TSModule(
     moduleName = "nsmanual",
     nameSpaceMappingStrategy = NameSpaceMappingStrategy.MANUAL

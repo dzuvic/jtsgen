@@ -21,8 +21,11 @@ prominent features:
 * read only and name space support
 * configured at source the code location (package annotation)
 
+## Documentation
+
 The documentation, including an introduction and a complete list of all features, is available on:
-[http://jtsgen.readthedocs.io](http://jtsgen.readthedocs.io)
+
+> --> [http://jtsgen.readthedocs.io](http://jtsgen.readthedocs.io) <--
 
 
 So here is a small demo:

@@ -24,7 +24,10 @@ import dz.jtsgen.processor.model.TypeScriptModel;
 import org.immutables.value.Value;
 
 import javax.annotation.processing.ProcessingEnvironment;
-import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.Element;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * holds information needed accessing the model when traversing the AST
@@ -38,9 +41,25 @@ public abstract class TSProcessingInfo {
     @Value.Parameter
     public abstract TypeScriptModel getTsModel();
 
+    /**
+     * @return the elements cache
+     */
     @Value.Lazy
     public TypeElementCache elementCache() {
         return new TypeElementCache(this.getpEnv());
     }
+
+
+    /**
+     * @return a list of additional elements that needed to be converted
+     */
+    @Value.Lazy
+    public Set<Element> additionalTypesToConvert() {
+        return this.getTsModel().getModuleInfo().additionalTypes().stream()
+                .map( x -> this.elementCache().typeElementByCanonicalName(x))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+    }
+
 
 }
