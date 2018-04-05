@@ -25,6 +25,7 @@ import com.google.testing.compile.JavaFileObjects;
 import dz.jtsgen.processor.helper.CompileHelper;
 import dz.jtsgen.processor.helper.ReferenceHelper;
 import dz.jtsgen.processor.helper.StringConstForTest;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -711,6 +712,17 @@ class TsGenProcessorTest {
                         Pattern.compile("^\\s+export\\s+namespace\\s+easy")),
                 "must not have name space easy"
         );
+    }
+
+    @Test
+    @DisplayName("WIP")
+    @Disabled
+    void test_memberPrefixFilter() throws IOException {
+        final String folderName = "prefix_get_bool";
+        final String tdsFilename = "prefix_get_bool.d.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/prefix_get_bool",
+                folderName, tdsFilename, DUMP_FILES, 1,
+                "package.java", "InterfacePrefixGetBool.java");
     }
 
     @Test

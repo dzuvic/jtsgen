@@ -1,3 +1,4 @@
+==========
 Change Log
 ==========
 
@@ -10,7 +11,8 @@ New Features
 - Added documentation for Maven and Kotlin projects
 - Added Support for type bounds on classes and interfaces
 - Added support converting types without an annotation
-
+- Added support for non standard properties
+  
 
 `jtsgen-0.3.0 <https://github.com/dzuvic/jtsgen/tree/jtsgen-0.3.0>`__ (2017-10-30)
 ----------------------------------------------------------------------------------

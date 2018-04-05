@@ -127,4 +127,19 @@ public @interface TSModule {
      */
     String[] additionalTypes() default {};
 
+
+    /**
+     * a getter prefix is a regular expression with exactly one group that extracts the name of the property
+     *
+     * @return a list of getter prefixes
+     */
+    String[] getterPrefixes() default { "^get([A-Z0-9].*)", "^is([A-Z0-9].*)"};
+
+    /**
+     * a setter prefix is a regular expression with exactly one group that extracts the name of the property
+     *
+     * @return a list of setter prefixes
+     */
+    String[] setterPrefixes() default { "^set([A-Z0-9].*)"};
+
 }

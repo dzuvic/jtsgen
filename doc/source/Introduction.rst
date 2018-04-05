@@ -1,10 +1,11 @@
+============
 Introduction
 ============
 
-The project ``jtsgen`` convert Java types as TypeScript types at compile time using an
-annotation processor. The main use case of this project is having code completion in
-the typescript frontend for types that resides in the JVM backend. These backend types
-are usually written in Java (or Kotlin).
+The project ``jtsgen`` converts Java types as TypeScript types at compile time using an
+annotation processor. The main use case of this project is getting code completion in
+the typescript frontend project for types that are defined in the JVM backend project.
+These backend types are usually written in Java (or Kotlin).
 
 For example: the following class defines data type person, that represents the interface between
 the TypeScipt based browser front end, e.g. angular or react, and a JAX-RS endpoint:
