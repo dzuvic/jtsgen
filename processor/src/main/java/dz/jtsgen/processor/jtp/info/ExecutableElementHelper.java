@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Dragan Zuvic
+ * Copyright (c) 2018 Dragan Zuvic
  *
  * This file is part of jtsgen.
  *
@@ -18,22 +18,51 @@
  *
  */
 
-package dz.jtsgen.processor.helper;
+package dz.jtsgen.processor.jtp.info;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.type.TypeKind;
+import java.util.List;
+
+public interface ExecutableElementHelper {
+
+    boolean isGetterOrSetter(ExecutableElement x);
+
+    boolean isGetter(ExecutableElement x);
+
+    String nameFromMethod(String s);
+}
+
 
 /**
  * some helper functions
  */
-public final class ExecutableElementHelper {
+final class ExecutableElementHelperImpl implements ExecutableElementHelper {
 
-    public static boolean isGetterOrSetter(ExecutableElement x) {
+    private final List<String> getterPrefixes;
+    private final List<String> setterPrefixes;
+
+
+    ExecutableElementHelperImpl(List<String> getterPrefixes, List<String> setterPrefixes) {
+        this.getterPrefixes = getterPrefixes;
+        this.setterPrefixes = setterPrefixes;
+    }
+
+    @Override
+    public  boolean isGetterOrSetter(ExecutableElement x) {
         return isGetter(x) || isSetter(x);
     }
 
-    public static boolean isGetter(ExecutableElement x) {
+    @Override
+    public  String nameFromMethod(String s) {
+        assert isGetterOrSetter(s);
+        String nameWithoutGetSet = nameExtractor(s);
+        return Character.toLowerCase(nameWithoutGetSet.charAt(0)) + nameWithoutGetSet.substring(1);
+    }
+
+    @Override
+    public  boolean isGetter(ExecutableElement x) {
         final String simpleName = x != null && x.getSimpleName() != null ? x.getSimpleName().toString() : null;
         if (simpleName != null && TypeKind.BOOLEAN == x.getReturnType().getKind()) {
             return isBooleanGetter(simpleName);
@@ -41,34 +70,28 @@ public final class ExecutableElementHelper {
         return isGetter(simpleName);
     }
 
-    public static boolean isSetter(Element x) {
+    boolean isSetter(Element x) {
         return isSetter(x != null && x.getSimpleName() != null ? x.getSimpleName().toString() : null);
     }
-
     /* ---- */
-    public static boolean isGetterOrSetter(String x) {
+
+    boolean isGetterOrSetter(String x) {
         return isGetter(x) || isSetter(x) || isBooleanGetter(x);
     }
 
-    private static boolean isSetter(String name) {
+    private  boolean isSetter(String name) {
         return name != null && name.length() > 3 && name.startsWith("set");
     }
 
-    public static boolean isGetter(String name) {
+    private boolean isGetter(String name) {
         return name != null && name.length() > 3 && name.startsWith("get");
     }
 
-    public static boolean isBooleanGetter(String name) {
+    private boolean isBooleanGetter(String name) {
         return name != null && name.length() > 2 && name.startsWith("is");
     }
 
-    public static String nameFromMethod(String s) {
-        assert isGetterOrSetter(s);
-        String nameWithoutGetSet = nameExtractor(s);
-        return Character.toLowerCase(nameWithoutGetSet.charAt(0)) + nameWithoutGetSet.substring(1);
-    }
-
-    private static String nameExtractor(String s) {
+    private  String nameExtractor(String s) {
         if (s.startsWith("get")) {
             return s.replaceFirst("get", "");
         } else if (s.startsWith("is")) {

@@ -22,6 +22,7 @@ package dz.jtsgen.processor.jtp.conv;
 
 import dz.jtsgen.processor.helper.DeclTypeHelper;
 import dz.jtsgen.processor.jtp.conv.visitors.JavaTypeConverter;
+import dz.jtsgen.processor.jtp.info.TSProcessingInfo;
 import dz.jtsgen.processor.model.*;
 
 import javax.lang.model.element.ElementKind;

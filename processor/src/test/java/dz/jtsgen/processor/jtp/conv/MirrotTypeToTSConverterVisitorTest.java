@@ -20,6 +20,7 @@
 
 package dz.jtsgen.processor.jtp.conv;
 
+import dz.jtsgen.processor.jtp.info.TSProcessingInfo;
 import dz.jtsgen.processor.model.TypeScriptModel;
 import dz.jtsgen.processor.model.tstarget.TSTargets;
 import org.junit.jupiter.api.BeforeEach;

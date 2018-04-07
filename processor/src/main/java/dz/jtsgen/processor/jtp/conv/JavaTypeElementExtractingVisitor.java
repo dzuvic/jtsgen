@@ -23,6 +23,7 @@ package dz.jtsgen.processor.jtp.conv;
 import dz.jtsgen.annotations.TSIgnore;
 import dz.jtsgen.annotations.TSReadOnly;
 import dz.jtsgen.processor.jtp.conv.visitors.JavaTypeConverter;
+import dz.jtsgen.processor.jtp.info.TSProcessingInfo;
 import dz.jtsgen.processor.model.TSMember;
 import dz.jtsgen.processor.model.TSRegularMemberBuilder;
 import dz.jtsgen.processor.model.TSTargetType;
@@ -33,8 +34,6 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
-import static dz.jtsgen.processor.helper.ExecutableElementHelper.*;
 
 /**
  * processes the Elements of an java interface or class, members and variables.
@@ -98,7 +97,7 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
     public Void visitExecutable(ExecutableElement e, Void notcalled) {
         LOG.fine(() -> String.format("JTExV visiting executable %s", e.toString()));
         if (isGetterOrSetter(e)) {
-            final String name = nameFromMethod(e.getSimpleName().toString());
+            final String name = nameOfMethod(e);
             final boolean isPublic = e.getModifiers().contains(Modifier.PUBLIC);
             final boolean isIgnored = isIgnored(e);
             final boolean isReadOnly = readOnlyAnnotation(e) || readOnlyAnnotation(this.typeElementToConvert);
@@ -114,6 +113,18 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
             if (isGetter(e)) extractableMembers.add(name);
         }
         return null;
+    }
+
+    private boolean isGetter(ExecutableElement e) {
+        return this.tsProcessingInfo.executableHelper().isGetter(e);
+    }
+
+    private String nameOfMethod(ExecutableElement e) {
+        return this.tsProcessingInfo.executableHelper().nameFromMethod(e.getSimpleName().toString());
+    }
+
+    private boolean isGetterOrSetter(ExecutableElement e) {
+        return this.tsProcessingInfo.executableHelper().isGetterOrSetter(e);
     }
 
     private boolean readOnlyAnnotation(Element e) {

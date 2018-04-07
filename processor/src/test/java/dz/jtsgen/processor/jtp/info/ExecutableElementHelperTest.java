@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Dragan Zuvic
+ * Copyright (c) 2018 Dragan Zuvic
  *
  * This file is part of jtsgen.
  *
@@ -18,7 +18,7 @@
  *
  */
 
-package dz.jtsgen.processor.helper;
+package dz.jtsgen.processor.jtp.info;
 
 import org.junit.jupiter.api.Test;
 
@@ -27,9 +27,6 @@ import javax.lang.model.element.Name;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
-import static dz.jtsgen.processor.helper.ExecutableElementHelper.isGetter;
-import static dz.jtsgen.processor.helper.ExecutableElementHelper.isSetter;
-import static dz.jtsgen.processor.helper.ExecutableElementHelper.nameFromMethod;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -37,37 +34,40 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class ExecutableElementHelperTest {
+
+    private ExecutableElementHelperImpl testee = new ExecutableElementHelperImpl(null, null);
+
     @Test
     void isGetterOrSetter() {
-        assertFalse(ExecutableElementHelper.isGetterOrSetter((String) null));
-        assertFalse(ExecutableElementHelper.isGetterOrSetter((ExecutableElement) null));
-        assertFalse(ExecutableElementHelper.isGetterOrSetter(createDummy("set")));
-        assertFalse(ExecutableElementHelper.isGetterOrSetter(createDummy("get")));
-        assertFalse(ExecutableElementHelper.isGetterOrSetter(createBooleanDummy("is")));
-        assertFalse(ExecutableElementHelper.isGetterOrSetter(createDummy("bla")));
-        assertTrue(ExecutableElementHelper.isGetterOrSetter(createDummy("setA")));
-        assertTrue(ExecutableElementHelper.isGetterOrSetter(createDummy("getA")));
-        assertTrue(ExecutableElementHelper.isGetterOrSetter(createBooleanDummy("isA")));
+        assertFalse(testee.isGetterOrSetter((String) null));
+        assertFalse(testee.isGetterOrSetter((ExecutableElement) null));
+        assertFalse(testee.isGetterOrSetter(createDummy("set")));
+        assertFalse(testee.isGetterOrSetter(createDummy("get")));
+        assertFalse(testee.isGetterOrSetter(createBooleanDummy("is")));
+        assertFalse(testee.isGetterOrSetter(createDummy("bla")));
+        assertTrue(testee.isGetterOrSetter(createDummy("setA")));
+        assertTrue(testee.isGetterOrSetter(createDummy("getA")));
+        assertTrue(testee.isGetterOrSetter(createBooleanDummy("isA")));
     }
 
     @Test
     void isSetter_tests() {
-        assertFalse(isSetter(null));
-        assertTrue(isSetter(createDummy("setA")));
-        assertFalse(isSetter(createDummy("set")));
-        assertFalse(isSetter(createDummy(null)));
-        assertFalse(isSetter(createDummySimpleNameIsNull()));
+        assertFalse(testee.isSetter(null));
+        assertTrue(testee.isSetter(createDummy("setA")));
+        assertFalse(testee.isSetter(createDummy("set")));
+        assertFalse(testee.isSetter(createDummy(null)));
+        assertFalse(testee.isSetter(createDummySimpleNameIsNull()));
     }
 
     @Test
     void isGetter_tests() {
-        assertFalse(isGetter((ExecutableElement) null));
-        assertTrue(isGetter(createDummy("getA")));
-        assertTrue(isGetter(createBooleanDummy("isA")));
-        assertFalse(isGetter(createDummy(null)));
-        assertFalse(isGetter(createDummySimpleNameIsNull()));
-        assertFalse(isGetter(createDummy("get")));
-        assertFalse(isGetter(createBooleanDummy("is")));
+        assertFalse(testee.isGetter((ExecutableElement) null));
+        assertTrue(testee.isGetter(createDummy("getA")));
+        assertTrue(testee.isGetter(createBooleanDummy("isA")));
+        assertFalse(testee.isGetter(createDummy(null)));
+        assertFalse(testee.isGetter(createDummySimpleNameIsNull()));
+        assertFalse(testee.isGetter(createDummy("get")));
+        assertFalse(testee.isGetter(createBooleanDummy("is")));
     }
 
     private ExecutableElement createDummy(final String simpleName) {
@@ -99,13 +99,13 @@ class ExecutableElementHelperTest {
 
     @Test
     void extract_methodName_fromGetterSetter() {
-        assertEquals("x", nameFromMethod("setX"));
-        assertEquals("x", nameFromMethod("getX"));
-        assertEquals("x", nameFromMethod("isX"));
-        assertEquals("x_b", nameFromMethod("getX_b"));
-        assertEquals("x_b", nameFromMethod("isX_b"));
-        assertEquals("x_b", nameFromMethod("setX_b"));
-        assertEquals("x_with_getter_setter", nameFromMethod("setX_with_getter_setter"));
+        assertEquals("x", testee.nameFromMethod("setX"));
+        assertEquals("x", testee.nameFromMethod("getX"));
+        assertEquals("x", testee.nameFromMethod("isX"));
+        assertEquals("x_b", testee.nameFromMethod("getX_b"));
+        assertEquals("x_b", testee.nameFromMethod("isX_b"));
+        assertEquals("x_b", testee.nameFromMethod("setX_b"));
+        assertEquals("x_with_getter_setter", testee.nameFromMethod("setX_with_getter_setter"));
     }
 
 }

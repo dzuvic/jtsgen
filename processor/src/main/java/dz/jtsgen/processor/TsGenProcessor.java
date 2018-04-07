@@ -26,9 +26,9 @@ import dz.jtsgen.processor.helper.ElementHelper;
 import dz.jtsgen.processor.jtp.TSModuleHandler;
 import dz.jtsgen.processor.jtp.TSModuleInfoEnforcer;
 import dz.jtsgen.processor.jtp.conv.JavaTypeProcessor;
-import dz.jtsgen.processor.jtp.conv.TSProcessingInfo;
-import dz.jtsgen.processor.jtp.conv.TSProcessingInfoBuilder;
+import dz.jtsgen.processor.jtp.info.TSProcessingInfo;
 import dz.jtsgen.processor.jtp.conv.TypeScriptAnnotationProcessor;
+import dz.jtsgen.processor.jtp.info.TSProcessingInfoBuilder;
 import dz.jtsgen.processor.model.TypeScriptModel;
 import dz.jtsgen.processor.renderer.TSRenderer;
 

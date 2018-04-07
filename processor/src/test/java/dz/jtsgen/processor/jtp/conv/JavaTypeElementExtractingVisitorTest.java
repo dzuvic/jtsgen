@@ -20,6 +20,7 @@
 
 package dz.jtsgen.processor.jtp.conv;
 
+import dz.jtsgen.processor.jtp.info.TSProcessingInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

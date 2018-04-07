@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Dragan Zuvic
+ * Copyright (c) 2018 Dragan Zuvic
  *
  * This file is part of jtsgen.
  *
@@ -18,21 +18,32 @@
  *
  */
 
-package dz.jtsgen.processor.jtp.conv;
+package dz.jtsgen.processor.jtp.info;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.TypeElement;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class TypeElementCache {
+public interface TypeElementCache {
+
+    /**
+     *
+     * @param canonicalName the type as string as fqn
+     * @return the TypeElement seen by the compiler or null if not found
+     */
+    TypeElement typeElementByCanonicalName(String canonicalName);
+}
+
+class TypeElementCacheImpl implements TypeElementCache {
     private final ProcessingEnvironment processingEnvironment;
     private final Map<String,TypeElement> cache = new ConcurrentHashMap<>();
 
-    public TypeElementCache(ProcessingEnvironment processingEnvironment) {
+    TypeElementCacheImpl(ProcessingEnvironment processingEnvironment) {
         this.processingEnvironment = processingEnvironment;
     }
 
+    @Override
     public TypeElement typeElementByCanonicalName(String canonicalName) {
         if (this.cache.containsKey(canonicalName)) return this.cache.get(canonicalName);
         else {

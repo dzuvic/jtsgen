@@ -19,7 +19,7 @@
  */
 
 @TSModule(moduleName = "prefix_get_bool",
-        getterPrefixes = { "^get([A-Z0-9].*)" }
+        getterPrefixes = { "^get([A-Z0-9].*)", "^has([A-Z0-9].*)" }
 )
 package jts.modules.prefix_get_bool;
 

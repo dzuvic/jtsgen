@@ -717,12 +717,13 @@ class TsGenProcessorTest {
     @Test
     @DisplayName("WIP")
     @Disabled
-    void test_memberPrefixFilter() throws IOException {
+    void test_memberPrefixFilter() {
         final String folderName = "prefix_get_bool";
         final String tdsFilename = "prefix_get_bool.d.ts";
         Compilation c = CompileHelper.compileForModule("jts/modules/prefix_get_bool",
-                folderName, tdsFilename, DUMP_FILES, 1,
-                "package.java", "InterfacePrefixGetBool.java");
+                folderName, tdsFilename, true, 1,
+                "package-info.java", "InterfacePrefixGetBool.java");
+
     }
 
     @Test

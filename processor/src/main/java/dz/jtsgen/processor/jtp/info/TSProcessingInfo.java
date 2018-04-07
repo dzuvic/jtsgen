@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Dragan Zuvic
+ * Copyright (c) 2018 Dragan Zuvic
  *
  * This file is part of jtsgen.
  *
@@ -18,8 +18,9 @@
  *
  */
 
-package dz.jtsgen.processor.jtp.conv;
+package dz.jtsgen.processor.jtp.info;
 
+import dz.jtsgen.processor.helper.ElementHelper;
 import dz.jtsgen.processor.model.TypeScriptModel;
 import org.immutables.value.Value;
 
@@ -30,7 +31,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * holds information needed accessing the model when traversing the AST
+ * holds information needed accessing the model when traversing the AST.
+ *
+ * It also contains the helper that depends on the configuration.
  */
 @Value.Immutable
 public abstract class TSProcessingInfo {
@@ -46,7 +49,7 @@ public abstract class TSProcessingInfo {
      */
     @Value.Lazy
     public TypeElementCache elementCache() {
-        return new TypeElementCache(this.getpEnv());
+        return new TypeElementCacheImpl(this.getpEnv());
     }
 
 
@@ -59,6 +62,13 @@ public abstract class TSProcessingInfo {
                 .map( x -> this.elementCache().typeElementByCanonicalName(x))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
+    }
+
+    @Value.Lazy
+    public ExecutableElementHelper executableHelper() {
+        return new ExecutableElementHelperImpl(
+                this.getTsModel().getModuleInfo().getterPrefixes(),
+                this.getTsModel().getModuleInfo().setterPrefixes());
     }
 
 

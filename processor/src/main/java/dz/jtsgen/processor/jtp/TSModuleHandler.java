@@ -84,6 +84,8 @@ public final class TSModuleHandler {
                                     else if (isNameAndNotNull("outputType",entry)) tsBuilder.outputType(convertOutputType(entry.getValue()));
                                     else if (isNameAndNotNull("nameSpaceMappingStrategy",entry)) tsBuilder.nameSpaceMappingStrategy(convertNameSpaceMappingStrategy(entry.getValue()));
                                     else if (isNameAndNotNull("additionalTypes",entry)) tsBuilder.addAllAdditionalTypes(convertToListOfString(entry.getValue()));
+                                    else if (isNameAndNotNull("getterPrefixes",entry)) tsBuilder.getterPrefixes(convertToListOfString(entry.getValue()));
+                                    else if (isNameAndNotNull("setterPrefixes",entry)) tsBuilder.setterPrefixes(convertToListOfString(entry.getValue()));
                                     else LOG.warning("unknown param on annotation TSModule " + entry.getKey());
                                 }
                                 return Optional.of( tsBuilder.build());
@@ -133,7 +135,7 @@ public final class TSModuleHandler {
                 :null;
     }
     
-    boolean isNameAndNotNull(String theName, Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry) {
+    private boolean isNameAndNotNull(String theName, Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry) {
         final String simpleName = entry.getKey().getSimpleName().toString();
         return theName.equals(simpleName) && entry.getValue() != null;
     }
@@ -147,7 +149,7 @@ public final class TSModuleHandler {
 
     }
 
-    List<NameSpaceMapping> convertToNameSpaceMappings(AnnotationValue nameSpaceMappingAnnotationValue, Element element) {
+    private List<NameSpaceMapping> convertToNameSpaceMappings(AnnotationValue nameSpaceMappingAnnotationValue, Element element) {
         if (nameSpaceMappingAnnotationValue == null) return null;
         return new SimpleAnnotationValueVisitor8<List<NameSpaceMapping>, Void>() {
             @Override
@@ -168,7 +170,7 @@ public final class TSModuleHandler {
         }.visit(nameSpaceMappingAnnotationValue);
     }
 
-    List<Pattern> convertExclusion(AnnotationValue exclAnnotationValue, Element element) {
+    private List<Pattern> convertExclusion(AnnotationValue exclAnnotationValue, Element element) {
         if (exclAnnotationValue == null) return null;
         return new SimpleAnnotationValueVisitor8<List<Pattern>, Void>() {
             @Override
@@ -190,7 +192,7 @@ public final class TSModuleHandler {
     }
 
 
-    Map<String, TSTargetType> convertTypeMapping(Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry) {
+    private Map<String, TSTargetType> convertTypeMapping(Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry) {
         AnnotationValue customMappingValue = entry.getValue();
         Element element = entry.getKey();
         if (customMappingValue == null) return new HashMap<>();

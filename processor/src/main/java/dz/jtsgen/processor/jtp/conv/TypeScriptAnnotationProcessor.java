@@ -22,6 +22,7 @@ package dz.jtsgen.processor.jtp.conv;
 import dz.jtsgen.processor.helper.Sets;
 import dz.jtsgen.processor.jtp.conv.visitors.JavaTypeConverter;
 import dz.jtsgen.processor.jtp.conv.visitors.TSAVisitor;
+import dz.jtsgen.processor.jtp.info.TSProcessingInfo;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;

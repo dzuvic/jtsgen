@@ -164,5 +164,14 @@ public abstract class TSModuleInfo {
     public List<String> additionalTypes() {
         return Collections.unmodifiableList(new ArrayList<>());
     }
-    
+
+    @Value.Default
+    public List<String> getterPrefixes() {
+        return Collections.unmodifiableList(new ArrayList<>());
+    }
+
+    @Value.Default
+    public List<String> setterPrefixes() {
+        return Collections.unmodifiableList(new ArrayList<>());
+    }
 }
