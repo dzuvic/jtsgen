@@ -715,14 +715,42 @@ class TsGenProcessorTest {
     }
 
     @Test
-    @DisplayName("WIP")
-    @Disabled
-    void test_memberPrefixFilter() {
+    @DisplayName("prefix_get_bool: Custom member prefix with getX and hasX")
+    void test_memberPrefixFilter() throws IOException {
         final String folderName = "prefix_get_bool";
         final String tdsFilename = "prefix_get_bool.d.ts";
         Compilation c = CompileHelper.compileForModule("jts/modules/prefix_get_bool",
-                folderName, tdsFilename, true, 1,
+                folderName, tdsFilename, true, 0,
                 "package-info.java", "InterfacePrefixGetBool.java");
+
+        assertEquals(
+                1,
+                findSourceLine(c, folderName, tdsFilename,
+                        Pattern.compile("^\\s+export\\s+interface\\s+InterfacePrefixGetBool\\s*\\{")).size(),
+                "must have Type InterfacePrefixGetBool"
+        );
+
+        assertEquals(
+                0,
+                findSourceLine(c, folderName, tdsFilename,
+                        Pattern.compile("^\\s*isBoolean:\\s*boolean\\s*;")).size(),
+                "must not have isBoolean, because of getterPrefix"
+        );
+
+        assertEquals(
+                1,
+                findSourceLine(c, folderName, tdsFilename,
+                        Pattern.compile("^\\s*getBoolean:\\s*boolean\\s*;")).size(),
+                "must have getBoolean, because of getterPrefix"
+        );
+
+        assertEquals(
+                1,
+                findSourceLine(c, folderName, tdsFilename,
+                        Pattern.compile("^\\s*hasBoolean:\\s*boolean\\s*;")).size(),
+                "must have hasBoolean, because of getterPrefix"
+        );
+
 
     }
 

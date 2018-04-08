@@ -20,14 +20,19 @@
 package dz.jtsgen.annotations;
 
 /**
- * This enum defines the naming strategy of the members. Currently only one is defined.
+ * This enum defines the naming strategy of the members, especially when taken from getters
+ * or setters.
  */
 public enum NameMappingStrategy {
 
     /**
-     * Leave names as is, don't try to map anything. just take the machted members as is.
-     *
-     * This is the default.
+     * Leave names as is, don't try to map anything. just take the matched members as is.
      */
-    SIMPLE
+    SIMPLE,
+
+    /**
+     * Try to behave like the default Jackson name mapping strategy does. This is the default
+     */
+    JACKSON_DEFAULT
+
 }

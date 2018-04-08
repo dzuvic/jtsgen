@@ -20,6 +20,7 @@
 
 package dz.jtsgen.processor.jtp;
 
+import dz.jtsgen.annotations.NameMappingStrategy;
 import dz.jtsgen.annotations.NameSpaceMappingStrategy;
 import dz.jtsgen.annotations.OutputType;
 import dz.jtsgen.annotations.TSModule;
@@ -86,7 +87,7 @@ public final class TSModuleHandler {
                                     else if (isNameAndNotNull("additionalTypes",entry)) tsBuilder.addAllAdditionalTypes(convertToListOfString(entry.getValue()));
                                     else if (isNameAndNotNull("getterPrefixes",entry)) tsBuilder.getterPrefixes(convertToListOfString(entry.getValue()));
                                     else if (isNameAndNotNull("setterPrefixes",entry)) tsBuilder.setterPrefixes(convertToListOfString(entry.getValue()));
-                                    else if (isNameAndNotNull("nameMappingStrategy",entry)) this.env.getMessager().printMessage(Diagnostic.Kind.WARNING,"NameMappingStrategy curently not supported", entry.getKey());
+                                    else if (isNameAndNotNull("nameMappingStrategy",entry)) tsBuilder.nameMappingStrategy(convertNameMappingStrategy(entry.getValue()));
                                     else LOG.warning("unknown param on annotation TSModule " + entry.getKey());
                                 }
                                 return Optional.of( tsBuilder.build());
@@ -133,6 +134,14 @@ public final class TSModuleHandler {
                 && value.getValue() != null
                 && Arrays.stream(NameSpaceMappingStrategy.values()).anyMatch(x -> x.name().equals(value.getValue().toString())))
                 ? NameSpaceMappingStrategy.valueOf(value.getValue().toString())
+                :null;
+    }
+
+    NameMappingStrategy convertNameMappingStrategy(AnnotationValue value) {
+        return (value != null
+                && value.getValue() != null
+                && Arrays.stream(NameSpaceMappingStrategy.values()).anyMatch(x -> x.name().equals(value.getValue().toString())))
+                ? NameMappingStrategy.valueOf(value.getValue().toString())
                 :null;
     }
     

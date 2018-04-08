@@ -102,13 +102,16 @@ class ExecutableElementHelperImplTest {
 
     @Test
     void extract_methodName_fromGetterSetter() {
-        assertEquals("x", testee.nameFromMethod("setX"));
-        assertEquals("x", testee.nameFromMethod("getX"));
-        assertEquals("x", testee.nameFromMethod("isX"));
-        assertEquals("x_b", testee.nameFromMethod("getX_b"));
-        assertEquals("x_b", testee.nameFromMethod("isX_b"));
-        assertEquals("x_b", testee.nameFromMethod("setX_b"));
-        assertEquals("x_with_getter_setter", testee.nameFromMethod("setX_with_getter_setter"));
+        assertEquals("x", testee.extractRawMemberName("setx").orElse(null));
+        assertEquals("X", testee.extractRawMemberName("setX").orElse(null));
+        assertEquals("X", testee.extractRawMemberName("getX").orElse(null));
+        assertEquals("x", testee.extractRawMemberName("getx").orElse(null));
+        assertEquals("X", testee.extractRawMemberName("isX").orElse(null));
+        assertEquals("x", testee.extractRawMemberName("isx").orElse(null));
+        assertEquals("X_b", testee.extractRawMemberName("getX_b").orElse(null));
+        assertEquals("X_b", testee.extractRawMemberName("isX_b").orElse(null));
+        assertEquals("X_b", testee.extractRawMemberName("setX_b").orElse(null));
+        assertEquals("X_with_getter_setter", testee.extractRawMemberName("setX_with_getter_setter").orElse(null));
     }
 
 }

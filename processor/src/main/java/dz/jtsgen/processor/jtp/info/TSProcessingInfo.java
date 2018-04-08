@@ -21,6 +21,8 @@
 package dz.jtsgen.processor.jtp.info;
 
 import dz.jtsgen.processor.helper.ElementHelper;
+import dz.jtsgen.processor.mapper.name.NameMapper;
+import dz.jtsgen.processor.mapper.name.NameMapperFactory;
 import dz.jtsgen.processor.model.TypeScriptModel;
 import org.immutables.value.Value;
 
@@ -70,6 +72,11 @@ public abstract class TSProcessingInfo {
                 .getterPrefixes( this.getTsModel().getModuleInfo().getterPrefixes())
                 .setterPrefixes( this.getTsModel().getModuleInfo().setterPrefixes())
                 .build();
+    }
+
+    @Value.Lazy
+    public NameMapper nameMapper() {
+        return NameMapperFactory.createNameMapper(this.getTsModel().getModuleInfo().nameMappingStrategy());
     }
 
 }

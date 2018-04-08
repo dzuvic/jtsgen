@@ -20,6 +20,7 @@
 
 package dz.jtsgen.processor.model;
 
+import dz.jtsgen.annotations.NameMappingStrategy;
 import dz.jtsgen.annotations.NameSpaceMappingStrategy;
 import dz.jtsgen.annotations.OutputType;
 import dz.jtsgen.processor.util.StringUtils;
@@ -175,5 +176,10 @@ public abstract class TSModuleInfo {
     @Value.Default
     public List<String> setterPrefixes() {
         return Collections.unmodifiableList(Collections.singletonList(SETTER_EXPRESSION));
+    }
+
+    @Value.Default
+    public NameMappingStrategy nameMappingStrategy() {
+        return NameMappingStrategy.JACKSON_DEFAULT;
     }
 }

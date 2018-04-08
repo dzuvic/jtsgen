@@ -25,12 +25,11 @@ import org.immutables.value.Value;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.type.TypeKind;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public interface ExecutableElementHelper {
 
@@ -38,7 +37,12 @@ public interface ExecutableElementHelper {
 
     boolean isGetter(ExecutableElement x);
 
-    String nameFromMethod(String s);
+    /**
+     *
+     * @param methodName the method name to parse
+     * @return the raw member name extracted by first matching prefixExpression
+     */
+    Optional<String> extractRawMemberName(String methodName);
 }
 
 
@@ -63,7 +67,6 @@ abstract class ExecutableElementHelperImpl implements ExecutableElementHelper {
         return setterPrefixes().stream().map( Pattern::compile).collect(Collectors.toList());
     }
 
-
     @Value.Lazy
     List<Pattern> compiledGetterPrefixes() {
         return getterPrefixes().stream().map( Pattern::compile).collect(Collectors.toList());
@@ -75,18 +78,22 @@ abstract class ExecutableElementHelperImpl implements ExecutableElementHelper {
     }
 
     @Override
-    public  String nameFromMethod(String s) {
-        assert isGetterOrSetter(s);
-        String nameWithoutGetSet = nameExtractor(s);
-        return Character.toLowerCase(nameWithoutGetSet.charAt(0)) + nameWithoutGetSet.substring(1);
+    public Optional<String> extractRawMemberName(String s) {
+        return Stream.concat(compiledGetterPrefixes().stream(),compiledSetterPrefixes().stream())
+                .map( x -> {
+                    Matcher m = x.matcher(s);
+                    return m.matches() && m.groupCount() >= 1 && m.group(1) != null ?
+                            m.group(1)
+                            : null;
+                } )
+                .filter(Objects::nonNull)
+                .findFirst();
+
     }
 
     @Override
     public  boolean isGetter(ExecutableElement x) {
         final String simpleName = x != null && x.getSimpleName() != null ? x.getSimpleName().toString() : null;
-        if (simpleName != null && TypeKind.BOOLEAN == x.getReturnType().getKind()) {
-            return isBooleanGetter(simpleName);
-        }
         return isGetter(simpleName);
     }
 
@@ -95,7 +102,7 @@ abstract class ExecutableElementHelperImpl implements ExecutableElementHelper {
     }
 
     boolean isGetterOrSetter(String x) {
-        return isGetter(x) || isSetter(x) || isBooleanGetter(x);
+        return isGetter(x) || isSetter(x);
     }
 
     private  boolean isSetter(String name) {
@@ -111,19 +118,4 @@ abstract class ExecutableElementHelperImpl implements ExecutableElementHelper {
     private boolean isGetter(String name) {
         return name != null && matches(name, this.compiledGetterPrefixes());
     }
-
-    private boolean isBooleanGetter(String name) {
-        return name != null && name.length() > 2 && name.startsWith("is");
-    }
-
-    private  String nameExtractor(String s) {
-        if (s.startsWith("get")) {
-            return s.replaceFirst("get", "");
-        } else if (s.startsWith("is")) {
-            return s.replaceFirst("is", "");
-        } else {
-            return s.replaceFirst("set", "");
-        }
-    }
-
 }

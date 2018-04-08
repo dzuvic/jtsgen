@@ -32,9 +32,9 @@ import java.lang.annotation.Target;
 public @interface TSModule {
 
     String UNKNOWN = "unknown";
-    String GETTER_EXRPESSION = "get([a-zA-Z0-9].*)";
-    String IS_EXPRESSION = "is([a-zA-Z0-9].*)";
-    String SETTER_EXPRESSION = "set([a-zA-Z0-9].*)";
+    String GETTER_EXRPESSION = "get([_a-zA-Z0-9].*)";
+    String IS_EXPRESSION = "is([_a-zA-Z0-9].*)";
+    String SETTER_EXPRESSION = "set([_a-zA-Z0-9].*)";
 
     /**
      * @return The module name of the JavaScript/TypeScript Module. This must be a java package friendly name.

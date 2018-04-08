@@ -97,13 +97,14 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
     public Void visitExecutable(ExecutableElement e, Void notcalled) {
         LOG.fine(() -> String.format("JTExV visiting executable %s", e.toString()));
         if (isGetterOrSetter(e)) {
-            final String name = nameOfMethod(e);
+            final String rawName = nameOfMethod(e).orElse("");
+            final String name = mappedName(rawName);
             final boolean isPublic = e.getModifiers().contains(Modifier.PUBLIC);
             final boolean isIgnored = isIgnored(e);
             final boolean isReadOnly = readOnlyAnnotation(e) || readOnlyAnnotation(this.typeElementToConvert);
             if (isGetter(e) && ( !isPublic ||  isIgnored )) return null; // return early for not converting private types
             final TSTargetType tsTypeOfExecutable = convertTypeMirrorToTsType(e, tsProcessingInfo);
-            LOG.fine(() -> "is getter or setter: " + (isPublic ? "public " : " ") + e.getSimpleName() + " -> " + name + ":" + tsTypeOfExecutable + " " +(isIgnored?"(ignored)":""));
+            LOG.fine(() -> "is getter or setter: " + (isPublic ? "public " : " ") + e.getSimpleName() + " -> " + name +"(" + rawName+ ")" + ":" + tsTypeOfExecutable + " " +(isIgnored?"(ignored)":""));
             if (members.containsKey(name)) {
                 // can't be read only anymore
                 members.put(name, TSRegularMemberBuilder.of(name, isGetter(e) ? tsTypeOfExecutable : members.get(name).getType(), isReadOnly));
@@ -115,12 +116,16 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
         return null;
     }
 
+    private String mappedName(String rawName) {
+        return this.tsProcessingInfo.nameMapper().mapMemberName(rawName);
+    }
+
     private boolean isGetter(ExecutableElement e) {
         return this.tsProcessingInfo.executableHelper().isGetter(e);
     }
 
-    private String nameOfMethod(ExecutableElement e) {
-        return this.tsProcessingInfo.executableHelper().nameFromMethod(e.getSimpleName().toString());
+    private Optional<String> nameOfMethod(ExecutableElement e) {
+        return this.tsProcessingInfo.executableHelper().extractRawMemberName(e.getSimpleName().toString());
     }
 
     private boolean isGetterOrSetter(ExecutableElement e) {

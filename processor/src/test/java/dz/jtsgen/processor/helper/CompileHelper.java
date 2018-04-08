@@ -58,8 +58,8 @@ public class CompileHelper {
             c.errors().forEach(System.err::println);
             fail("No Compilation error should occur");
         }
-        long myWarnungs = c.diagnostics().asList().stream().filter(x -> x.getKind().equals(Diagnostic.Kind.WARNING)).count();
-        if (myWarnungs != warningCount) {
+        long myWarnings = c.diagnostics().asList().stream().filter(x -> x.getKind().equals(Diagnostic.Kind.WARNING)).count();
+        if (myWarnings != warningCount) {
             c.warnings().forEach(System.err::println);
             fail("Warnings count differ "+warningCount+" (expected) !="+c.warnings().size());
         }
