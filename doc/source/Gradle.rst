@@ -3,7 +3,7 @@ Using in Gradle projects
 
 Adding the following snippet to your gradle (sub-) project, the
 annotation processor should run at automatically at compile
-time. Since 0.3.0 ``jtsgen`` has been distributed on maven central, so
+time. Since 0.3.0 *tsgen* has been distributed on maven central, so
 no other repository has to be defined. 
 
 The used version should be held in a variable like the following

@@ -126,14 +126,15 @@ jacocoTestReport {
                     '/dz/jtsgen/processor/dsl/model/TSMappedTypeVarBuilder*',
                     '/dz/jtsgen/processor/dsl/model/TypeMappingExpressionBuilder*',
                     '/dz/jtsgen/processor/dsl/parser/TokenBuilder*',
-                    '/dz/jtsgen/processor/jtp/conv/TSProcessingInfoBuilder*',
                     '/dz/jtsgen/processor/model/NameSpaceMappingBuilder*',
                     '/dz/jtsgen/processor/model/TSEnumBuilder*',
                     '/dz/jtsgen/processor/model/TSEnumMemberBuilder*',
                     '/dz/jtsgen/processor/model/TSInterfaceBuilder*',
                     '/dz/jtsgen/processor/model/TSModuleInfoBuilder*',
                     '/dz/jtsgen/processor/model/TSRegularMemberBuilder*',
-                    '/dz/jtsgen/processor/model/TSTypeVariableBuilder.*'
+                    '/dz/jtsgen/processor/model/TSTypeVariableBuilder*',
+                    '/dz/jtsgen/processor/jtp/info/TSProcessingInfoBuilder*',
+                    '/dz/jtsgen/processor/jtp/info/ExecutableElementHelperImplBuilder*'
             ] )
         })
     }

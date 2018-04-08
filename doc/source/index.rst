@@ -7,9 +7,9 @@
 jtsgen: Java -> TypeScript Emitter
 ##################################
 
-The project ``jtsgen`` emits TypeScript ambient types from Java sources.
-``jtsgen`` is implemented as an annotation processor, therefore it
-should be easily integrated in your current build infrastructure.
+The project *tsgen* (former *jtsgen*) emits TypeScript ambient types
+from Java sources. *tsgen* is implemented as an annotation processor,
+therefore it should be easily integrated in your current build infrastructure.
 Usually there are no other plugins required for your build system
 (maven, gradle).
 

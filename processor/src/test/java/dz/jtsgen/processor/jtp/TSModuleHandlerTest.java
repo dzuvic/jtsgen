@@ -20,9 +20,11 @@
 
 package dz.jtsgen.processor.jtp;
 
+import dz.jtsgen.annotations.NameMappingStrategy;
 import dz.jtsgen.annotations.NameSpaceMappingStrategy;
 import dz.jtsgen.annotations.OutputType;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import javax.annotation.processing.Messager;
@@ -126,6 +128,22 @@ class TSModuleHandlerTest {
     void testStrategy_valid() {
         when(this.annotationValue.getValue()).thenReturn(NameSpaceMappingStrategy.MANUAL.name());
         assertEquals(NameSpaceMappingStrategy.MANUAL, testee.convertNameSpaceMappingStrategy(this.annotationValue));
+    }
+
+    @Test
+    @DisplayName("check invalid name mapper strategy")
+    void test_namemapper_Strategy_invalid() {
+        assertNull(testee.convertNameMappingStrategy(null));
+        assertNull(testee.convertNameMappingStrategy(this.annotationValue));
+        when(this.annotationValue.getValue()).thenReturn("XXX");
+        assertNull(testee.convertNameMappingStrategy(this.annotationValue));
+    }
+
+    @Test
+    @DisplayName("check valid name mapper strategy")
+    void testValidNameStrategy_valid() {
+        when(this.annotationValue.getValue()).thenReturn(NameMappingStrategy.SIMPLE.name());
+        assertEquals(NameMappingStrategy.SIMPLE, testee.convertNameMappingStrategy(this.annotationValue));
     }
 
 

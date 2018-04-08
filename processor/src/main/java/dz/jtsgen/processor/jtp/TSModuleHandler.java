@@ -140,7 +140,7 @@ public final class TSModuleHandler {
     NameMappingStrategy convertNameMappingStrategy(AnnotationValue value) {
         return (value != null
                 && value.getValue() != null
-                && Arrays.stream(NameSpaceMappingStrategy.values()).anyMatch(x -> x.name().equals(value.getValue().toString())))
+                && Arrays.stream(NameMappingStrategy.values()).anyMatch(x -> x.name().equals(value.getValue().toString())))
                 ? NameMappingStrategy.valueOf(value.getValue().toString())
                 :null;
     }

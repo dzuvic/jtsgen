@@ -34,7 +34,7 @@ Processing Parameters
 ---------------------
 
 
-The ``jtsgen`` annotation processor supports with the following parameters:
+The *tsgen* annotation processor supports with the following parameters:
 
 * jtsgenLogLevel: enable additional logging. Use ine of the following
   ``j.u.Logging`` levels: ``OFF`` , ``SEVERE`` , ``WARNING`` , ``INFO`` , ``CONFIG``

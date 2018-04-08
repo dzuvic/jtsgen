@@ -17,12 +17,12 @@
  * along with jtsgen.  If not, see http://www.gnu.org/licenses/
  *
  */
+package jts.modules.namemap;
 
-@TSModule(moduleName = "prefix_get_bool",
-        getterPrefixes = { "^get([A-Z0-9].*)", "^has([A-Z0-9].*)" },
-        setterPrefixes = { "set([A-Z0-9].*)"}
-)
-package jts.modules.prefix_get_bool;
+import dz.jtsgen.annotations.TypeScript;
 
-import dz.jtsgen.annotations.OutputType;
-import dz.jtsgen.annotations.TSModule;
+// Must not be in output
+@TypeScript
+public interface InterFaceTestNameMappedSimple {
+    String getIdentityMappedName();
+}

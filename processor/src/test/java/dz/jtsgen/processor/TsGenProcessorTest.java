@@ -569,6 +569,28 @@ class TsGenProcessorTest {
     }
 
     @Test
+    @DisplayName("Check Simple Name mapping")
+    void nameMapSimple_test() throws Exception {
+        final String folderName = "namemap_test";
+        final String tdsFilename = "namemap_test.d.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/namemap", folderName, tdsFilename, DUMP_FILES, 0,  "package-info.java", "InterFaceTestNameMappedSimple.java");
+
+        assertEquals(
+                1
+                , findSourceLine(c, folderName, tdsFilename,
+                        Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTestNameMappedSimple\\s*\\{")).size(),
+                "must have Type InterFaceTestNameMappedSimple"
+        );
+
+        assertEquals(
+                1,
+                findSourceLine(c, folderName, tdsFilename,
+                        Pattern.compile("\\s*IdentityMappedName\\s*:\\s*string")).size(),
+                "must not have member IdentityMappedName (upper case)"
+        );
+    }
+
+    @Test
     @DisplayName("checking inclusion of additional types")
     void test_default_additionalTypes() throws IOException {
         InetAddress a;

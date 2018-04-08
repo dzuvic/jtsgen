@@ -18,11 +18,15 @@
  *
  */
 
-@TSModule(moduleName = "prefix_get_bool",
-        getterPrefixes = { "^get([A-Z0-9].*)", "^has([A-Z0-9].*)" },
-        setterPrefixes = { "set([A-Z0-9].*)"}
-)
-package jts.modules.prefix_get_bool;
 
-import dz.jtsgen.annotations.OutputType;
+/**
+ * Test simple name space strategty
+ */
+@TSModule(
+        moduleName = "namemap_test",
+        nameMappingStrategy = NameMappingStrategy.SIMPLE
+)
+package jts.modules.namemap;
+
+import dz.jtsgen.annotations.NameMappingStrategy;
 import dz.jtsgen.annotations.TSModule;

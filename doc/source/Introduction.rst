@@ -2,7 +2,7 @@
 Introduction
 ============
 
-The project ``jtsgen`` converts Java types as TypeScript types at compile time using an
+The project *tsgen* converts Java types as TypeScript types at compile time using an
 annotation processor. The main use case of this project is getting code completion in
 the typescript frontend project for types that are defined in the JVM backend project.
 These backend types are usually written in Java (or Kotlin).
@@ -55,8 +55,8 @@ following data type:
 
 It is important to know, how the marshalling maps type like BigDecimal to JSON. For that the convesion of
 types could be easily configured by a DSL. And because this information how the Java types are mapped
-to JSON are configured somewhere in the backend, ``jtsgen`` can also be configured at compile time, so the
-configuration of ``jtsgen`` (package annotation) can be kept near the source the code that configured the
+to JSON are configured somewhere in the backend, *tsgen* can also be configured at compile time, so the
+configuration of *tsgen* (package annotation) can be kept near the source the code that configured the
 Java to JSON mapper, e.g. Jackons's ``ObjectMapper``.
 
 
