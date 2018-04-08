@@ -27,15 +27,13 @@ import javax.lang.model.element.Name;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class ExecutableElementHelperTest {
+class ExecutableElementHelperImplTest {
 
-    private ExecutableElementHelperImpl testee = new ExecutableElementHelperImpl(null, null);
+    private ExecutableElementHelperImpl testee = ExecutableElementHelperImplBuilder.builder().build();
 
     @Test
     void isGetterOrSetter() {
@@ -54,9 +52,14 @@ class ExecutableElementHelperTest {
     void isSetter_tests() {
         assertFalse(testee.isSetter(null));
         assertTrue(testee.isSetter(createDummy("setA")));
+        assertTrue(testee.isSetter(createDummy("set0A")));
+        assertTrue(testee.isSetter(createDummy("set0")));
         assertFalse(testee.isSetter(createDummy("set")));
         assertFalse(testee.isSetter(createDummy(null)));
         assertFalse(testee.isSetter(createDummySimpleNameIsNull()));
+
+        // let the naming strategy decide
+        assertTrue(testee.isSetter(createDummy("seta")));
     }
 
     @Test

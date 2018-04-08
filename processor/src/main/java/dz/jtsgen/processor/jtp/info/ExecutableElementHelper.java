@@ -20,10 +20,17 @@
 
 package dz.jtsgen.processor.jtp.info;
 
+import dz.jtsgen.annotations.TSModule;
+import org.immutables.value.Value;
+
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.type.TypeKind;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public interface ExecutableElementHelper {
 
@@ -38,15 +45,28 @@ public interface ExecutableElementHelper {
 /**
  * some helper functions
  */
-final class ExecutableElementHelperImpl implements ExecutableElementHelper {
+@Value.Immutable
+abstract class ExecutableElementHelperImpl implements ExecutableElementHelper {
 
-    private final List<String> getterPrefixes;
-    private final List<String> setterPrefixes;
+    @Value.Default
+    List<String> getterPrefixes() {
+        return Arrays.asList(TSModule.GETTER_EXRPESSION, TSModule.IS_EXPRESSION);
+    }
+
+    @Value.Default
+    List<String> setterPrefixes() {
+        return Collections.singletonList(TSModule.SETTER_EXPRESSION);
+    }
+
+    @Value.Lazy
+    List<Pattern> compiledSetterPrefixes() {
+        return setterPrefixes().stream().map( Pattern::compile).collect(Collectors.toList());
+    }
 
 
-    ExecutableElementHelperImpl(List<String> getterPrefixes, List<String> setterPrefixes) {
-        this.getterPrefixes = getterPrefixes;
-        this.setterPrefixes = setterPrefixes;
+    @Value.Lazy
+    List<Pattern> compiledGetterPrefixes() {
+        return getterPrefixes().stream().map( Pattern::compile).collect(Collectors.toList());
     }
 
     @Override
@@ -73,18 +93,23 @@ final class ExecutableElementHelperImpl implements ExecutableElementHelper {
     boolean isSetter(Element x) {
         return isSetter(x != null && x.getSimpleName() != null ? x.getSimpleName().toString() : null);
     }
-    /* ---- */
 
     boolean isGetterOrSetter(String x) {
         return isGetter(x) || isSetter(x) || isBooleanGetter(x);
     }
 
     private  boolean isSetter(String name) {
-        return name != null && name.length() > 3 && name.startsWith("set");
+        return name != null && matches(name, this.compiledSetterPrefixes());
+    }
+
+    private boolean matches(String name, List<Pattern> patternList) {
+        return patternList.stream().anyMatch(
+                x -> x.matcher(name).matches()
+        );
     }
 
     private boolean isGetter(String name) {
-        return name != null && name.length() > 3 && name.startsWith("get");
+        return name != null && matches(name, this.compiledGetterPrefixes());
     }
 
     private boolean isBooleanGetter(String name) {

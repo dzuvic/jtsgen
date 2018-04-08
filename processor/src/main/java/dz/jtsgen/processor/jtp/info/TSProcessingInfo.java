@@ -66,10 +66,10 @@ public abstract class TSProcessingInfo {
 
     @Value.Lazy
     public ExecutableElementHelper executableHelper() {
-        return new ExecutableElementHelperImpl(
-                this.getTsModel().getModuleInfo().getterPrefixes(),
-                this.getTsModel().getModuleInfo().setterPrefixes());
+        return ExecutableElementHelperImplBuilder.builder()
+                .getterPrefixes( this.getTsModel().getModuleInfo().getterPrefixes())
+                .setterPrefixes( this.getTsModel().getModuleInfo().setterPrefixes())
+                .build();
     }
-
 
 }

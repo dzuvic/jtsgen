@@ -86,6 +86,7 @@ public final class TSModuleHandler {
                                     else if (isNameAndNotNull("additionalTypes",entry)) tsBuilder.addAllAdditionalTypes(convertToListOfString(entry.getValue()));
                                     else if (isNameAndNotNull("getterPrefixes",entry)) tsBuilder.getterPrefixes(convertToListOfString(entry.getValue()));
                                     else if (isNameAndNotNull("setterPrefixes",entry)) tsBuilder.setterPrefixes(convertToListOfString(entry.getValue()));
+                                    else if (isNameAndNotNull("nameMappingStrategy",entry)) this.env.getMessager().printMessage(Diagnostic.Kind.WARNING,"NameMappingStrategy curently not supported", entry.getKey());
                                     else LOG.warning("unknown param on annotation TSModule " + entry.getKey());
                                 }
                                 return Optional.of( tsBuilder.build());

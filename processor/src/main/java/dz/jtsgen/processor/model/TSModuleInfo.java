@@ -28,6 +28,8 @@ import org.immutables.value.Value;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import static dz.jtsgen.annotations.TSModule.*;
+
 /**
  * Describes a JavaScript Module.
  * <p>
@@ -86,7 +88,7 @@ public abstract class TSModuleInfo {
      */
     @Value.Default
     public String getModuleName() {
-        return "unknown";
+        return UNKNOWN;
     }
 
     @Value.Check
@@ -110,22 +112,22 @@ public abstract class TSModuleInfo {
 
     @Value.Default
     public String getModuleDescription() {
-        return "unknown";
+        return UNKNOWN;
     }
 
     @Value.Default
     public String getModuleAuthor() {
-        return "unknown";
+        return UNKNOWN;
     }
 
     @Value.Default
     public String getModuleLicense() {
-        return "unknown";
+        return UNKNOWN;
     }
 
     @Value.Default
     public String getModuleAuthorUrl() {
-        return "unknown";
+        return UNKNOWN;
     }
 
     @Value.Default
@@ -167,11 +169,11 @@ public abstract class TSModuleInfo {
 
     @Value.Default
     public List<String> getterPrefixes() {
-        return Collections.unmodifiableList(new ArrayList<>());
+        return Collections.unmodifiableList(Arrays.asList(GETTER_EXRPESSION, IS_EXPRESSION));
     }
 
     @Value.Default
     public List<String> setterPrefixes() {
-        return Collections.unmodifiableList(new ArrayList<>());
+        return Collections.unmodifiableList(Collections.singletonList(SETTER_EXPRESSION));
     }
 }

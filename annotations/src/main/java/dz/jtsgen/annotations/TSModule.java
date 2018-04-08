@@ -31,6 +31,11 @@ import java.lang.annotation.Target;
 @Target(value = {ElementType.PACKAGE})
 public @interface TSModule {
 
+    String UNKNOWN = "unknown";
+    String GETTER_EXRPESSION = "get([a-zA-Z0-9].*)";
+    String IS_EXPRESSION = "is([a-zA-Z0-9].*)";
+    String SETTER_EXPRESSION = "set([a-zA-Z0-9].*)";
+
     /**
      * @return The module name of the JavaScript/TypeScript Module. This must be a java package friendly name.
      */
@@ -40,22 +45,22 @@ public @interface TSModule {
      * @return The author number for the package.json file
      *
      */
-    String author() default "unknown";
+    String author() default UNKNOWN;
 
     /**
      * @return The authorUrl number for the package.json file
      */
-    String authorUrl() default "unknown";
+    String authorUrl() default UNKNOWN;
 
     /**
      * @return The license for the package.json file
      */
-    String license() default "unknown";
+    String license() default UNKNOWN;
 
     /**
      * @return The description for the package.json file
      */
-    String description() default "unknown";
+    String description() default UNKNOWN;
 
 
     /**
@@ -133,13 +138,19 @@ public @interface TSModule {
      *
      * @return a list of getter prefixes
      */
-    String[] getterPrefixes() default { "^get([A-Z0-9].*)", "^is([A-Z0-9].*)"};
+    String[] getterPrefixes() default {GETTER_EXRPESSION, IS_EXPRESSION};
 
     /**
      * a setter prefix is a regular expression with exactly one group that extracts the name of the property
      *
      * @return a list of setter prefixes
      */
-    String[] setterPrefixes() default { "^set([A-Z0-9].*)"};
+    String[] setterPrefixes() default {SETTER_EXPRESSION};
+
+    /**
+     * The name mapping strategy of the member names. This should match the strategy used in
+     * your JSON Library. The default is NameMappingStrategy.SIMPLE
+     */
+    NameMappingStrategy nameMappingStrategy() default NameMappingStrategy.SIMPLE;
 
 }
