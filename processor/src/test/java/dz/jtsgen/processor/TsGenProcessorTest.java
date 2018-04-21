@@ -586,7 +586,52 @@ class TsGenProcessorTest {
                 1,
                 findSourceLine(c, folderName, tdsFilename,
                         Pattern.compile("\\s*IdentityMappedName\\s*:\\s*string")).size(),
-                "must not have member IdentityMappedName (upper case)"
+                "must have member IdentityMappedName (upper case)"
+        );
+    }
+
+    @Test
+    @DisplayName("Check Snake Case Mapping")
+    void nameSnakeCaseMapping_test() throws Exception {
+        final String folderName = "namesnake_test";
+        final String tdsFilename = "namesnake_test.d.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/namesnake", folderName, tdsFilename, DUMP_FILES, 0,  "package-info.java", "InterFaceTestNameMappedSnake.java");
+
+        assertEquals(
+                1
+                , findSourceLine(c, folderName, tdsFilename,
+                        Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTestNameMappedSnake\\s*\\{")).size(),
+                "must have Type InterFaceTestNameMappedSimple"
+        );
+
+        assertEquals(
+                1,
+                findSourceLine(c, folderName, tdsFilename,
+                        Pattern.compile("\\s*identity_snake_case\\s*:\\s*string")).size(),
+                "must have member identity_snake_case"
+        );
+    }
+
+
+    @Test
+    @DisplayName("Check UpperCase Name mapping")
+    void nameMapUpper_test() throws Exception {
+        final String folderName = "nameupper_test";
+        final String tdsFilename = "nameupper_test.d.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/nameupper", folderName, tdsFilename, DUMP_FILES, 0,  "package-info.java", "InterFaceTestNameMappedUpper.java");
+
+        assertEquals(
+                1
+                , findSourceLine(c, folderName, tdsFilename,
+                        Pattern.compile("^\\s+export\\s+interface\\s+InterFaceTestNameMappedUpper\\s*\\{")).size(),
+                "must have Type InterFaceTestNameMappedUpper"
+        );
+
+        assertEquals(
+                1,
+                findSourceLine(c, folderName, tdsFilename,
+                        Pattern.compile("\\s*IdentityLowecase\\s*:\\s*string")).size(),
+                "must have member IdentityLowecase"
         );
     }
 
