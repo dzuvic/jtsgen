@@ -24,6 +24,8 @@ import dz.jtsgen.processor.util.StringUtils;
 
 import java.util.*;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * Tree structure of namespaces with Types
  */
@@ -48,7 +50,7 @@ public class TSNameSpace {
     }
 
     public TSNameSpace findOrCreate(String namespace) {
-        if (namespace==null) throw new IllegalArgumentException("namepsave arg is null");
+        requireNonNull(namespace, "namespace");
 
         if (this.name.equals(namespace)) return this;
 
@@ -72,12 +74,10 @@ public class TSNameSpace {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("TSNameSpace{");
-        sb.append("name='").append(name).append('\'');
-        sb.append(", types=").append(types);
-        sb.append(", children=").append(children);
-        sb.append('}');
-        return sb.toString();
+        return "TSNameSpace{" + "name='" + name + '\'' +
+                ", types=" + types +
+                ", children=" + children +
+                '}';
     }
 
 

@@ -20,15 +20,12 @@
 
 package dz.jtsgen.processor.mapper.name;
 
-import dz.jtsgen.annotations.NameMappingStrategy;
-
-/**
- * This mapper represents the identity function. It just returns  the raw name unmapped
- */
-class VerySimpleNameMapper implements NameMapper {
+class UpperCamelCaseNameMapper implements NameMapper {
 
     @Override
     public String mapMemberName(String rawName) {
-        return rawName;
+        if (rawName == null || rawName.length() == 0) return rawName;
+        return rawName.substring(0,1).toUpperCase()
+                + ( rawName.length() > 1 ? rawName.substring(1): "" );
     }
 }

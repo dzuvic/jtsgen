@@ -40,12 +40,13 @@ class TSNameSpaceTest {
     @Test
     @DisplayName("TSNamespace: Check namespace not null")
     void test_findOrCreateAssertion() {
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(NullPointerException.class,
                 () -> new TSNameSpace().findOrCreate(null)
         );
     }
 
     @Test
+    @DisplayName("Check failing empty namespace")
     void testIllegalSubnameSpace() {
         assertThrows(IllegalArgumentException.class,
                 () -> {

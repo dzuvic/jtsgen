@@ -33,6 +33,16 @@ public enum NameMappingStrategy {
     /**
      * Try to behave like the default Jackson name mapping strategy does. This is the default
      */
-    JACKSON_DEFAULT
+    JACKSON_DEFAULT,
 
+    /**
+     * The first character is uppercase, like UpperCamelCaseStrategy in Jackson
+     */
+    UPPER_CAMEL_CASE,
+
+    /**
+     * Snake Case, means, upper cases are interpreted as words that will be transformed to
+     * lower case words separated by underscores
+     */
+    SNAKE_CASE
 }

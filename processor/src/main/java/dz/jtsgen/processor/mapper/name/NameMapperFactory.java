@@ -24,6 +24,8 @@ import dz.jtsgen.annotations.NameMappingStrategy;
 
 import java.util.logging.Logger;
 
+import static java.util.Objects.requireNonNull;
+
 public final class NameMapperFactory {
 
     private static Logger LOG = Logger.getLogger(NameMapperFactory.class.getName());
@@ -34,9 +36,12 @@ public final class NameMapperFactory {
      * @return an instance of a NameMapper
      */
     public static NameMapper createNameMapper(NameMappingStrategy strategy) {
-        switch (strategy) {
+
+        switch (requireNonNull(strategy, "strategy")) {
             case SIMPLE: return new VerySimpleNameMapper();
             case JACKSON_DEFAULT: return new JacksonDefaultNameMapper();
+            case UPPER_CAMEL_CASE: return new UpperCamelCaseNameMapper();
+            case SNAKE_CASE: return new SnakeCaseNameMapper();
         }
         throw new IllegalStateException("No Mapper implemented for strategy " + strategy);
     }

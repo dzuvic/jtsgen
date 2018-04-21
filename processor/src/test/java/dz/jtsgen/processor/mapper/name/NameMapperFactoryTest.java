@@ -20,15 +20,16 @@
 
 package dz.jtsgen.processor.mapper.name;
 
-import dz.jtsgen.annotations.NameMappingStrategy;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-/**
- * This mapper represents the identity function. It just returns  the raw name unmapped
- */
-class VerySimpleNameMapper implements NameMapper {
+import static org.junit.jupiter.api.Assertions.*;
 
-    @Override
-    public String mapMemberName(String rawName) {
-        return rawName;
+class NameMapperFactoryTest {
+
+    @Test
+    @DisplayName("Check Factory errors when called with null")
+    void createNameMapper() {
+        assertThrows(NullPointerException.class, () -> NameMapperFactory.createNameMapper(null));
     }
 }
