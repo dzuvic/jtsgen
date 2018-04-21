@@ -12,7 +12,7 @@ New Features
 - Added Support for type bounds on classes and interfaces
 - Added support converting types without an annotation
 - Added support for non standard properties
-- Added support for simple name mapping strategy
+- Added support for different name mapping strategies
   
 
 `jtsgen-0.3.0 <https://github.com/dzuvic/jtsgen/tree/jtsgen-0.3.0>`__ (2017-10-30)

@@ -233,13 +233,19 @@ Member Name Mapping
 -------------------
 
 The extracted raw member name has to match the one the used by the JSON
-framework. In the case of Jackson you define a PropertyNamingStrategy
-[PNS]_. *tsgen* let's you choose one of the following name mapping
-strategy:
+framework. For example, in Jackson you define the mapping of the
+member names using a PropertyNamingStrategy [PNS]_. *tsgen* tries to stick to
+the default setting of Jackson's DataBind. If necessary you can change this
+name mapping in *tsgen* by setting the ``nameMappingStrategy`` in ``TSModule``
+to one of the following strategy:
 
-- ``SIMPLE``: no mapping at all
 - ``JACKSON_DEFAULT``: the default Jackson property name mapping. This is
   the default used in *tsgen*
+- ``SIMPLE``: no mapping at all
+- ``SNAKE_CASE``: upper cases are interpreted as words that will be transformed
+  to lower case words separated by underscores
+- ``UPPER_CAMEL_CASE``: The first character is converted to upper case
+
 
 The member name mapping strategy can be defined using the
 parameter ``nameMappingStrategy`` of the ``TSModule`` annotation.
