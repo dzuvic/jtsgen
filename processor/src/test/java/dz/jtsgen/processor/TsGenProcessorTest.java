@@ -174,6 +174,23 @@ class TsGenProcessorTest {
         );
     }
 
+    @Test
+    @DisplayName("Check issue 46 - generating too much")
+    @Disabled
+    void test_Issue_46_Wrong_Java_Types() throws IOException {
+        Compilation c = CompileHelper.compileJtsDev(true, 0, "Issue_46_Wrong_Java_Types.java");
+//        assertEquals(
+//                1,
+//                findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceInheritance1Test\\s+extends\\s+InterFaceInheritance1TestParent\\s+\\{")).size(),
+//                "must have Type InterFaceInheritance1Test extends InterFaceInheritance1TestParent"
+//        );
+//        assertEquals(
+//                1,
+//                findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceInheritance1TestParent\\s+\\{")).size(),
+//                "must have Type InterFaceInheritance1TestParent"
+//        );
+    }
+
 
     @Test
     @DisplayName("Generate type parameters in return type")

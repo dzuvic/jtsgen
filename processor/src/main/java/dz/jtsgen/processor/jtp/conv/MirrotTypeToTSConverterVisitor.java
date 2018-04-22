@@ -39,10 +39,8 @@ import javax.lang.model.type.*;
 import javax.lang.model.util.AbstractTypeVisitor8;
 import javax.tools.Diagnostic;
 import java.util.*;
-import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static dz.jtsgen.processor.helper.TypeMirrorHelper.extractTypeVariablename;
 import static dz.jtsgen.processor.model.tstarget.TSTargetFactory.*;
@@ -60,9 +58,6 @@ class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTargetType, 
 
     private static Logger LOG = Logger.getLogger(MirrotTypeToTSConverterVisitor.class.getName());
 
-
-    private final Map<String, TSTargetType> declaredTypeConversions;
-
     private final Element currentElement;
 
     private final TSProcessingInfo tsProcessingInfo;
@@ -71,21 +66,10 @@ class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTargetType, 
 
     MirrotTypeToTSConverterVisitor(Element currentElement, TSProcessingInfo tsProcessingInfo, JavaTypeConverter javaTypeConverternverter) {
         this.tsProcessingInfo = tsProcessingInfo;
-        this.declaredTypeConversions = new LinkedHashMap<>();
-        this.declaredTypeConversions.putAll(tsProcessingInfo.getTsModel().getModuleInfo().getCustomMappings());
-        this.declaredTypeConversions.putAll(
-                createDefaultDeclaredTypeConversion().stream()
-                        .filter(x -> ! tsProcessingInfo.getTsModel().getModuleInfo().getCustomMappings().containsKey(x.getJavaType()))
-                        .collect(Collectors.toMap(TSTargetType::getJavaType,Function.identity()))
-        );
         this.currentElement = currentElement;
         this.javaTypeConverter = javaTypeConverternverter;
     }
 
-    private List<TSTargetType> createDefaultDeclaredTypeConversion() {
-        return Stream.of(STRING, CHARACTER, NUMBER, COLLECTION, MAPS, OBJECT).collect(Collectors.toList());
-
-    }
 
     @Override
     public TSTargetType visitIntersection(IntersectionType t, Void x) {
@@ -185,9 +169,9 @@ class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTargetType, 
     }
 
     private Optional<TSTargetType> directConversionType(DeclaredType t,String nameOfType) {
-        if (this.declaredTypeConversions.containsKey(nameOfType)) {
+        if (this.tsProcessingInfo.declaredTypeConversions().containsKey(nameOfType)) {
             LOG.finest(() -> "TCSV: declared Type in conversion List:" + nameOfType);
-            return Optional.of(this.declaredTypeConversions.get(nameOfType));
+            return Optional.of(this.tsProcessingInfo.declaredTypeConversions().get(nameOfType));
         }
 
         LOG.finest(() -> "TCSV: declared Type NOT in conversion List:" + nameOfType);
@@ -203,7 +187,7 @@ class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTargetType, 
         ).collect(Collectors.toSet());
         LOG.finest(() -> "TCSV: list of super types for " + nameOfType + ": " + superTypeNames);
 
-        return this.declaredTypeConversions.values().stream().filter( x -> superTypeNames.contains(x.getJavaType())).findFirst();
+        return this.tsProcessingInfo.declaredTypeConversions().values().stream().filter( x -> superTypeNames.contains(x.getJavaType())).findFirst();
     }
 
     @Override

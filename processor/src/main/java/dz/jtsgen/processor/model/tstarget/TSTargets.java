@@ -22,6 +22,10 @@ package dz.jtsgen.processor.model.tstarget;
 
 import dz.jtsgen.processor.model.TSTargetType;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import static dz.jtsgen.processor.model.tstarget.TSTargetFactory.createTSTargetByDSL;
 
 /**
@@ -42,4 +46,9 @@ public final class TSTargets {
 
     public static final TSTargetType COLLECTION = createTSTargetByDSL("java.util.Collection<T> -> `T`[]").orElse(NONE);
     public static final TSTargetType MAPS = createTSTargetByDSL("java.util.Map<U,V> -> { [key: `U`]: `V`; }").orElse(NONE);
+
+    public static List<TSTargetType> defaultDeclaredTypeConversion() {
+        return Stream.of(STRING, CHARACTER, NUMBER, COLLECTION, MAPS, OBJECT).collect(Collectors.toList());
+
+    }
 }

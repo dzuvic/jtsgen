@@ -20,17 +20,20 @@
 
 package dz.jtsgen.processor.jtp.info;
 
-import dz.jtsgen.processor.helper.ElementHelper;
 import dz.jtsgen.processor.mapper.name.NameMapper;
 import dz.jtsgen.processor.mapper.name.NameMapperFactory;
+import dz.jtsgen.processor.model.TSTargetType;
 import dz.jtsgen.processor.model.TypeScriptModel;
 import org.immutables.value.Value;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Element;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static dz.jtsgen.processor.model.tstarget.TSTargets.defaultDeclaredTypeConversion;
+import static java.util.Collections.unmodifiableMap;
 
 /**
  * holds information needed accessing the model when traversing the AST.
@@ -60,10 +63,11 @@ public abstract class TSProcessingInfo {
      */
     @Value.Lazy
     public Set<Element> additionalTypesToConvert() {
-        return this.getTsModel().getModuleInfo().additionalTypes().stream()
-                .map( x -> this.elementCache().typeElementByCanonicalName(x))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
+        return Collections.unmodifiableSet(
+                this.getTsModel().getModuleInfo().additionalTypes().stream()
+                    .map( x -> this.elementCache().typeElementByCanonicalName(x))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet()));
     }
 
     @Value.Lazy
@@ -77,6 +81,21 @@ public abstract class TSProcessingInfo {
     @Value.Lazy
     public NameMapper nameMapper() {
         return NameMapperFactory.createNameMapper(this.getTsModel().getModuleInfo().nameMappingStrategy());
+    }
+
+    /**
+     * @return a list of declared type conversion in a linked hash map
+     */
+    @Value.Lazy
+    public Map<String, TSTargetType> declaredTypeConversions() {
+        LinkedHashMap<String, TSTargetType> result = new LinkedHashMap<>();
+        result.putAll(this.getTsModel().getModuleInfo().getCustomMappings());
+        result.putAll(
+                defaultDeclaredTypeConversion().stream()
+                        .filter(x -> ! this.getTsModel().getModuleInfo().getCustomMappings().containsKey(x.getJavaType()))
+                        .collect(Collectors.toMap(TSTargetType::getJavaType,Function.identity()))
+        );
+        return unmodifiableMap(result);
     }
 
 }
