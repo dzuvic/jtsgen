@@ -21,10 +21,7 @@
 package dz.jtsgen.processor.renderer.module.tsd;
 
 import dz.jtsgen.processor.helper.IdentHelper;
-import dz.jtsgen.processor.model.TSEnum;
-import dz.jtsgen.processor.model.TSInterface;
-import dz.jtsgen.processor.model.TSType;
-import dz.jtsgen.processor.model.TSTypeVariable;
+import dz.jtsgen.processor.model.*;
 import dz.jtsgen.processor.model.rendering.TSMemberVisitor;
 import dz.jtsgen.processor.model.rendering.TSTypeVisitor;
 
@@ -101,7 +98,11 @@ class TSTypeVisitorDefault implements TSTypeVisitor {
     private String nameWithBounds(TSTypeVariable z) {
         return z.getName() +
                 (z.getBounds().isEmpty() ? "" :
-                    " extends " + z.getBounds().stream().map(TSType::getName).collect(Collectors.joining(" & "))
+                    " extends " + z.getBounds().stream().map( x ->
+                            x.fold( TSTargetType::toString,
+                                    TSType::getName
+                            )
+                    ).collect(Collectors.joining(" & "))
                 );
     }
 

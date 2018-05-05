@@ -158,14 +158,14 @@ public interface Either<L, R> extends Iterable<R> {
     }
 
     /**
-     * @return null if Right else the left value
+     * @return left value or null
      */
     default L leftOrNull() {
        return isLeft() ? this.leftValue() : null;
     }
 
     /**
-     * @return null if Right else the left value
+     * @return right value or null
      */
     default R rightOrNull() {
        return isRight() ? this.value() : null;

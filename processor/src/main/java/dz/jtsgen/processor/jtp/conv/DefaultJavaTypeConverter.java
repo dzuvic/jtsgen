@@ -24,16 +24,13 @@ import dz.jtsgen.processor.helper.DeclTypeHelper;
 import dz.jtsgen.processor.jtp.conv.visitors.JavaTypeConverter;
 import dz.jtsgen.processor.jtp.info.TSProcessingInfo;
 import dz.jtsgen.processor.model.*;
-import dz.jtsgen.processor.util.StreamUtils;
+import dz.jtsgen.processor.util.Either;
 
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.type.TypeMirror;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -83,13 +80,10 @@ public class DefaultJavaTypeConverter implements JavaTypeConverter {
         TSType result = null;
 
         List<TSTypeVariable> typeParams = element.getTypeParameters().stream()
-                .map(x -> {
-                    List<TSType> convertedBounds = convertBounds(x);
-                    return TSTypeVariableBuilder.builder()
-                            .name(x.getSimpleName().toString())
-                            .addAllBounds(convertedBounds)
-                            .build();
-                })
+                .map(x -> TSTypeVariableBuilder.builder()
+                        .name(x.getSimpleName().toString())
+                        .addAllBounds(convertBounds(x))
+                        .build())
                 .collect(Collectors.toList());
         LOG.fine(() -> "DJTC Element has type params: " + typeParams);
 
@@ -137,10 +131,10 @@ public class DefaultJavaTypeConverter implements JavaTypeConverter {
     }
 
 
-    private List<TSType> convertBounds(TypeParameterElement element) {
+    private List<Either<TSTargetType,TSType>> convertBounds(TypeParameterElement element) {
         if (element.getBounds().isEmpty()) return new ArrayList<>();
 
-        List<TSType> result = element.getBounds().stream()
+        List<Either<TSTargetType,TSType>> result = element.getBounds().stream()
                 .map(this.processingInfo.getpEnv().getTypeUtils()::asElement)
                 .filter(x -> x instanceof TypeElement)
                 .map(x -> (TypeElement) x)
@@ -150,14 +144,20 @@ public class DefaultJavaTypeConverter implements JavaTypeConverter {
                 .map(x -> {
                     LOG.info("DJTC converting Bound " + x);
                     Optional<TSTargetType> tsTargetType = convertedByDSL(x);
-                    // TODO: bound should be either<TSTargeType,TSType>
-                    if (tsTargetType.isPresent()) return Optional.<TSType>empty() ;
-                    else return handleJavaType(x);
+                    return tsTargetType
+                            .map(Either::<TSTargetType, Optional<TSType>>left)
+                            .orElseGet(() -> Either.right(handleJavaType(x)));
                 })
-                .filter(Optional::isPresent).map(Optional::get)
+                .filter(x -> x.isLeft() || (x.toOptional().flatMap( y -> Optional.of(y.isPresent())).orElse(false) ))
+                .map(
+                        x -> (x.isLeft()) ? Either.<TSTargetType, TSType>left(x.leftValue())
+                                            : Either.<TSTargetType, TSType>right( x.value().get())
+                )
                 .collect(Collectors.toList());
 
-        this.processingInfo.getTsModel().addTSTypes(result);
+        this.processingInfo.getTsModel().addTSTypes(
+                result.stream().filter(Either::isRight).map(Either::value).collect(Collectors.toList())
+        );
 
         return result;
     }

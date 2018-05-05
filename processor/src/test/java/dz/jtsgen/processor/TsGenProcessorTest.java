@@ -178,16 +178,16 @@ class TsGenProcessorTest {
     @DisplayName("Check issue 46 - generating too much for <T extends Number>")
     void test_Issue_46_Wrong_Java_Types() throws IOException {
         Compilation c = CompileHelper.compileJtsDev(DUMP_FILES, 1, "Issue_46_Wrong_Java_Types.java");
-//        assertEquals(
-//                1,
-//                findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceInheritance1Test\\s+extends\\s+InterFaceInheritance1TestParent\\s+\\{")).size(),
-//                "must have Type InterFaceInheritance1Test extends InterFaceInheritance1TestParent"
-//        );
-//        assertEquals(
-//                1,
-//                findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceInheritance1TestParent\\s+\\{")).size(),
-//                "must have Type InterFaceInheritance1TestParent"
-//        );
+        assertEquals(
+                1,
+                findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\sinterface\\sIssue_46_Wrong_Java_Types\\s*<T\\s+extends\\s+number>")).size(),
+                "must have Type export interface Issue_46_Wrong_Java_Types<T extends number>"
+        );
+        assertEquals(
+                1,
+                findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+upperBound:\\s*T")).size(),
+                "must have member upperBound: T"
+        );
     }
 
 
