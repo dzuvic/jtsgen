@@ -20,6 +20,7 @@
 
 package dz.jtsgen.processor.model;
 
+import dz.jtsgen.processor.util.Either;
 import org.immutables.value.Value;
 
 import java.util.List;
@@ -29,5 +30,5 @@ public abstract class TSTypeVariable {
 
     public abstract String getName();
 
-    public abstract List<TSType> getBounds();
+    public abstract List<Either<TSTargetType,TSType>> getBounds();
 }

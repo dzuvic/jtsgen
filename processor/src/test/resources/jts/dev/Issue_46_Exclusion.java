@@ -17,27 +17,14 @@
  * along with jtsgen.  If not, see http://www.gnu.org/licenses/
  *
  */
+package jts.dev;
 
-package dz.jtsgen.processor.helper;
+import dz.jtsgen.annotations.TypeScript;
 
-import javax.lang.model.element.TypeElement;
-
-public final class ElementHelper {
-
-    // only for testing
-    ElementHelper() {
-
-    }
-
-    /**
-     *
-     * @param typeElement the type element to check
-     * @param clazz the type the element has to be
-     * @return true if type element is represented by class clazz
-     */
-    public static boolean typeOf(TypeElement typeElement, Class<?> clazz) {
-
-        // this should be done in different way, but checking the name should be sufficient
-        return typeElement.getSimpleName().contentEquals(clazz.getSimpleName());
-    }
+// Generating bogus Java types due to not aborting the converter recursion
+// The following will lead to generating a lot of not needed Java Types:
+// Test checks, if Marker interfaces are discarded
+@TypeScript
+public interface Issue_46_Exclusion<T extends Comparable> {
+    T getUpperBound();
 }

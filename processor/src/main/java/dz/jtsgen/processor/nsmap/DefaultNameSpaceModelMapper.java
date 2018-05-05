@@ -64,9 +64,6 @@ final class DefaultNameSpaceModelMapper implements NameSpaceModelMapper {
 
     private List<TSMember> mapMembers(List<TSMember> members, NameSpaceMapper mapper) {
         return members.stream().map (x -> {
-            //TODO
-//            ToDo.todo("check");
-//            TSTargetType newTSTarget = TSTargetFactory.changeNameSpace(x.getType(),mapper);
             TSTargetType newTSTarget = x.getType().mapNameSpace(mapper);
             LOG.finest(() -> "DNSM mapping member " + x.getName() + ": " + x.getType() + " -> " + newTSTarget);
             return x.changedTSTarget(newTSTarget);

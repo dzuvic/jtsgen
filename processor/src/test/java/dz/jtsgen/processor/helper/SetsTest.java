@@ -20,31 +20,13 @@
 
 package dz.jtsgen.processor.helper;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import org.junit.jupiter.api.Test;
 
-/**
- * Some helper functions for Sets
- */
-public final class Sets {
+import static org.junit.jupiter.api.Assertions.*;
 
-    Sets() {
-        // only for testing
-    }
-
-    /**
-     *
-     * @param first the first collection of the union set
-     * @param second the second collection of the union set
-     * @param <U> Type of the union elements
-     * @return an unmodifiable union set
-     */
-    public static <U> Set<U> union(Collection<U> first, Collection<U> second) {
-        final Set<U> result = new HashSet<U>();
-        result.addAll(first);
-        result.addAll(second);
-        return Collections.unmodifiableSet(result);
+class SetsTest {
+    @Test
+    void checkCtor() {
+        assertNotNull(new Sets());
     }
 }

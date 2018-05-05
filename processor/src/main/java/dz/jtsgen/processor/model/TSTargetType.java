@@ -25,6 +25,7 @@ import java.util.Map;
 
 /**
  *  A kind of target representation for the conversion a specific java type.
+ *  it is primarily created by the mapping DSL.
  */
 public interface TSTargetType {
 
