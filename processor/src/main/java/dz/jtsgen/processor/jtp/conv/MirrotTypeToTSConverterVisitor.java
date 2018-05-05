@@ -38,11 +38,14 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.*;
 import javax.lang.model.util.AbstractTypeVisitor8;
 import javax.tools.Diagnostic;
-import java.util.*;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static dz.jtsgen.processor.helper.TypeMirrorHelper.extractTypeVariablename;
+import static dz.jtsgen.processor.jtp.conv.ConversionByDsl.directConversionType;
 import static dz.jtsgen.processor.model.tstarget.TSTargetFactory.*;
 import static dz.jtsgen.processor.model.tstarget.TSTargets.*;
 import static dz.jtsgen.processor.util.StreamUtils.firstOptional;
@@ -110,7 +113,7 @@ class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTargetType, 
     private Optional<TSTargetType> extractType(DeclaredType t) {
         final String nameOfType = withoutTypeArgs(t.toString());
         return firstOptional(
-                ()-> directConversionType(t, nameOfType),
+                ()-> directConversionType(t, nameOfType, tsProcessingInfo.declaredTypeConversions(), env()),
                 ()-> typeInModel(t, nameOfType),
                 ()-> typeNotInModel(t,nameOfType)
         ).map(x -> {
@@ -131,7 +134,6 @@ class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTargetType, 
                                     return new Tuple<>(it.getSecond(), tsTargetType);
                     })
                     .collect(Collectors.toMap(Tuple::getFirst, Tuple::getSecond));
-            //return TSTargetFactory.copyWithTypeParams(tstype, typeParamMap, null);
             return tstype.withTypeParams(typeParamMap);
         }
         return tstype;
@@ -166,28 +168,6 @@ class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTargetType, 
             model().addTSTarget(result.get());
         }
         return result;
-    }
-
-    private Optional<TSTargetType> directConversionType(DeclaredType t,String nameOfType) {
-        if (this.tsProcessingInfo.declaredTypeConversions().containsKey(nameOfType)) {
-            LOG.finest(() -> "TCSV: declared Type in conversion List:" + nameOfType);
-            return Optional.of(this.tsProcessingInfo.declaredTypeConversions().get(nameOfType));
-        }
-
-        LOG.finest(() -> "TCSV: declared Type NOT in conversion List:" + nameOfType);
-
-        // exclude the mother of all java types, any will be resolved later
-        List<? extends TypeMirror> supertypes = env().getTypeUtils().directSupertypes(t).stream().filter(
-            x -> ! "java.lang.Object".equals(x.toString())
-        ).collect(Collectors.toList());
-        Set<String> superTypeNames = supertypes.stream().map(
-                // the underlying type of the TypeMirror is a Symbol, which has all the information we need
-                // unfortunately Oracle/Sun decided not being accessible. Casting to internal classes is not an option
-                x -> withoutTypeArgs(x.toString())
-        ).collect(Collectors.toSet());
-        LOG.finest(() -> "TCSV: list of super types for " + nameOfType + ": " + superTypeNames);
-
-        return this.tsProcessingInfo.declaredTypeConversions().values().stream().filter( x -> superTypeNames.contains(x.getJavaType())).findFirst();
     }
 
     @Override

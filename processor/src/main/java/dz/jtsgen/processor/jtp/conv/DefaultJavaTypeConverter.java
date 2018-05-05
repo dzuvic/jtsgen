@@ -38,10 +38,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import static dz.jtsgen.processor.jtp.conv.ConversionByDsl.directConversionType;
 import static javax.lang.model.element.ElementKind.ENUM_CONSTANT;
 
 /**
- * this represents the default java type converter. It converts a TypeElement to single TypeScript Type
+ * this represents the default java type type converter. It converts a TypeElement to single TypeScript Target (TSType)
+ * It does NOT convert a Java type, a subclass of TypeMirror.
  */
 public class DefaultJavaTypeConverter implements JavaTypeConverter {
 
@@ -77,20 +79,6 @@ public class DefaultJavaTypeConverter implements JavaTypeConverter {
             return Optional.empty();
         }
 
-        return StreamUtils.firstOptional(
-
-                // check if the java type can be directly mapped to an TSTarget Type
-                // this is a fix for #46
-                () -> convertByDSL(element),
-
-                // handle type not covered by the DSL
-                () -> handleJavaTypeNotCoveredByDSL(element)
-        );
-    }
-
-    private Optional<TSType> handleJavaTypeNotCoveredByDSL(TypeElement element) {
-//        System.out.println(convertTypeMirrorToTsType(element,processingInfo));
-//        this.processingInfo.getTsModel().getModuleInfo().getCustomMappings();
         List<TSType> supertypes = convertSuperTypes(element);
         TSType result = null;
 
@@ -161,7 +149,10 @@ public class DefaultJavaTypeConverter implements JavaTypeConverter {
                 .filter(x -> !checkExclusion(x))
                 .map(x -> {
                     LOG.info("DJTC converting Bound " + x);
-                    return handleJavaType(x);
+                    Optional<TSTargetType> tsTargetType = convertedByDSL(x);
+                    // TODO: bound should be either<TSTargeType,TSType>
+                    if (tsTargetType.isPresent()) return Optional.<TSType>empty() ;
+                    else return handleJavaType(x);
                 })
                 .filter(Optional::isPresent).map(Optional::get)
                 .collect(Collectors.toList());
@@ -213,13 +204,14 @@ public class DefaultJavaTypeConverter implements JavaTypeConverter {
     }
 
     /**
-     * Check if a type elemnt can be directly converted from a DSL expression
+     * Check if a type elemnet can be directly converted from a DSL expression
+     * this is especially needed for types in bounds. see #46
      *
      * @param element the java type element
      * @return a converted TSType if possible
      */
-    private Optional<TSType> convertByDSL(TypeElement element) {
-        return Optional.empty();
+    private Optional<TSTargetType> convertedByDSL(TypeElement element) {
+        return directConversionType(element.asType(),this.processingInfo.declaredTypeConversions(), this.processingInfo.getpEnv());
     }
 }
 

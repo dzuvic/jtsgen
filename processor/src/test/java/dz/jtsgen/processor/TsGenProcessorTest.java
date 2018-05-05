@@ -175,10 +175,9 @@ class TsGenProcessorTest {
     }
 
     @Test
-    @DisplayName("Check issue 46 - generating too much")
-    @Disabled
+    @DisplayName("Check issue 46 - generating too much for <T extends Number>")
     void test_Issue_46_Wrong_Java_Types() throws IOException {
-        Compilation c = CompileHelper.compileJtsDev(true, 0, "Issue_46_Wrong_Java_Types.java");
+        Compilation c = CompileHelper.compileJtsDev(DUMP_FILES, 1, "Issue_46_Wrong_Java_Types.java");
 //        assertEquals(
 //                1,
 //                findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+InterFaceInheritance1Test\\s+extends\\s+InterFaceInheritance1TestParent\\s+\\{")).size(),

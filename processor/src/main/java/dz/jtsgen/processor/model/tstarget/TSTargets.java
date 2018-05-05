@@ -49,6 +49,5 @@ public final class TSTargets {
 
     public static List<TSTargetType> defaultDeclaredTypeConversion() {
         return Stream.of(STRING, CHARACTER, NUMBER, COLLECTION, MAPS, OBJECT).collect(Collectors.toList());
-
     }
 }
