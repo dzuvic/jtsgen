@@ -27,6 +27,10 @@ import javax.lang.model.type.TypeVariable;
  */
 public final class TypeMirrorHelper {
 
+    TypeMirrorHelper() {
+        // only for tests
+    }
+
     /**
      * @param t the TypeVariable Mirror to inspect
      * @return the type variable name

@@ -190,6 +190,38 @@ class TsGenProcessorTest {
         );
     }
 
+    @Test
+    @DisplayName("Check issue 46 - ignore bound <T extends Serilizable>")
+    void test_Issue_46_MarkerInterface() throws IOException {
+        Compilation c = CompileHelper.compileJtsDev(DUMP_FILES, 1, "Issue_46_Marker.java");
+        assertEquals(
+                1,
+                findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\sinterface\\sIssue_46_Marker\\s*<T>")).size(),
+                "must have Type Issue_46_Marker<T>"
+        );
+        assertEquals(
+                1,
+                findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+upperBound:\\s*T")).size(),
+                "must have member upperBound: T"
+        );
+    }
+
+    @Test
+    @DisplayName("Check issue 46 - ignore bound <T extends Comparable>")
+    void test_Issue_46_Exclusion() throws IOException {
+        Compilation c = CompileHelper.compileJtsDev(DUMP_FILES, 1, "Issue_46_Exclusion.java");
+        assertEquals(
+                1,
+                findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\sinterface\\sIssue_46_Exclusion\\s*<T>")).size(),
+                "must have Type Issue_46_Exclusion<T>"
+        );
+        assertEquals(
+                1,
+                findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+upperBound:\\s*T")).size(),
+                "must have member upperBound: T"
+        );
+    }
+
 
     @Test
     @DisplayName("Generate type parameters in return type")

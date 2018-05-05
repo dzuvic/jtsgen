@@ -36,8 +36,12 @@ import static dz.jtsgen.processor.util.StringUtils.withoutTypeArgs;
 /**
  * This class is contains all helpers around types, that ca be directly converted by the declared DSL
  */
-class ConversionByDsl {
+final class ConversionByDsl {
     private static Logger LOG = Logger.getLogger(ConversionByDsl.class.getName());
+
+    ConversionByDsl() {
+        // only for test
+    }
 
     static Optional<TSTargetType> directConversionType(TypeMirror t, Map<String, TSTargetType> declaredTypeConversions, ProcessingEnvironment pEnv) {
         final String nameOfType = withoutTypeArgs(t.toString());

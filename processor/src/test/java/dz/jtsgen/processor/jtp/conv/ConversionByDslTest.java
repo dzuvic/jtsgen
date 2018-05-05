@@ -18,26 +18,16 @@
  *
  */
 
-package dz.jtsgen.processor.helper;
+package dz.jtsgen.processor.jtp.conv;
 
-import javax.lang.model.element.TypeElement;
+import org.junit.jupiter.api.Test;
 
-public final class ElementHelper {
+import static org.junit.jupiter.api.Assertions.*;
 
-    // only for testing
-    ElementHelper() {
+class ConversionByDslTest {
 
-    }
-
-    /**
-     *
-     * @param typeElement the type element to check
-     * @param clazz the type the element has to be
-     * @return true if type element is represented by class clazz
-     */
-    public static boolean typeOf(TypeElement typeElement, Class<?> clazz) {
-
-        // this should be done in different way, but checking the name should be sufficient
-        return typeElement.getSimpleName().contentEquals(clazz.getSimpleName());
+    @Test
+    void initCtor() {
+        assertNotNull(new ConversionByDsl());
     }
 }

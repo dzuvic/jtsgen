@@ -94,6 +94,30 @@ class CustomMappingParserImplTest {
     }
 
     @Test
+    void check_error_backtick() {
+        t=testee.parse("List` -> error");
+        assertEquals(t.leftValue(),"backtick only allowed RHS for Type Variables'`' at pos 4 of expression List` -> error");
+    }
+
+    @Test
+    void check_error_TSclose() {
+        t=testee.parse("List -> bla>");
+        assertEquals(t.leftValue(),"closing angle bracket without opening'>' at pos 11 of expression List -> bla>");
+    }
+
+    @Test
+    void check_error_TSTypeVarOnlyOnRHS() {
+        t=testee.parse("List -> List<T>");
+        assertEquals(t.leftValue(),"TS type variable not defined on LHS ()'T' at pos 13 of expression List -> List<T>");
+    }
+
+    @Test
+    void check_error_TSTypeVarOnlyOn() {
+        t=testee.parse("List<T> -> List<T>");
+        assertEquals(t.value().toString(),"TypeMappingExpression{typeVariables=[T], names=[List], tsExpressionElements=[TSMappedTerminal{value=List}, TSMappedTypeContainer{expressions=[TSMappedTerminal{value=<}, TSMappedTypeVar{value=T}, TSMappedTerminal{value=>}], value=<T>}], conversionCoverage=SUBTYPES}");
+    }
+
+    @Test
     void check_error_closing_bracket() {
         t=testee.parse("List >T -> error");
         assertEquals(t.leftValue(),"closing angle bracket without opening'>' at pos 5 of expression List >T -> error");
