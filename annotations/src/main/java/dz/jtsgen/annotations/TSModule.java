@@ -150,6 +150,8 @@ public @interface TSModule {
     /**
      * The name mapping strategy of the member names. This should match the strategy used in
      * your JSON Library. The default is NameMappingStrategy.SIMPLE
+     *
+     * @return the name mapping strategy
      */
     NameMappingStrategy nameMappingStrategy() default NameMappingStrategy.JACKSON_DEFAULT;
 

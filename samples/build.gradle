@@ -42,4 +42,5 @@ compileJava {
 dependencies {
     compile project(":annotations")
     compileOnly project(":processor")
+    annotationProcessor project(":processor")
 }

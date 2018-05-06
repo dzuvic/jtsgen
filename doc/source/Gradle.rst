@@ -30,6 +30,22 @@ build dir automatically:
         compileOnly "com.github.dzuvic:jtsgen-processor:${jtsgen_Version}"
     }
 
+Since Gradle 4.6 there is also a special dependency, if the compiler doesn't
+catch the processor automatically. So for Gradle 4.6+ it should look like this,
+by using the new dependency
+`annotationProcessor <https://docs.gradle.org/4.6/release-notes.html#convenient-declaration-of-annotation-processor-dependencies>`_
+:
+
+.. code-block:: groovy
+
+    dependencies {
+        compileOnly "com.github.dzuvic:jtsgen-annotations:${jtsgen_Version}"
+        compileOnly "com.github.dzuvic:jtsgen-processor:${jtsgen_Version}"
+        annotationProcessor "com.github.dzuvic:jtsgen-processor:${jtsgen_Version}"
+    }
+
+Please refer to the official `Gradle Documentation <https://docs.gradle.org/current/userguide/java_plugin.html>`_
+around this subject.
 
     
 

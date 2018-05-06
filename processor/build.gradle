@@ -55,8 +55,8 @@ dependencies {
 
     apt "org.immutables:value:${immutables_Version}" // for annotation processor
 //    apt 'org.immutables:value-processor:2.5.3'
-    implementation "org.immutables:value:${immutables_Version}" // for annotations
-    implementation "org.immutables:builder:${immutables_Version}" // for annotations
+    compileOnly "org.immutables:value:${immutables_Version}" // for annotations
+    compileOnly "org.immutables:builder:${immutables_Version}" // for annotations
     
     compileOnly  files(Jvm.current().toolsJar)
 
@@ -65,6 +65,13 @@ dependencies {
 
 
 sourceSets.main.java.srcDirs = [aptOutDir,'src/main/java']
+
+jar{
+    manifest {
+        attributes 'Implementation-Title': 'TSGen Annotation Processor',
+                'Implementation-Version': version
+    }
+}
 
 idea {
     module {
