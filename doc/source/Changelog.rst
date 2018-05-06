@@ -2,8 +2,8 @@
 Change Log
 ==========
 
-`jtsgen-0.4.0-SNAPSHOT` (UNRELEASED)
-------------------------------------
+`jtsgen-0.4.0 <https://github.com/dzuvic/jtsgen/tree/jtsgen-0.4.0>`__ (2018-05-06)
+----------------------------------------------------------------------------------
 
 New Features
 ~~~~~~~~~~~~
@@ -13,6 +13,53 @@ New Features
 - Added support converting types without an annotation
 - Added support for non standard properties
 - Added support for different name mapping strategies
+
+Breaking Changes
+~~~~~~~~~~~~~~~~
+
+Type bounds of classes will be converted, but i don't expect that this shouldn't break any existing code.
+
+
+Tickets
+~~~~~~~
+
+**Implemented enhancements:**
+
+-  publish snapshot `#48 <https://github.com/dzuvic/jtsgen/issues/48>`__
+-  Kotlin Boolean doesn't show up
+   `#42 <https://github.com/dzuvic/jtsgen/issues/42>`__
+-  Bug: Generics in Ouput are missing
+   `#33 <https://github.com/dzuvic/jtsgen/issues/33>`__
+
+**Fixed bugs:**
+
+-  Generating bogus Java types due to not aborting the converter
+   recursion `#46 <https://github.com/dzuvic/jtsgen/issues/46>`__
+-  Bug: wrong dependency in Processor
+   `#40 <https://github.com/dzuvic/jtsgen/issues/40>`__
+
+**Closed issues:**
+
+-  Support generating Ouptput without an annotation
+   `#41 <https://github.com/dzuvic/jtsgen/issues/41>`__
+-  Add documentaion for maven
+   `#38 <https://github.com/dzuvic/jtsgen/issues/38>`__
+-  Support for converting external types
+   `#36 <https://github.com/dzuvic/jtsgen/issues/36>`__
+-  rename project packages prior deployment on maven central
+   `#12 <https://github.com/dzuvic/jtsgen/issues/12>`__
+
+**Merged pull requests:**
+
+-  Feature/46 early dsl
+   `#51 <https://github.com/dzuvic/jtsgen/pull/51>`__
+   (`dzuvic <https://github.com/dzuvic>`__)
+-  Feature/48 publish snapshot
+   `#49 <https://github.com/dzuvic/jtsgen/pull/49>`__
+   (`dzuvic <https://github.com/dzuvic>`__)
+-  Feature/33 generics
+   `#47 <https://github.com/dzuvic/jtsgen/pull/47>`__
+   (`dzuvic <https://github.com/dzuvic>`__)
 
 
 `jtsgen-0.3.0 <https://github.com/dzuvic/jtsgen/tree/jtsgen-0.3.0>`__ (2017-10-30)
