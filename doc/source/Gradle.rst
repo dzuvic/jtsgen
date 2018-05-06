@@ -12,7 +12,7 @@ The used version should be held in a variable like the following
    
   buildscript {
       ext {
-        jtsgen_Version=" \ |release|\ "
+        jtsgen_Version="\ |last-release|\ "
       }
    }
 

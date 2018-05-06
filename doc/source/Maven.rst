@@ -29,7 +29,7 @@ The following full example generates the typescript files in ``../client/src`` a
             <dependency>
                 <groupId>com.github.dzuvic</groupId>
                 <artifactId>jtsgen-processor</artifactId>
-                <version>0.3.0</version>
+                <version>0.4.0</version>
                 <scope>provided</scope>
             </dependency>
         </dependencies>

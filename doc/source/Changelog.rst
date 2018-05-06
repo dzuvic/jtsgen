@@ -2,6 +2,17 @@
 Change Log
 ==========
 
+
+jtsgen-0.5.0 (UNRELEASED)
+-------------------------
+
+Planned Features
+~~~~~~~~~~~~~~~~
+
+- support for converting the documentation
+
+
+
 `jtsgen-0.4.0 <https://github.com/dzuvic/jtsgen/tree/jtsgen-0.4.0>`__ (2018-05-06)
 ----------------------------------------------------------------------------------
 
