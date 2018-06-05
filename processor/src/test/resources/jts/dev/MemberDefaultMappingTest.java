@@ -34,6 +34,7 @@ public class MemberDefaultMappingTest {
     public boolean member_boolean=true;
 
     public Object member_Object=null;
+    public Boolean member_Boolean=null;
     public Integer member_Integer=null;
     public Long member_o_Long=null;
     public Float member_o_float=null;

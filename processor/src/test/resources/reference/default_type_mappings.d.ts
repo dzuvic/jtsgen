@@ -5,6 +5,7 @@
 declare namespace JtsDev {
   export interface MemberDefaultMappingTest {
     member_short: number;
+    member_Boolean: boolean;
     member_float: number;
     member_char: string;
     member_boolean: boolean;

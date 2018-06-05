@@ -48,6 +48,6 @@ public final class TSTargets {
     public static final TSTargetType MAPS = createTSTargetByDSL("java.util.Map<U,V> -> { [key: `U`]: `V`; }").orElse(NONE);
 
     public static List<TSTargetType> defaultDeclaredTypeConversion() {
-        return Stream.of(STRING, CHARACTER, NUMBER, COLLECTION, MAPS, OBJECT).collect(Collectors.toList());
+        return Stream.of(STRING, CHARACTER, BOOLEAN, NUMBER, COLLECTION, MAPS, OBJECT).collect(Collectors.toList());
     }
 }

@@ -5,6 +5,16 @@ build/
 /out/
 */out/
 
+#vscode
+.classpath
+.project
+launch.test.json
+launch.json
+.ignore
+.settings
+bin/
+
+
 # java/jvm output
 *.jar
 hs_err_pid*
