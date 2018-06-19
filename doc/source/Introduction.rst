@@ -2,13 +2,15 @@
 Introduction
 ============
 
-The project *tsgen* converts Java types as TypeScript types at compile time using an
-annotation processor. The main use case of this project is getting code completion in
-the typescript frontend project for types that are defined in the JVM backend project.
-These backend types are usually written in Java (or Kotlin).
+The project *tsgen* converts Java types as TypeScript types at compile
+time using an annotation processor. The main use case of this project
+is getting code completion in the typescript frontend project for
+types that are defined in the JVM backend project.  These backend
+types are usually written in Java (or Kotlin).
 
-For example: the following class defines data type person, that represents the interface between
-the TypeScipt based browser front end, e.g. angular or react, and a JAX-RS endpoint:
+For example: the following class defines data type person, that
+represents the interface between the TypeScipt based browser front
+end, e.g. angular or react, and a JAX-RS endpoint:
 
 .. code-block:: java
 
@@ -34,10 +36,11 @@ the TypeScipt based browser front end, e.g. angular or react, and a JAX-RS endpo
   }
 
 
-The data might be transmitted and accessed using JSON, or whatever marshalling technology you like, but
-in TypeScript you have to write something like the following code for being able using code completion
-on that type. Either you write something like the follwing or just use this project, which generates the
-following data type:
+The data might be transmitted and accessed using JSON, or whatever
+marshalling technology you like, but in TypeScript you have to write
+something like the following code for being able using code completion
+on that type. Either you write something like the follwing or just use
+this project, which generates the following data type:
 
 .. code-block:: typescript
 
@@ -100,9 +103,17 @@ An example project ist also available on github: `jtsgen-examples <https://githu
 Limits
 ------
 
-As all annotation processors, only the types are transformed, no methods, or anything executable. For this you could
-try something like `TeaVM <http://teavm.org>`_ or `Kotlin JS <https://kotlinlang.org/docs/reference/js-overview.html>`_.
+As all annotation processors, only the types are transformed, no
+methods, or anything executable. For this you could try something like
+`TeaVM <http://teavm.org>`_ or `Kotlin JS
+<https://kotlinlang.org/docs/reference/js-overview.html>`_.
 
-Another limitation regarding name spaces exists only temporarily until some major refactoring has been done. Currently
-the name space mapping is only available an java types, but not for type bounds. A type bound is converted without any
-name space. Usually that should be fine, unless you're planning extracting everything without any name space mapping.
+Another limitation exists regarding name spaces until some major
+refactoring has been done: Currently the name space mapping is only
+available for java types, but not for type bounds. A type bound is
+converted without any name space. Usually that should be fine, unless
+you're planning extracting everything without any name space mapping.
+
+This tool, like many other Java tools, is not able to infer missing
+types when acessing a Raw Type. This should usually not be problem,
+but please refer to F.A.Q. section, if this is an issue.

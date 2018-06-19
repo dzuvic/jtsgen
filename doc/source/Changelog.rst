@@ -6,6 +6,13 @@ Change Log
 jtsgen-0.5.0 (UNRELEASED)
 -------------------------
 
+New Features
+~~~~~~~~~~~~
+
+- The documentation has been expanded with a section about building
+  and extending ``tsgen``
+- Tests for JDK 10 has been added
+
 Planned Features
 ~~~~~~~~~~~~~~~~
 
