@@ -4,17 +4,19 @@ buildscript {
         // version numbers, mostly for testing
         junit4_Version            = '4.12'
         junitVintage_Version      = '4.12.3'
-        junitPlatform_Version     = '1.0.3'
-        junitJupiter_Version      = '5.0.3'
-        mockito_Version           = '2.7.21'
-        compile_testing_Version   = '0.13'
+        junitPlatform_Version     = '1.2.0'
+        junitJupiter_Version      = '5.2.0'
+        mockito_Version           = '2.18.3'
+        compile_testing_Version   = '0.15'
         commons_io_Version        = '2.5'
-        guava_Version             = '21.0'
+        guava_Version             = '23.0'
         generex_Verson            = '1.0.2'
-        jacoco_Version            = '0.8.0'
         log4j_Version             = '2.9.0'
 
-        immutables_Version        = '2.5.6'
+        jacoco_Version            = '0.8.1'
+        coverAlls_Version         = '2.8.1'
+
+        immutables_Version        = '2.6.1'
 
     }
 
@@ -22,8 +24,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1"
-        classpath "org.junit.platform:junit-platform-gradle-plugin:${junitPlatform_Version}"
+        classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:${coverAlls_Version}"
    	}
 }
 
@@ -53,7 +54,6 @@ subprojects {
 
     jacoco {
         toolVersion = "${jacoco_Version}"
-//        applyTo junitPlatformTest
     }
 
 
@@ -64,10 +64,5 @@ subprojects {
             html.enabled = false
         }
     }
-}
-
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.7'
 }
 

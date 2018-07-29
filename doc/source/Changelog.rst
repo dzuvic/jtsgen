@@ -2,9 +2,24 @@
 Change Log
 ==========
 
+The changelog is sorted descending by release date and contains at least one chapter about:
+
+- *New features*
+- *Breaking Changes*
+- *Deprecated Features*, which will be removed in the next months
+- *Removed Features*
+- *Fixed*
+
 
 jtsgen-0.5.0 (UNRELEASED)
 -------------------------
+
+New Features
+~~~~~~~~~~~~
+
+- The documentation has been expanded with a section about building
+  and extending ``tsgen``
+- Tests for JDK 10 has been added
 
 Planned Features
 ~~~~~~~~~~~~~~~~

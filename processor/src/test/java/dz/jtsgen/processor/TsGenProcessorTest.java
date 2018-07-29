@@ -29,6 +29,8 @@ import org.junit.Ignore;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnJre;
+import org.junit.jupiter.api.condition.JRE;
 
 
 import javax.tools.Diagnostic;
@@ -730,6 +732,7 @@ class TsGenProcessorTest {
     }
 
     @Test
+    @EnabledOnJre(JRE.JAVA_8)
     void test_default_exclusion() throws IOException {
         Compilation c = CompileHelper.compileJtsDev(DUMP_FILES, 1, "InterFaceTestWithSunInternal.java");
 
@@ -1029,7 +1032,7 @@ class TsGenProcessorTest {
     void members_with_module_definitions() throws IOException {
         final String folderName = "testm1";
         final String tdsFilename = "test-m1.d.ts";
-        Compilation c = CompileHelper.compileForModule("jts/modules/testM1", folderName, tdsFilename, DUMP_FILES, 0, "MemberWithModuleDef.java", "package-info.java", "m2/InterFaceTestModuleM2MustBeIn.java");
+        Compilation c = CompileHelper.compileForModule("jts/modules/testM1", folderName, tdsFilename, true, 0, "MemberWithModuleDef.java", "package-info.java", "m2/InterFaceTestModuleM2MustBeIn.java", "InterFaceTestModuleM1.java");
         assertEquals(
                 1,
                 findSourceLine(c, folderName, PACKAGE_JSON,

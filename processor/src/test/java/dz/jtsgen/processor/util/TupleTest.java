@@ -29,7 +29,7 @@ class TupleTest {
     void test_Tuple_equals() {
         Tuple same=new Tuple<>("a", "b");
         assertTrue(same.equals(same));
-        assertFalse(same.equals(new Integer(0)));
+        assertFalse(same.equals(Integer.valueOf(0)));
         assertEquals(new Tuple<>("a", "b"), new Tuple<>("a", "b"));
         assertNotEquals(new Tuple<>("B", "b"), new Tuple<>("a", "b"));
         assertNotEquals(new Tuple<>("a", "B"), new Tuple<>("a", "b"));

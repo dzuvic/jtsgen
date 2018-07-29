@@ -9,6 +9,10 @@ env:
 dist: trusty
 sudo: false
 
+jdk:
+  - oraclejdk8
+  - openjdk10
+
 script:
   - ./gradlew -version
   - ./gradlew build
@@ -22,10 +26,7 @@ cache:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
 
-jdk:
-  - oraclejdk8
 
 after_success:
-  - ./gradlew jacocoTestReport
-  - bash <(curl -s https://codecov.io/bash)
-  - ./dev/check_and_deploy.sh
+  - ./dev/check_and_deploy.sh && ./gradlew jacocoTestReport && bash <(curl -s https://codecov.io/bash)
+
