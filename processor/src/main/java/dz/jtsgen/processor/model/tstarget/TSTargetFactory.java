@@ -44,10 +44,8 @@ public final class TSTargetFactory {
     final static NameSpaceMapper IDENTITY = x -> x;
 
     /**
-     * Reference:
-     * @see <a href="http://jtsgen.readthedocs.io">http://jtsgen.readthedocs.io</a>
-     * for a reference of the DSL
-     *
+     * The reference of the DSL can be found on:
+     * @see <a href="http://jtsgen.readthedocs.io">jtsgen.readthedocs.io</a>
      *
      * @param mappingString the Mapping String
      * @return the corresponding TSTarget without namespace of that mapping string

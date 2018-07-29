@@ -23,6 +23,7 @@ Usually there are no other plugins required for your build system
    Gradle
    Maven
    Build
+   Appendix
 
 .. toctree::
    :maxdepth: 2

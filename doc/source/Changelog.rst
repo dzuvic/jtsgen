@@ -2,6 +2,14 @@
 Change Log
 ==========
 
+The changelog is sorted descending by release date and contains at least one chapter about:
+
+- *New features*
+- *Breaking Changes*
+- *Deprecated Features*, which will be removed in the next months
+- *Removed Features*
+- *Fixed*
+
 
 jtsgen-0.5.0 (UNRELEASED)
 -------------------------
