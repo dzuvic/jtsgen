@@ -59,6 +59,7 @@ The following annotation parameters are supported:
   ``{"set([_a-zA-Z0-9].*)"}`` (sine 0.4.0)
 - **version**: The version number for the package.json file, default is
   "1.0.0"
+- **enumExportStrategy**: Defines how the default enum output strategy is. Default is ``EnumExportStrategy.NUMERIC``
 
 Note: The Processing Parameters *tsgen* may override some of these settings. See :ref:`processing-parameters`
 for details.
