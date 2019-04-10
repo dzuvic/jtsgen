@@ -2,6 +2,17 @@
 Build and Develop
 =================
 
+
+This chapter describes the internal structures of *tsgen* for
+development purpose. Also the build / release process and how
+to contribute to *tsgen*.
+
+
+Build & Release
+===============
+
+
+
 Build *tsgen*
 -------------
 
@@ -27,5 +38,42 @@ To build this project execute the following command:
     BUILD SUCCESSFUL in 14s
     18 actionable tasks: 10 executed, 8 up-to-date
 
-
     
+
+Development
+===========
+    
+    
+
+Structures
+----------
+
+*tsgen* is an annotation processor, therefore it applies to an
+ implicit contract between the compiler and the processor. It only
+ extracts the type information, mainly from the sources. Remember:
+ some types are erased, especially on the classes
+
+   
+It processes the *Java* sources in the following stages:
+
+ #. The annotation processor ``TsGenProcessor`` is started by the
+    compiler. It Analyzes only classes, that are annotated by the types
+    from the ``dz.jtsgen.annotations`` package.
+ #. Before any Java conversion is processed, the a configuration
+    structure is built by combining the command line arguments for the
+    compiler and the information added to the ``TSModule`` annotation
+ #. After the configuration has been determined, the name space
+    mappings are resolved.
+ #. The processor converts the Java types to an internal, AST like,
+    structure for the render. There are multiple converters involved in
+    this stage
+ #. It generates TypeScript code into the sources folder, which might
+    be changed in the near future
+
+
+.. literalinclude:: ../../processor/src/main/java/dz/jtsgen/processor/model/TSType.java 
+    :linenos:
+    :language: java
+   
+
+

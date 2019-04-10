@@ -31,7 +31,7 @@ import static dz.jtsgen.processor.util.StringUtils.lastOf;
 import static dz.jtsgen.processor.util.StringUtils.untill;
 
 /**
- * This type contains all iformation about a converted type
+ * This type contains all information about a converted type
  */
 public abstract class TSType implements TSTypeElement {
 
@@ -58,6 +58,6 @@ public abstract class TSType implements TSTypeElement {
     public abstract Element getElement();
 
     public abstract String getKeyword();
-    
+
     public abstract TSType changedNamespace(String namespace, List<TSMember> members);
 }
