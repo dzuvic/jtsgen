@@ -25,13 +25,10 @@ import com.google.testing.compile.JavaFileObjects;
 import dz.jtsgen.processor.helper.CompileHelper;
 import dz.jtsgen.processor.helper.ReferenceHelper;
 import dz.jtsgen.processor.helper.StringConstForTest;
-import org.junit.Ignore;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnJre;
 import org.junit.jupiter.api.condition.JRE;
-
 
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
@@ -553,6 +550,20 @@ class TsGenProcessorTest {
                 "must have the member someEnum: SomeEnum"
         );
 
+    }
+
+    @Test
+    void test_enum_string() throws IOException {
+        final String folderName = "enum_string_test";
+        final String tdsFilename = "enum_string_test.d.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/enum_string", folderName, tdsFilename, DUMP_FILES, 0, "package-info.java", "InterfaceWithEnum.java", "SomeEnum.java");
+
+        assertEquals(
+                1,
+                findSourceLine(c, folderName, tdsFilename,
+                        Pattern.compile("^\\s+A = 'A', B = 'B', C = 'C'\\s*$")).size(),
+                "must include enum values"
+        );
     }
 
     @Test
