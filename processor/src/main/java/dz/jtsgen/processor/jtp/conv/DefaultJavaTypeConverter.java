@@ -89,7 +89,11 @@ public class DefaultJavaTypeConverter implements JavaTypeConverter {
 
         switch (element.getKind()) {
             case CLASS: {
-                result = TSInterfaceBuilder.of(element).withMembers(findMembers(element)).withSuperTypes(supertypes).withTypeParams(typeParams);
+                result = TSInterfaceBuilder.of(element)
+                        .withMembers(findMembers(element))
+                        .withSuperTypes(supertypes)
+                        .withTypeParams(typeParams)
+                        .withDocumentString(element.);
                 break;
             }
             case INTERFACE: {

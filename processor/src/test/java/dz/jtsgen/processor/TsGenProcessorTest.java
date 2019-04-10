@@ -25,6 +25,7 @@ import com.google.testing.compile.JavaFileObjects;
 import dz.jtsgen.processor.helper.CompileHelper;
 import dz.jtsgen.processor.helper.ReferenceHelper;
 import dz.jtsgen.processor.helper.StringConstForTest;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnJre;
@@ -111,17 +112,45 @@ class TsGenProcessorTest {
         assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, StringConstForTest.JTSGEN_MYMODULE, PACKAGE_JSON).isPresent());
         assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, StringConstForTest.JTSGEN_MYMODULE, StringConstForTest.MY_MODULE_D_TS).isPresent());
 
-        JavaFileObject testee2 = c.generatedFile(StandardLocation.SOURCE_OUTPUT, StringConstForTest.JTSGEN_MYMODULE, StringConstForTest.MY_MODULE_D_TS).get();
 
         ReferenceHelper.assertEquals(
 
                 c.generatedFile(StandardLocation.SOURCE_OUTPUT, StringConstForTest.JTSGEN_MYMODULE, PACKAGE_JSON).get()
                 , "simple_interface_1.package.json");
 
+        JavaFileObject testee2 = c.generatedFile(StandardLocation.SOURCE_OUTPUT, StringConstForTest.JTSGEN_MYMODULE, StringConstForTest.MY_MODULE_D_TS).get();
         ReferenceHelper.assertEquals(
-
-                c.generatedFile(StandardLocation.SOURCE_OUTPUT, StringConstForTest.JTSGEN_MYMODULE, StringConstForTest.MY_MODULE_D_TS).get()
+                testee2
                 , "simple_interface_1.my-module.d.ts");
+    }
+
+    @Test
+    @DisplayName("Tests converting javadoc to tsdoc")
+    void test_documentation() throws IOException {
+        JavaFileObject[] files = {JavaFileObjects.forResource("jts/dev/DocumentationTests.java")};
+        Compilation c = javac()
+                .withProcessors(new TsGenProcessor())
+                .withOptions("-AjtsgenModuleName=MyModule")
+                .compile(files);
+
+        assertEquals(
+                0, c.errors().size());
+
+        // check debug is disabled
+        assertEquals(
+                Logger.getLogger(TsGenProcessor.class.getPackage().getName()).getLevel(), Level.OFF);
+
+        assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, StringConstForTest.JTSGEN_MYMODULE, PACKAGE_JSON).isPresent());
+        assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, StringConstForTest.JTSGEN_MYMODULE, StringConstForTest.MY_MODULE_D_TS).isPresent());
+
+        JavaFileObject testee2 = c.generatedFile(StandardLocation.SOURCE_OUTPUT, StringConstForTest.JTSGEN_MYMODULE, StringConstForTest.MY_MODULE_D_TS).get();
+
+        System.out.println( IOUtils.toString(testee2.openReader(true)));
+
+        // test only the conversion of the java documentation
+        ReferenceHelper.assertEquals(
+                testee2
+                , "documentation_tests.my-module.d.ts");
     }
 
     @Test
