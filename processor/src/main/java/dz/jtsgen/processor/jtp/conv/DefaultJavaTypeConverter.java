@@ -93,7 +93,7 @@ public class DefaultJavaTypeConverter implements JavaTypeConverter {
                         .withMembers(findMembers(element))
                         .withSuperTypes(supertypes)
                         .withTypeParams(typeParams)
-                        .withDocumentString(element.);
+                        .withDocumentString(element.toString());
                 break;
             }
             case INTERFACE: {
