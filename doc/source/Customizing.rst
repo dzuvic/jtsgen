@@ -250,3 +250,11 @@ to one of the following strategy:
 
 The member name mapping strategy can be defined using the
 parameter ``nameMappingStrategy`` of the ``TSModule`` annotation.
+
+
+Enum Output Strategy
+-------------------
+
+- ``NUMERIC``: Writing numeric enums. This is
+  the default used in *tsgen*
+- ``STRING``: Writing string enums.
