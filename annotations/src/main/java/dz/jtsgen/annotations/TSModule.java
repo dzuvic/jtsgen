@@ -155,4 +155,10 @@ public @interface TSModule {
      */
     NameMappingStrategy nameMappingStrategy() default NameMappingStrategy.JACKSON_DEFAULT;
 
+    /**
+     * The export type of the enums. The default is EnumExportType.NUMERIC
+     *
+     * @return the enum export type
+     */
+    EnumExportStrategy enumExportStrategy() default EnumExportStrategy.NUMERIC;
 }

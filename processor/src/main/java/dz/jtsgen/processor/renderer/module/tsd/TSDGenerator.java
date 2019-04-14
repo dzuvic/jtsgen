@@ -105,7 +105,7 @@ public final class TSDGenerator {
     }
 
     private TSTypeVisitor creatTypeVisitor(TSModuleInfo module, PrintWriter out) {
-        return module.generateTypeGuards() ? new TSTypeVisitorTypeGuards(out) : new TSTypeVisitorDefault(out);
+        return module.generateTypeGuards() ? new TSTypeVisitorTypeGuards(out, model) : new TSTypeVisitorDefault(out, model);
     }
 
     private void writeHeader(TSModuleInfo module, PrintWriter out) {

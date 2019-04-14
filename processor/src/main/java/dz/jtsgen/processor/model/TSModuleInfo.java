@@ -20,6 +20,7 @@
 
 package dz.jtsgen.processor.model;
 
+import dz.jtsgen.annotations.EnumExportStrategy;
 import dz.jtsgen.annotations.NameMappingStrategy;
 import dz.jtsgen.annotations.NameSpaceMappingStrategy;
 import dz.jtsgen.annotations.OutputType;
@@ -48,6 +49,7 @@ public abstract class TSModuleInfo {
      * @param moduleAuthorUrl if null use current
      * @param moduleName if null use current
      * @param outputType if null use the current
+     * @param enumExportStrategy if null use the current
      * @return return a copy with params changed
      */
     public TSModuleInfo withModuleData(
@@ -58,6 +60,7 @@ public abstract class TSModuleInfo {
             , String moduleAuthorUrl
             , String moduleName
             , OutputType outputType
+            , EnumExportStrategy enumExportStrategy
     ) {
         return TSModuleInfoBuilder.copyOf(this)
                 .withModuleName(moduleName == null ? this.getModuleName() : moduleName)
@@ -66,7 +69,8 @@ public abstract class TSModuleInfo {
                 .withModuleAuthor(moduleAuthor== null ? this.getModuleAuthor(): moduleAuthor )
                 .withModuleLicense(moduleLicense== null ? this.getModuleLicense(): moduleLicense )
                 .withModuleAuthorUrl(moduleAuthorUrl== null ? this.getModuleAuthorUrl(): moduleAuthorUrl )
-                .withOutputType( outputType == null ? this.getOutputType() : outputType);
+                .withOutputType( outputType == null ? this.getOutputType() : outputType)
+                .withEnumExportStrategy(enumExportStrategy == null ? this.enumExportStrategy() : enumExportStrategy);
     }
     
 
@@ -182,4 +186,10 @@ public abstract class TSModuleInfo {
     public NameMappingStrategy nameMappingStrategy() {
         return NameMappingStrategy.JACKSON_DEFAULT;
     }
+
+    @Value.Default
+    public EnumExportStrategy enumExportStrategy() {
+        return EnumExportStrategy.NUMERIC;
+    }
+
 }

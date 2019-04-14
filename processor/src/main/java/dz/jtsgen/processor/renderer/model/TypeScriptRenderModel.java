@@ -20,6 +20,7 @@
 
 package dz.jtsgen.processor.renderer.model;
 
+import dz.jtsgen.annotations.EnumExportStrategy;
 import dz.jtsgen.annotations.OutputType;
 import dz.jtsgen.processor.model.TSModuleInfo;
 import dz.jtsgen.processor.model.TSType;
@@ -50,6 +51,8 @@ public class TypeScriptRenderModel extends TypeScriptModel {
     public OutputType getOutputType() {
         return this.getModuleInfo().getOutputType();
     }
+
+    public EnumExportStrategy getEnumExportStrategy() { return this.getModuleInfo().enumExportStrategy(); }
 
     /**
      * @return the filename of the typings file if output type is sufficient

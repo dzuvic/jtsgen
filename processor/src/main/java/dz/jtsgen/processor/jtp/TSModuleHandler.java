@@ -20,10 +20,7 @@
 
 package dz.jtsgen.processor.jtp;
 
-import dz.jtsgen.annotations.NameMappingStrategy;
-import dz.jtsgen.annotations.NameSpaceMappingStrategy;
-import dz.jtsgen.annotations.OutputType;
-import dz.jtsgen.annotations.TSModule;
+import dz.jtsgen.annotations.*;
 import dz.jtsgen.processor.model.*;
 import dz.jtsgen.processor.model.tstarget.TSTargetFactory;
 import dz.jtsgen.processor.util.Either;
@@ -88,6 +85,7 @@ public final class TSModuleHandler {
                                     else if (isNameAndNotNull("getterPrefixes",entry)) tsBuilder.getterPrefixes(convertToListOfString(entry.getValue()));
                                     else if (isNameAndNotNull("setterPrefixes",entry)) tsBuilder.setterPrefixes(convertToListOfString(entry.getValue()));
                                     else if (isNameAndNotNull("nameMappingStrategy",entry)) tsBuilder.nameMappingStrategy(convertNameMappingStrategy(entry.getValue()));
+                                    else if (isNameAndNotNull("enumExportStrategy",entry)) tsBuilder.enumExportStrategy(convertEnumExportStrategy(entry.getValue()));
                                     else LOG.warning("unknown param on annotation TSModule " + entry.getKey());
                                 }
                                 return Optional.of( tsBuilder.build());
@@ -144,7 +142,15 @@ public final class TSModuleHandler {
                 ? NameMappingStrategy.valueOf(value.getValue().toString())
                 :null;
     }
-    
+
+    EnumExportStrategy convertEnumExportStrategy(AnnotationValue value) {
+        return (value != null
+                && value.getValue() != null
+                && Arrays.stream(EnumExportStrategy.values()).anyMatch(x -> x.name().equals(value.getValue().toString())))
+                ? EnumExportStrategy.valueOf(value.getValue().toString())
+                :null;
+    }
+
     private boolean isNameAndNotNull(String theName, Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry) {
         final String simpleName = entry.getKey().getSimpleName().toString();
         return theName.equals(simpleName) && entry.getValue() != null;

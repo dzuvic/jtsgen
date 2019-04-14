@@ -59,6 +59,7 @@ The following annotation parameters are supported:
   ``{"set([_a-zA-Z0-9].*)"}`` (sine 0.4.0)
 - **version**: The version number for the package.json file, default is
   "1.0.0"
+- **enumExportStrategy**: Defines how the default enum output strategy is. Default is ``EnumExportStrategy.NUMERIC``
 
 Note: The Processing Parameters *tsgen* may override some of these settings. See :ref:`processing-parameters`
 for details.
@@ -249,3 +250,11 @@ to one of the following strategy:
 
 The member name mapping strategy can be defined using the
 parameter ``nameMappingStrategy`` of the ``TSModule`` annotation.
+
+
+Enum Output Strategy
+-------------------
+
+- ``NUMERIC``: Writing numeric enums. This is
+  the default used in *tsgen*
+- ``STRING``: Writing string enums.

@@ -24,6 +24,7 @@ import dz.jtsgen.processor.helper.IdentHelper;
 import dz.jtsgen.processor.model.*;
 import dz.jtsgen.processor.model.rendering.TSMemberVisitor;
 import dz.jtsgen.processor.model.rendering.TSTypeVisitor;
+import dz.jtsgen.processor.renderer.model.TypeScriptRenderModel;
 
 import java.io.PrintWriter;
 import java.util.stream.Collectors;
@@ -34,14 +35,16 @@ import java.util.stream.Collectors;
 class TSTypeVisitorDefault implements TSTypeVisitor {
     private final PrintWriter out;
     private final TSMemberVisitor tsMemberVisitor;
+    private final TypeScriptRenderModel model;
 
-    TSTypeVisitorDefault(PrintWriter out, TSMemberVisitor visitor ){
+    TSTypeVisitorDefault(PrintWriter out, TSMemberVisitor visitor, TypeScriptRenderModel model){
         this.out = out;
         this.tsMemberVisitor = visitor;
+        this.model = model;
     }
 
-    TSTypeVisitorDefault(PrintWriter out) {
-        this(out,new DefaultTSMemberVisitor(out));
+    TSTypeVisitorDefault(PrintWriter out, TypeScriptRenderModel model) {
+        this(out,new DefaultTSMemberVisitor(out, model), model);
     }
 
 

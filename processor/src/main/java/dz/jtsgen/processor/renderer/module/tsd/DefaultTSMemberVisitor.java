@@ -20,9 +20,11 @@
 
 package dz.jtsgen.processor.renderer.module.tsd;
 
+import dz.jtsgen.annotations.EnumExportStrategy;
 import dz.jtsgen.processor.model.TSEnumMember;
 import dz.jtsgen.processor.model.TSMember;
 import dz.jtsgen.processor.model.rendering.TSMemberVisitor;
+import dz.jtsgen.processor.renderer.model.TypeScriptRenderModel;
 
 import java.io.PrintWriter;
 
@@ -31,8 +33,11 @@ public class DefaultTSMemberVisitor implements TSMemberVisitor {
 
     private final PrintWriter out;
 
-    DefaultTSMemberVisitor(PrintWriter out) {
+    private final TypeScriptRenderModel model;
+
+    DefaultTSMemberVisitor(PrintWriter out, TypeScriptRenderModel model) {
         this.out=out;
+        this.model=model;
     }
 
     @Override
@@ -47,6 +52,11 @@ public class DefaultTSMemberVisitor implements TSMemberVisitor {
     @Override
     public void visit(TSEnumMember x) {
         out.print(x.getName());
+        if (EnumExportStrategy.STRING.equals(model.getEnumExportStrategy())) {
+            out.print(" = '");
+            out.print(x.getName());
+            out.print("'");
+        }
     }
 
 }
