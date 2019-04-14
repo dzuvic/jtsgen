@@ -92,6 +92,11 @@ compileJava {
     }
 }
 
+javadoc {
+    // exclude generated code
+    exclude 'dz/jtsgen/processor/model/**'
+}
+
 jacoco {
     toolVersion = "${jacoco_Version}"
 //    applyTo junitPlatformTest
