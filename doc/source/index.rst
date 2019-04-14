@@ -31,6 +31,7 @@ Usually there are no other plugins required for your build system
 
    References
    License
+   Contributors
    Changelog
    Test cases <https://github.com/dzuvic/jtsgen/tree/master/processor/src/test>
 

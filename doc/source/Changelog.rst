@@ -17,15 +17,16 @@ jtsgen-0.5.0 (UNRELEASED)
 New Features
 ~~~~~~~~~~~~
 
-- The documentation has been expanded with a section about building
+- The documentation has been expanded with a section about the contributors, building
   and extending ``tsgen``
-- Tests for JDK 10 has been added
+- Tests for JDK 11 have been added
+- new options for generating enum
+
 
 Planned Features
 ~~~~~~~~~~~~~~~~
 
 - support for converting the documentation
-
 
 
 `jtsgen-0.4.0 <https://github.com/dzuvic/jtsgen/tree/jtsgen-0.4.0>`__ (2018-05-06)
