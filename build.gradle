@@ -2,10 +2,7 @@
 buildscript {
     ext {
         // version numbers, mostly for testing
-        junit4_Version            = '4.12'
-        junitVintage_Version      = '4.12.3'
-        junitPlatform_Version     = '1.2.0'
-        junitJupiter_Version      = '5.2.0'
+        junitJupiter_Version      = '5.4.2'
         mockito_Version           = '2.18.3'
         compile_testing_Version   = '0.15'
         commons_io_Version        = '2.5'
@@ -13,10 +10,10 @@ buildscript {
         generex_Verson            = '1.0.2'
         log4j_Version             = '2.9.0'
 
-        jacoco_Version            = '0.8.1'
-        coverAlls_Version         = '2.8.1'
+        jacoco_Version            = '0.8.3'
+        coverAlls_Version         = '2.8.2'
 
-        immutables_Version        = '2.6.1'
+        immutables_Version        = '2.7.4'
 
     }
 
