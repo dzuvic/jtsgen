@@ -18,7 +18,7 @@
  *
  */
 
-package jts.dev;
+package jts.modules.enum_string;
 
 import dz.jtsgen.annotations.TypeScript;
 

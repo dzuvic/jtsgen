@@ -25,7 +25,7 @@
         moduleName = "enum_string_test",
         enumExportStrategy = EnumExportStrategy.STRING
 )
-package jts.modules.inherit1;
+package jts.modules.enum_string;
 
 import dz.jtsgen.annotations.EnumExportStrategy;
 import dz.jtsgen.annotations.TSModule;
