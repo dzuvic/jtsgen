@@ -147,11 +147,11 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
 
 
     private TSTargetType convertTypeMirrorToTsType(ExecutableElement theElement, TSProcessingInfo tsProcessingInfo) {
-        return new MirrotTypeToTSConverterVisitor(theElement, tsProcessingInfo, javaTypeConverter).visit(theElement.getReturnType());
+        return new MirrorTypeToTSConverterVisitor(theElement, tsProcessingInfo, javaTypeConverter).visit(theElement.getReturnType());
     }
 
     private TSTargetType convertTypeMirrorOfMemberToTsType(VariableElement theElement, TSProcessingInfo TSProcessingInfo) {
-        return new MirrotTypeToTSConverterVisitor(theElement, TSProcessingInfo, javaTypeConverter).visit(theElement.asType());
+        return new MirrorTypeToTSConverterVisitor(theElement, TSProcessingInfo, javaTypeConverter).visit(theElement.asType());
     }
 
     List<TSMember> getMembers() {

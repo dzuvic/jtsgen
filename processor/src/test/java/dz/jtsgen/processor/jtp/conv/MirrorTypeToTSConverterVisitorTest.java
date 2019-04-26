@@ -35,11 +35,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class MirrotTypeToTSConverterVisitorTest {
+class MirrorTypeToTSConverterVisitorTest {
 
     private TypeElement typeElement;
 
-    private MirrotTypeToTSConverterVisitor testee;
+    private MirrorTypeToTSConverterVisitor testee;
 
     private TSProcessingInfo param;
 
@@ -54,7 +54,7 @@ class MirrotTypeToTSConverterVisitorTest {
         when(this.param.getpEnv()).thenReturn(processingEnvMock);
 
 
-        this.testee = new MirrotTypeToTSConverterVisitor(this.typeElement,this.param, null) ;
+        this.testee = new MirrorTypeToTSConverterVisitor(this.typeElement,this.param, null) ;
     }
 
 
