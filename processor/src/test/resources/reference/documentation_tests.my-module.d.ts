@@ -3,9 +3,11 @@
 
 
 declare namespace MyModule {
-  export interface InterFaceTest {
-    readonly someString: string;
-    readonly someInt: number;
-  }
+    /**
+     *  Sample documentation for a class
+     */
+    export interface DocumentationTests {
+        docInt: number;
+    }
 
  }

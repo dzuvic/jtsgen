@@ -88,26 +88,31 @@ public class DefaultJavaTypeConverter implements JavaTypeConverter {
         LOG.fine(() -> "DJTC Element has type params: " + typeParams);
 
         switch (element.getKind()) {
-            case CLASS: {
+            case CLASS:
+            case INTERFACE: {
                 result = TSInterfaceBuilder.of(element)
                         .withMembers(findMembers(element))
                         .withSuperTypes(supertypes)
                         .withTypeParams(typeParams)
-                        .withDocumentString(element.toString());
-                break;
-            }
-            case INTERFACE: {
-                result = TSInterfaceBuilder.of(element).withMembers(findMembers(element)).withSuperTypes(supertypes).withTypeParams(typeParams);
+                        .withDocumentString(commentFrom(element));
                 break;
             }
             case ENUM: {
-                result = TSEnumBuilder.of(element).withMembers(findEnumMembers(element)).withTypeParams(new ArrayList<>());
+                result = TSEnumBuilder.of(element)
+                        .withMembers(findEnumMembers(element))
+                        .withTypeParams(new ArrayList<>())
+                        .withDocumentString(commentFrom(element));
                 break;
             }
             default:
                 break;
         }
         return Optional.ofNullable(result);
+    }
+
+
+    private String commentFrom(TypeElement element) {
+        return this.processingInfo.getpEnv().getElementUtils().getDocComment(element);
     }
 
     private List<TSType> convertSuperTypes(TypeElement element) {
