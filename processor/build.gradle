@@ -41,7 +41,6 @@ dependencies {
     testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiter_Version}")
     testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiter_Version}")
     testCompileOnly('org.apiguardian:apiguardian-api:1.0.0')
-//    testRuntime("org.junit.platform:junit-platform-launcher:${junitPlatform_Version}")
     testRuntime("org.apache.logging.log4j:log4j-core:${log4j_Version}")
     testRuntime("org.apache.logging.log4j:log4j-jul:${log4j_Version}")
 
@@ -53,12 +52,11 @@ dependencies {
     
 
     apt "org.immutables:value:${immutables_Version}" // for annotation processor
-//    apt 'org.immutables:value-processor:2.5.3'
     compileOnly "org.immutables:value:${immutables_Version}" // for annotations
     compileOnly "org.immutables:builder:${immutables_Version}" // for annotations
 
 
-    if (! Jvm.current().javaVersion == "1.8") {
+    if (Jvm.current().javaVersion.java8) {
         println("Adding Tools.jar to dependency")
         compileOnly  files(Jvm.current().toolsJar)
         runtime files(Jvm.current().toolsJar)

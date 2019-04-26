@@ -51,6 +51,7 @@ class TSTypeVisitorDefault implements TSTypeVisitor {
 
     @Override
     public void visit(TSInterface x, int ident) {
+        tsComment(x, ident);
         typePrefix(x, ident);
         x.getMembers().forEach(y -> {
             getOut().print(IdentHelper.identPrefix(ident + 1));
@@ -74,6 +75,23 @@ class TSTypeVisitorDefault implements TSTypeVisitor {
         });
         getOut().println("");
         typePostFix(ident);
+
+    }
+
+    private void tsComment(TSType tsType, int ident) {
+        tsType.getDocumentString().ifPresent(x -> {
+
+            getOut().print(IdentHelper.identPrefix(ident));
+            getOut().println("/**");
+
+            getOut().print(IdentHelper.identPrefix(ident));
+            getOut().print(" * ");
+            getOut().println(x);
+
+
+            getOut().print(IdentHelper.identPrefix(ident));
+            getOut().println(" */");
+        });
 
     }
 

@@ -145,7 +145,7 @@ class TsGenProcessorTest {
 
         JavaFileObject testee2 = c.generatedFile(StandardLocation.SOURCE_OUTPUT, StringConstForTest.JTSGEN_MYMODULE, StringConstForTest.MY_MODULE_D_TS).get();
 
-        System.out.println( IOUtils.toString(testee2.openReader(true)));
+        //System.out.println( IOUtils.toString(testee2.openReader(true)));
 
         // test only the conversion of the java documentation
         ReferenceHelper.assertEquals(
