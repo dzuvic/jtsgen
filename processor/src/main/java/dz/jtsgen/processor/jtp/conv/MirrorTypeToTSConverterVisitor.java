@@ -57,9 +57,9 @@ import static javax.tools.Diagnostic.Kind.WARNING;
  * This Visitor is used to convert a Java Type to an TS type
  * Created by zuvic on 04.04.17.
  */
-class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTargetType, Void> {
+class MirrorTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTargetType, Void> {
 
-    private static Logger LOG = Logger.getLogger(MirrotTypeToTSConverterVisitor.class.getName());
+    private static Logger LOG = Logger.getLogger(MirrorTypeToTSConverterVisitor.class.getName());
 
     private final Element currentElement;
 
@@ -67,7 +67,7 @@ class MirrotTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTargetType, 
 
     private final JavaTypeConverter javaTypeConverter;
 
-    MirrotTypeToTSConverterVisitor(Element currentElement, TSProcessingInfo tsProcessingInfo, JavaTypeConverter javaTypeConverternverter) {
+    MirrorTypeToTSConverterVisitor(Element currentElement, TSProcessingInfo tsProcessingInfo, JavaTypeConverter javaTypeConverternverter) {
         this.tsProcessingInfo = tsProcessingInfo;
         this.currentElement = currentElement;
         this.javaTypeConverter = javaTypeConverternverter;
