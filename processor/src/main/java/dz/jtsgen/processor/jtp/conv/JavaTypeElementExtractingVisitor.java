@@ -86,7 +86,14 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
         LOG.log(Level.FINEST, () -> String.format("JTExV visiting variable %s%s", name, isIgnored?" (ignored)":""));
         if (isPublic && !members.containsKey(name)) {
             final TSTargetType tsTypeOfExecutable = convertTypeMirrorOfMemberToTsType(e, tsProcessingInfo);
-            members.put(name, TSRegularMemberBuilder.of(name,tsTypeOfExecutable, isReadOnlyAnnotation));
+            final Optional<String> comment = Optional.ofNullable(this.tsProcessingInfo.getpEnv().getElementUtils().getDocComment(e));
+            members.put(name,
+                    TSRegularMemberBuilder
+                            .of(
+                                    name,
+                                    tsTypeOfExecutable,
+                                    isReadOnlyAnnotation)
+                            .withComment(comment));
             if (! isIgnored) extractableMembers.add(name);
         }
         return null;
@@ -107,9 +114,20 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
             LOG.fine(() -> "is getter or setter: " + (isPublic ? "public " : " ") + e.getSimpleName() + " -> " + name +"(" + rawName+ ")" + ":" + tsTypeOfExecutable + " " +(isIgnored?"(ignored)":""));
             if (members.containsKey(name)) {
                 // can't be read only anymore
-                members.put(name, TSRegularMemberBuilder.of(name, isGetter(e) ? tsTypeOfExecutable : members.get(name).getType(), isReadOnly));
+                final Optional<String> comment = Optional.ofNullable(this.tsProcessingInfo.getpEnv().getElementUtils().getDocComment(e));
+                members.put(name, TSRegularMemberBuilder
+                        .of(
+                                name,
+                                isGetter(e) ? tsTypeOfExecutable : members.get(name).getType(),
+                                isReadOnly)
+                        .withComment(comment)
+                );
             } else {
-                members.put(name, TSRegularMemberBuilder.of(name, tsTypeOfExecutable, isReadOnly));
+                final Optional<String> comment = Optional.ofNullable(this.tsProcessingInfo.getpEnv().getElementUtils().getDocComment(e));
+                members.put(name, TSRegularMemberBuilder
+                        .of(name, tsTypeOfExecutable, isReadOnly)
+                        .withComment(comment)
+                );
             }
             if (isGetter(e)) extractableMembers.add(name);
         }

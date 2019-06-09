@@ -28,6 +28,8 @@ import dz.jtsgen.annotations.TypeScript;
 public interface DocumentationTests {
 
     /**
+     * multi line
+     * comments
      * @return some value
      */
     int getDocInt();

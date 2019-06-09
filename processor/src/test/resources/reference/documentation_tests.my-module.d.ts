@@ -3,11 +3,16 @@
 
 
 declare namespace MyModule {
+  /**
+   *  Sample documentation for a class
+   */
+  export interface DocumentationTests {
     /**
-     *  Sample documentation for a class
+     *  multi line
+     *  comments
+     *  @return some value
      */
-    export interface DocumentationTests {
-        docInt: number;
-    }
+    docInt: number;
+  }
 
  }

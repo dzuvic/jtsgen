@@ -111,8 +111,8 @@ public class DefaultJavaTypeConverter implements JavaTypeConverter {
     }
 
 
-    private String commentFrom(TypeElement element) {
-        return this.processingInfo.getpEnv().getElementUtils().getDocComment(element);
+    private Optional<String> commentFrom(TypeElement element) {
+        return Optional.ofNullable(this.processingInfo.getpEnv().getElementUtils().getDocComment(element));
     }
 
     private List<TSType> convertSuperTypes(TypeElement element) {

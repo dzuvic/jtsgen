@@ -22,6 +22,7 @@ package dz.jtsgen.processor.renderer.module;
 
 import dz.jtsgen.processor.model.TypeScriptModel;
 import dz.jtsgen.processor.renderer.model.TypeScriptRenderModel;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import javax.annotation.processing.Filer;
@@ -38,6 +39,7 @@ import static org.mockito.Mockito.when;
 class ModuleGeneratorTest {
 
     @Test
+    @DisplayName("testing handling exceptions when writing module")
     void writeModule() throws Exception {
         TypeScriptRenderModel model = new TypeScriptRenderModel(TypeScriptModel.newModelWithDefaultModule());
         ProcessingEnvironment env = mock(ProcessingEnvironment.class);

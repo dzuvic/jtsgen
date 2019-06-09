@@ -21,6 +21,7 @@
 package dz.jtsgen.processor.renderer.module.tsd;
 
 import dz.jtsgen.annotations.EnumExportStrategy;
+import dz.jtsgen.processor.helper.IdentHelper;
 import dz.jtsgen.processor.model.TSEnumMember;
 import dz.jtsgen.processor.model.TSMember;
 import dz.jtsgen.processor.model.rendering.TSMemberVisitor;
@@ -29,34 +30,34 @@ import dz.jtsgen.processor.renderer.model.TypeScriptRenderModel;
 import java.io.PrintWriter;
 
 
-public class DefaultTSMemberVisitor implements TSMemberVisitor {
+public class DefaultTSMemberVisitor extends OutputVisitor implements TSMemberVisitor {
 
-    private final PrintWriter out;
 
     private final TypeScriptRenderModel model;
 
     DefaultTSMemberVisitor(PrintWriter out, TypeScriptRenderModel model) {
-        this.out=out;
+        super(out);
         this.model=model;
     }
 
     @Override
-    public void visit(TSMember x) {
-        if (x.getReadOnly()) out.print("readonly ");
-        out.print(x.getName());
-        out.print(": ");
-        out.print(x.getType());
-        out.println(";");
+    public void visit(TSMember x, int ident) {
+        x.getComment().ifPresent( comment -> tsComment(comment,ident));
+        getOut().print(IdentHelper.identPrefix(ident));
+        if (x.getReadOnly()) getOut().print("readonly ");
+        getOut().print(x.getName());
+        getOut().print(": ");
+        getOut().print(x.getType());
+        getOut().println(";");
     }
 
     @Override
-    public void visit(TSEnumMember x) {
-        out.print(x.getName());
+    public void visit(TSEnumMember x, int ident) {
+        getOut().print(x.getName());
         if (EnumExportStrategy.STRING.equals(model.getEnumExportStrategy())) {
-            out.print(" = '");
-            out.print(x.getName());
-            out.print("'");
+            getOut().print(" = '");
+            getOut().print(x.getName());
+            getOut().print("'");
         }
     }
-
 }

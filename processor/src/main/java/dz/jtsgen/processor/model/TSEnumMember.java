@@ -52,8 +52,8 @@ public abstract class TSEnumMember implements TSMember {
 
 
     @Override
-    public void accept(TSMemberVisitor visitor) {
-        visitor.visit(this);
+    public void accept(TSMemberVisitor visitor, int ident) {
+        visitor.visit(this, ident);
     }
 
     @Override

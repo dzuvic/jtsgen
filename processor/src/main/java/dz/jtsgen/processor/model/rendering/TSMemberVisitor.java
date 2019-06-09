@@ -25,6 +25,6 @@ import dz.jtsgen.processor.model.TSEnumMember;
 import dz.jtsgen.processor.model.TSMember;
 
 public interface TSMemberVisitor {
-    void visit(TSMember x);
-    void visit(TSEnumMember x);
+    void visit(TSMember x, int ident);
+    void visit(TSEnumMember x, int ident);
 }

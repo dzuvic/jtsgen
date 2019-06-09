@@ -32,13 +32,13 @@ import java.util.stream.Collectors;
 /**
  * default renderer for TSTypes
  */
-class TSTypeVisitorDefault implements TSTypeVisitor {
-    private final PrintWriter out;
+class TSTypeVisitorDefault extends OutputVisitor implements TSTypeVisitor {
+
     private final TSMemberVisitor tsMemberVisitor;
     private final TypeScriptRenderModel model;
 
     TSTypeVisitorDefault(PrintWriter out, TSMemberVisitor visitor, TypeScriptRenderModel model){
-        this.out = out;
+        super(out);
         this.tsMemberVisitor = visitor;
         this.model = model;
     }
@@ -51,17 +51,15 @@ class TSTypeVisitorDefault implements TSTypeVisitor {
 
     @Override
     public void visit(TSInterface x, int ident) {
-        tsComment(x, ident);
+        x.getDocumentString().ifPresent( comment -> tsComment(comment, ident));
         typePrefix(x, ident);
-        x.getMembers().forEach(y -> {
-            getOut().print(IdentHelper.identPrefix(ident + 1));
-            y.accept(getTsMemberVisitor());
-        });
+        x.getMembers().forEach(y -> y.accept(getTsMemberVisitor(), ident + 1));
         typePostFix(ident);
     }
 
     @Override
     public void visit(TSEnum x, int ident) {
+        x.getDocumentString().ifPresent( comment -> tsComment(comment, ident));
         typePrefix(x, ident);
         getOut().print(IdentHelper.identPrefix(ident + 1));
         final boolean[] isFirst = {true};
@@ -71,29 +69,13 @@ class TSTypeVisitorDefault implements TSTypeVisitor {
             } else {
                 getOut().print(", ");
             }
-            y.accept(getTsMemberVisitor());
+            y.accept(getTsMemberVisitor(), ident + 1);
         });
         getOut().println("");
         typePostFix(ident);
 
     }
 
-    private void tsComment(TSType tsType, int ident) {
-        tsType.getDocumentString().ifPresent(x -> {
-
-            getOut().print(IdentHelper.identPrefix(ident));
-            getOut().println("/**");
-
-            getOut().print(IdentHelper.identPrefix(ident));
-            getOut().print(" * ");
-            getOut().println(x);
-
-
-            getOut().print(IdentHelper.identPrefix(ident));
-            getOut().println(" */");
-        });
-
-    }
 
     private void typePostFix(int ident) {
         getOut().print(IdentHelper.identPrefix(ident));
@@ -133,10 +115,6 @@ class TSTypeVisitorDefault implements TSTypeVisitor {
         return s.append(" extends ").append( x.getSuperTypes().stream().map(TSType::getName).collect(Collectors.joining(",")))
                 .toString();
 
-    }
-
-    PrintWriter getOut() {
-        return out;
     }
 
     private TSMemberVisitor getTsMemberVisitor() {
