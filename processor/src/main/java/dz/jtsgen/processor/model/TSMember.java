@@ -21,6 +21,8 @@ package dz.jtsgen.processor.model;
 
 import dz.jtsgen.processor.model.rendering.TSMemberElement;
 
+import java.util.Optional;
+
 /** This super class is needed for immutables */
 public interface TSMember extends TSMemberElement {
 
@@ -31,6 +33,8 @@ public interface TSMember extends TSMemberElement {
     boolean getReadOnly();
 
     boolean getInvalid();
+
+    Optional<String> getComment();
 
     TSMember changedTSTarget(TSTargetType newTargetType);
 

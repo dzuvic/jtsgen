@@ -22,5 +22,5 @@ package dz.jtsgen.processor.model.rendering;
 
 
 public interface TSMemberElement {
-    void accept(TSMemberVisitor visitor);
+    void accept(TSMemberVisitor visitor, int ident);
 }

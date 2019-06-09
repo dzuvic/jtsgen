@@ -22,6 +22,8 @@ package dz.jtsgen.processor.model;
 import dz.jtsgen.processor.model.rendering.TSMemberVisitor;
 import org.immutables.value.Value;
 
+import java.util.Optional;
+
 @Value.Immutable
 public abstract class TSRegularMember implements TSMember {
 
@@ -34,14 +36,16 @@ public abstract class TSRegularMember implements TSMember {
     @Value.Parameter
     public abstract boolean getReadOnly();
 
+    public abstract Optional<String> getComment();
+
     @Value.Default
     public boolean getInvalid() {
         return false;
     }
 
     @Override
-    public void accept(TSMemberVisitor visitor) {
-        visitor.visit(this);
+    public void accept(TSMemberVisitor visitor, int ident) {
+        visitor.visit(this, ident);
     }
 
     @Override
