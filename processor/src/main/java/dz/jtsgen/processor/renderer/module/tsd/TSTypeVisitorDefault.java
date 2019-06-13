@@ -35,16 +35,14 @@ import java.util.stream.Collectors;
 class TSTypeVisitorDefault extends OutputVisitor implements TSTypeVisitor {
 
     private final TSMemberVisitor tsMemberVisitor;
-    private final TypeScriptRenderModel model;
 
-    TSTypeVisitorDefault(PrintWriter out, TSMemberVisitor visitor, TypeScriptRenderModel model){
+    TSTypeVisitorDefault(PrintWriter out, TSMemberVisitor visitor){
         super(out);
         this.tsMemberVisitor = visitor;
-        this.model = model;
     }
 
-    TSTypeVisitorDefault(PrintWriter out, TypeScriptRenderModel model) {
-        this(out,new DefaultTSMemberVisitor(out, model), model);
+    TSTypeVisitorDefault(PrintWriter out) {
+        this(out,new DefaultTSMemberVisitor(out));
     }
 
 
@@ -61,13 +59,12 @@ class TSTypeVisitorDefault extends OutputVisitor implements TSTypeVisitor {
     public void visit(TSEnum x, int ident) {
         x.getDocumentString().ifPresent( comment -> tsComment(comment, ident));
         typePrefix(x, ident);
-        getOut().print(IdentHelper.identPrefix(ident + 1));
         final boolean[] isFirst = {true};
         x.getMembers().forEach(y -> {
             if (isFirst[0]) {
                 isFirst[0] = false;
             } else {
-                getOut().print(", ");
+                getOut().println(",");
             }
             y.accept(getTsMemberVisitor(), ident + 1);
         });

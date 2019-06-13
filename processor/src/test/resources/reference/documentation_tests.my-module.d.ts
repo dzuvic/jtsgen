@@ -4,9 +4,21 @@
 
 declare namespace MyModule {
   /**
+   *  Sample documentation of an enum
+   */
+  export enum DocumentEnum {
+    /**
+     *  DOC_A documentation
+     */
+    DOC_A,
+    DOC_B
+  }
+
+  /**
    *  Sample documentation for a class
    */
   export interface DocumentationTests {
+    docEnum: DocumentEnum;
     /**
      *  multi line
      *  comments

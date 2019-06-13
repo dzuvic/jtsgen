@@ -33,8 +33,8 @@ import java.util.stream.Stream;
  */
 class TSTypeVisitorTypeGuards extends TSTypeVisitorDefault {
 
-    TSTypeVisitorTypeGuards(PrintWriter out, TypeScriptRenderModel model) {
-        super(out, new DefaultTSMemberVisitor(out, model), model);
+    TSTypeVisitorTypeGuards(PrintWriter out) {
+        super(out, new DefaultTSMemberVisitor(out));
     }
 
 

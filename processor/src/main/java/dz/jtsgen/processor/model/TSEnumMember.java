@@ -25,13 +25,21 @@ import dz.jtsgen.processor.model.rendering.TSMemberVisitor;
 import dz.jtsgen.processor.model.tstarget.TSTargetEnumValueType;
 import org.immutables.value.Value;
 
+import java.util.Optional;
+
 @Value.Immutable
 public abstract class TSEnumMember implements TSMember {
-    
+
     private static final TSTargetType ENUM_MEMBER = new TSTargetEnumValueType();
 
     @Value.Parameter
-    public abstract String getName() ;
+    public abstract String getName();
+
+    /**
+     * @return the string representation of the enum. By default, it's the enum name. This is field is only used,
+     * when EnumExportStrategy is STRING
+     */
+    public abstract Optional<String> getExportStrategyStringRepresentation();
 
 
     @Override
