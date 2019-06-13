@@ -16,7 +16,7 @@ This project emits TypeScript types from Java sources.
 easily integrated in your current build infrastructure. So here are the
 prominent features:
 
-* Emitting types for annotated Java classes and interfaces at *compile* time
+* Emitting types and documentation from annotated Java classes and interfaces at *compile* time
 * Several  module types and output variants supported
 * read only and name space support
 * configured at source the code location (package annotation)
@@ -34,7 +34,6 @@ So here is a small demo:
 
 As you can see, if the IDE is configured correctly, the java sources are
 converted immediately.
-
 
 ## License And Legal Notes
 

@@ -34,4 +34,22 @@ public interface DocumentationTests {
      */
     int getDocInt();
 
+
+    DocumentEnum getDocEnum();
+
+}
+
+
+/**
+ * Sample documentation of an enum
+ */
+enum DocumentEnum {
+    /**
+     * DOC_A documentation
+     */
+    DOC_A,
+
+    // Inline Documetation
+    DOC_B
+
 }

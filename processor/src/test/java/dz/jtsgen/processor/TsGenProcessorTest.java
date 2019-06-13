@@ -569,8 +569,20 @@ class TsGenProcessorTest {
         assertEquals(
                 1,
                 findSourceLine(c, JTS_DEV, JTS_DEV_D_TS,
-                        Pattern.compile("^\\s+A, B, C\\s*$")).size(),
-                "must include enum values"
+                        Pattern.compile("^\\s+A,\\s*$")).size(),
+                "must include enum value A"
+        );
+        assertEquals(
+                1,
+                findSourceLine(c, JTS_DEV, JTS_DEV_D_TS,
+                        Pattern.compile("^\\s+B,\\s*$")).size(),
+                "must include enum value A"
+        );
+        assertEquals(
+                1,
+                findSourceLine(c, JTS_DEV, JTS_DEV_D_TS,
+                        Pattern.compile("^\\s+C\\s*$")).size(),
+                "must include enum value A"
         );
         assertEquals(
                 1,
@@ -590,8 +602,20 @@ class TsGenProcessorTest {
         assertEquals(
                 1,
                 findSourceLine(c, folderName, tdsFilename,
-                        Pattern.compile("^\\s+A = 'A', B = 'B', C = 'C'\\s*$")).size(),
-                "must include enum values"
+                        Pattern.compile("^\\s+A = 'A',\\s*$")).size(),
+                "must include enum value A"
+        );
+        assertEquals(
+                1,
+                findSourceLine(c, folderName, tdsFilename,
+                        Pattern.compile("^\\s+B = 'B',\\s*$")).size(),
+                "must include enum value B"
+        );
+        assertEquals(
+                1,
+                findSourceLine(c, folderName, tdsFilename,
+                        Pattern.compile("^\\s+C = 'C'\\s*$")).size(),
+                "must include enum value C"
         );
     }
 

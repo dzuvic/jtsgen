@@ -20,12 +20,14 @@
 
 package dz.jtsgen.processor.jtp.conv;
 
+import dz.jtsgen.annotations.EnumExportStrategy;
 import dz.jtsgen.processor.helper.DeclTypeHelper;
 import dz.jtsgen.processor.jtp.conv.visitors.JavaTypeConverter;
 import dz.jtsgen.processor.jtp.info.TSProcessingInfo;
 import dz.jtsgen.processor.model.*;
 import dz.jtsgen.processor.util.Either;
 
+import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.TypeParameterElement;
@@ -140,10 +142,10 @@ public class DefaultJavaTypeConverter implements JavaTypeConverter {
     }
 
 
-    private List<Either<TSTargetType,TSType>> convertBounds(TypeParameterElement element) {
+    private List<Either<TSTargetType, TSType>> convertBounds(TypeParameterElement element) {
         if (element.getBounds().isEmpty()) return new ArrayList<>();
 
-        List<Either<TSTargetType,TSType>> result = element.getBounds().stream()
+        List<Either<TSTargetType, TSType>> result = element.getBounds().stream()
                 .map(this.processingInfo.getpEnv().getTypeUtils()::asElement)
                 .filter(x -> x instanceof TypeElement)
                 .map(x -> (TypeElement) x)
@@ -157,10 +159,10 @@ public class DefaultJavaTypeConverter implements JavaTypeConverter {
                             .map(Either::<TSTargetType, Optional<TSType>>left)
                             .orElseGet(() -> Either.right(handleJavaType(x)));
                 })
-                .filter(x -> x.isLeft() || (x.toOptional().flatMap( y -> Optional.of(y.isPresent())).orElse(false) ))
+                .filter(x -> x.isLeft() || (x.toOptional().flatMap(y -> Optional.of(y.isPresent())).orElse(false)))
                 .map(
                         x -> (x.isLeft()) ? Either.<TSTargetType, TSType>left(x.leftValue())
-                                            : Either.<TSTargetType, TSType>right( x.value().get())
+                                : Either.<TSTargetType, TSType>right(x.value().get())
                 )
                 .collect(Collectors.toList());
 
@@ -199,8 +201,32 @@ public class DefaultJavaTypeConverter implements JavaTypeConverter {
     private Collection<? extends TSMember> findEnumMembers(TypeElement element) {
         return element.getEnclosedElements().stream()
                 .filter(x -> x.getKind() == ENUM_CONSTANT)
-                .map(x -> TSEnumMemberBuilder.of(x.getSimpleName().toString())
+                .map(this::convertEnumMemberByStrategy
                 ).collect(Collectors.toList());
+    }
+
+    /**
+     * convert  the enum mamber by conversion strategy
+     * @param x the element
+     * @return the TSEnumMember model
+     */
+    private TSEnumMember convertEnumMemberByStrategy(Element x) {
+        final String enumName = x.getSimpleName().toString();
+        final Optional<String> comment = Optional.ofNullable(
+                this.processingInfo.getpEnv().getElementUtils().getDocComment(x)
+        );
+        EnumExportStrategy enumExportStrategy = this.processingInfo.getTsModel().getModuleInfo().enumExportStrategy();
+        final TSEnumMember result;
+        if (enumExportStrategy == EnumExportStrategy.STRING) {
+            result = TSEnumMemberBuilder.of(enumName)
+                    .withExportStrategyStringRepresentation(enumName)
+                    .withComment(comment);
+        } else {
+            assert enumExportStrategy == EnumExportStrategy.NUMERIC;
+            result = TSEnumMemberBuilder.of(enumName)
+                    .withComment(comment);
+        }
+        return result;
     }
 
     private Collection<? extends TSMember> findMembers(TypeElement e) {
@@ -220,7 +246,7 @@ public class DefaultJavaTypeConverter implements JavaTypeConverter {
      * @return a converted TSType if possible
      */
     private Optional<TSTargetType> convertedByDSL(TypeElement element) {
-        return directConversionType(element.asType(),this.processingInfo.declaredTypeConversions(), this.processingInfo.getpEnv());
+        return directConversionType(element.asType(), this.processingInfo.declaredTypeConversions(), this.processingInfo.getpEnv());
     }
 }
 

@@ -21,6 +21,8 @@ New Features
   and extending ``tsgen``
 - Tests for JDK 11 have been added
 - new options for generating enum
+- enum values are rendered each in a new line
+- documentation strings are rendered, but currently without any transformation to tsdoc
 
 
 Planned Features

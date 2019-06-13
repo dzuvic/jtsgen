@@ -33,11 +33,8 @@ import java.io.PrintWriter;
 public class DefaultTSMemberVisitor extends OutputVisitor implements TSMemberVisitor {
 
 
-    private final TypeScriptRenderModel model;
-
-    DefaultTSMemberVisitor(PrintWriter out, TypeScriptRenderModel model) {
+    DefaultTSMemberVisitor(PrintWriter out) {
         super(out);
-        this.model=model;
     }
 
     @Override
@@ -53,11 +50,16 @@ public class DefaultTSMemberVisitor extends OutputVisitor implements TSMemberVis
 
     @Override
     public void visit(TSEnumMember x, int ident) {
-        getOut().print(x.getName());
-        if (EnumExportStrategy.STRING.equals(model.getEnumExportStrategy())) {
-            getOut().print(" = '");
+        x.getComment().ifPresent( comment -> tsComment(comment,ident));
+        getOut().print(IdentHelper.identPrefix(ident));
+        if ( x.getExportStrategyStringRepresentation().isPresent()) {
             getOut().print(x.getName());
+            getOut().print(" = '");
+            getOut().print(x.getExportStrategyStringRepresentation().get());
             getOut().print("'");
+        } else {
+            getOut().print(x.getName());
+
         }
     }
 }
