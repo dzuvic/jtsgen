@@ -16,11 +16,20 @@ Build & Release
 Build *tsgen*
 -------------
 
-To build *tsgen* you need the one of following Software installed:
+To build *tsgen* you only need a JDK 8+ compatible environment on your machine, e.g.:
 
-- Oracle JDK 8+ -- Available at `Oracle <https://java.com>`_
-- Azul OopenJDK 8+ -- Available at `Oracle <https://java.com>`_
-- IcedTea 3.8+ -- Available at `Oracle <https://java.com>`_
+- AdoptOpenJDK  -- Available on `https://adoptopenjdk.net <https://adoptopenjdk.net>`_
+- Amazon Correto -- Available on `https://aws.amazon.com/corretto <https://aws.amazon.com/corretto>`_
+- Azul OpenJDK 8+ -- Available on `https://www.azul.com/downloads/zulu <https://www.azul.com/downloads/zulu>`_
+- IcedTea 3.8+ -- Available on `https://icedtea.classpath.org <https://icedtea.classpath.org/wiki/Main_Page>`_
+- Oracle JDK 8+ -- Available on `https://java.com <https://java.com>`_
+- SapMachine --  Available on `https://sap.github.io/SapMachine <https://sap.github.io/SapMachine>`_
+
+Tools like `SdkMan <https://sdkman.io>`_ are recommended for switching between various JDK
+versions.
+
+Since version 0.5.0 the final releases have been built with IcdedTea.
+
 
 Building on Linux
 ~~~~~~~~~~~~~~~~~
@@ -28,7 +37,7 @@ Building on Linux
 To build this project execute the following command:
 
 .. code-block:: bash
-		
+
     $ ./gradlew build
     Starting a Gradle Daemon, 1 incompatible and 1 stopped Daemons could not be reused, use --status for details
 
