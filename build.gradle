@@ -5,7 +5,7 @@ buildscript {
         junitJupiter_Version      = '5.4.2'
         mockito_Version           = '2.18.3'
         compile_testing_Version   = '0.15'
-        commons_io_Version        = '2.5'
+        commons_io_Version        = '2.6'
         guava_Version             = '23.0'
         generex_Verson            = '1.0.2'
         log4j_Version             = '2.9.0'
