@@ -2,7 +2,7 @@
 buildscript {
     ext {
         // version numbers, mostly for testing
-        junitJupiter_Version      = '5.4.2'
+        junitJupiter_Version      = '5.5.0'
         mockito_Version           = '2.18.3'
         compile_testing_Version   = '0.15'
         commons_io_Version        = '2.5'
