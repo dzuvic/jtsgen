@@ -40,7 +40,7 @@ dependencies {
     // JUnit 5 Jupiter
     testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiter_Version}")
     testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiter_Version}")
-    testCompileOnly('org.apiguardian:apiguardian-api:1.0.0')
+    testCompileOnly('org.apiguardian:apiguardian-api:1.1.0')
     testRuntime("org.apache.logging.log4j:log4j-core:${log4j_Version}")
     testRuntime("org.apache.logging.log4j:log4j-jul:${log4j_Version}")
 
