@@ -11,7 +11,7 @@ buildscript {
         log4j_Version             = '2.9.0'
 
         jacoco_Version            = '0.8.3'
-        coverAlls_Version         = '2.8.2'
+        coverAlls_Version         = '2.8.3'
 
         immutables_Version        = '2.7.4'
 
