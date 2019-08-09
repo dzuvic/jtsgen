@@ -49,7 +49,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'jtsgen'
-copyright = '2017, Dragan Zuvic'
+copyright = '2017-2019, Dragan Zuvic'
 author = 'Dragan Zuvic'
 
 # The version info for the project you're documenting, acts as replacement for
