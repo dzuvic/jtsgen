@@ -228,7 +228,7 @@ Changelog <https://github.com/dzuvic/jtsgen/compare/jtsgen-0.1.1...jtsgen-0.1.2>
 
 **Fixed bugs:**
 
--  compile time dependendcy to guava
+-  compile time dependency to guava
    `#13 <https://github.com/dzuvic/jtsgen/issues/13>`__
 
 `jtsgen-0.1.1 <https://github.com/dzuvic/jtsgen/tree/jtsgen-0.1.1>`__ (2017-05-13)

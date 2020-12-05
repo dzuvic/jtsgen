@@ -1,6 +1,7 @@
 # IDEA and gradle
 /.gradle/
 .idea/
+.run/
 build/
 /out/
 */out/

@@ -51,7 +51,7 @@ public class DefaultJavaTypeConverter implements JavaTypeConverter {
     private final TSProcessingInfo processingInfo;
 
 
-    private static Logger LOG = Logger.getLogger(TypeScriptAnnotationProcessor.class.getName());
+    private static final Logger LOG = Logger.getLogger(TypeScriptAnnotationProcessor.class.getName());
 
     DefaultJavaTypeConverter(TSProcessingInfo processingInfo) {
         this.processingInfo = processingInfo;
@@ -152,17 +152,13 @@ public class DefaultJavaTypeConverter implements JavaTypeConverter {
                 .filter(x -> !isMarkerInterface(x))
                 .filter(x -> !isTopType(x))
                 .filter(x -> !checkExclusion(x))
-                .map(x -> {
-                    LOG.info("DJTC converting Bound " + x);
-                    Optional<TSTargetType> tsTargetType = convertedByDSL(x);
-                    return tsTargetType
-                            .map(Either::<TSTargetType, Optional<TSType>>left)
-                            .orElseGet(() -> Either.right(handleJavaType(x)));
-                })
-                .filter(x -> x.isLeft() || (x.toOptional().flatMap(y -> Optional.of(y.isPresent())).orElse(false)))
+                .map(this::typeElementEitherToTargetOrTSType)
+                .filter( ( Either<TSTargetType, Optional<TSType>> x0) ->
+                        x0.isLeft() || (x0.rightOrNull() != null && x0.rightOrNull().isPresent()))
                 .map(
-                        x -> (x.isLeft()) ? Either.<TSTargetType, TSType>left(x.leftValue())
-                                : Either.<TSTargetType, TSType>right(x.value().get())
+                        ( Either<TSTargetType, Optional<TSType>> y0) -> y0.isLeft() ?
+                                Either.<TSTargetType, TSType>left(y0.leftValue())
+                                : Either.<TSTargetType, TSType>right(y0.value().get())
                 )
                 .collect(Collectors.toList());
 
@@ -171,6 +167,16 @@ public class DefaultJavaTypeConverter implements JavaTypeConverter {
         );
 
         return result;
+    }
+
+    // This is outside of lambda, bc tis way typings more clear
+    private  Either<TSTargetType, Optional<TSType>> typeElementEitherToTargetOrTSType(TypeElement x) {
+        LOG.info("DJTC converting Bound " + x);
+        Optional<TSTargetType> tsTargetType = convertedByDSL(x);
+        return tsTargetType
+                // keep it this way, with a method reference you get a warning casting types.
+                .map((TSTargetType l) -> Either.<TSTargetType, Optional<TSType>>left(l))
+                .orElseGet(() -> Either.<TSTargetType, Optional<TSType>>right( handleJavaType(x) ));
     }
 
 
@@ -239,7 +245,7 @@ public class DefaultJavaTypeConverter implements JavaTypeConverter {
     }
 
     /**
-     * Check if a type elemnet can be directly converted from a DSL expression
+     * Check if a type element can be directly converted from a DSL expression
      * this is especially needed for types in bounds. see #46
      *
      * @param element the java type element
