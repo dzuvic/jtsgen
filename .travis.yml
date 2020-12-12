@@ -28,5 +28,5 @@ cache:
 
 
 after_success:
-  - ./dev/check_and_deploy.sh && ./gradlew jacocoTestReport && bash <(curl -s https://codecov.io/bash)
+  - ./dev/check_and_deploy.sh && bash <(curl -s https://codecov.io/bash)
 

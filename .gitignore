@@ -1,5 +1,6 @@
 # IDEA and gradle
 /.gradle/
+/buildSrc/.gradle/
 .idea/
 .run/
 build/
@@ -23,6 +24,7 @@ hs_err_pid*
 # during development
 /processor/src/test/java/jts
 /tmp
+*.gradle.old
 
 /processor/src/main/generated/
 /processor/src/test/java/tmp/

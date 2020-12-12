@@ -25,6 +25,12 @@ New Features
 - documentation strings are rendered, but currently without any transformation to tsdoc
 
 
+Internal
+~~~~~~~~
+
+- Migrated to Gradle 6.7
+
+
 Planned Features
 ~~~~~~~~~~~~~~~~
 
