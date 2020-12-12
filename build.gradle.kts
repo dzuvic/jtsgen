@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Dragan Zuvic
+ * Copyright (c) 2017-2020 Dragan Zuvic
  *
  * This file is part of jtsgen.
  *
@@ -18,29 +18,8 @@
  *
  */
 
-
-apply plugin: 'java'
-
-sourceCompatibility = 1.8
-
-// the location of the generated source files
-def tsOutDir="${buildDir}/ts"
-
-repositories {
-    mavenCentral()
-}
-
-task createTsDir() {
-    mkdir (tsOutDir)
-}
-
-compileJava {
-    options.compilerArgs = [ "-s", tsOutDir ]
-    dependsOn(createTsDir)
-}
-
-dependencies {
-    compile project(":annotations")
-    compileOnly project(":processor")
-    annotationProcessor project(":processor")
+// This Build file includes only definitions of version numbers
+allprojects {
+    version = "0.5.0-SNAPSHOT"
+    group = "com.github.dzuvic"
 }
