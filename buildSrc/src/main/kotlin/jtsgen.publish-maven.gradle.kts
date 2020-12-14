@@ -31,6 +31,13 @@ publishing {
     }
 }
 
+
+
+tasks.withType<GenerateModuleMetadata> {
+    enabled = false
+}
+
+
 signing {
     setRequired({
         (project.extra["isReleaseVersion"] as Boolean) && gradle.taskGraph.hasTask("publish")
