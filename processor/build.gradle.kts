@@ -100,7 +100,7 @@ tasks.jar {
 
 publishing {
     publications {
-        create<MavenPublication>("mavenJava") {
+        create<MavenPublication>("mavenJavaProcessor") {
             artifactId = "jtsgen-processor"
             from(components["java"])
             versionMapping {
@@ -140,5 +140,5 @@ publishing {
 
 
 signing {
-    sign(publishing.publications["mavenJava"])
+    sign(publishing.publications["mavenJavaProcessor"])
 }
