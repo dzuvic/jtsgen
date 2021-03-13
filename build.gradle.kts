@@ -20,6 +20,6 @@
 
 // This Build file includes only definitions of version numbers
 allprojects {
-    version = "0.5.0-SNAPSHOT"
+    version = "0.5.0"
     group = "com.github.dzuvic"
 }
