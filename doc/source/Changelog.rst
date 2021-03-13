@@ -11,8 +11,8 @@ The changelog is sorted descending by release date and contains at least one cha
 - *Fixed*
 
 
-jtsgen-0.5.0 (UNRELEASED)
--------------------------
+jtsgen-0.5.0 <https://github.com/dzuvic/jtsgen/tree/jtsgen-0.5.0>`__ (2021-03-13)
+---------------------------------------------------------------------------------
 
 New Features
 ~~~~~~~~~~~~
@@ -28,7 +28,7 @@ New Features
 Internal
 ~~~~~~~~
 
-- Migrated to Gradle 6.7
+- Migrated to Gradle 6.8
 
 
 Planned Features
