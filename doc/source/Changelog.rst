@@ -10,6 +10,15 @@ The changelog is sorted descending by release date and contains at least one cha
 - *Removed Features*
 - *Fixed*
 
+jtsgen-0.6.0 (UNRELEASED)
+-------------------------
+
+Planned Features
+~~~~~~~~~~~~~~~~
+
+- generating classes
+- support for converting the documentation
+
 
 jtsgen-0.5.0 <https://github.com/dzuvic/jtsgen/tree/jtsgen-0.5.0>`__ (2021-03-13)
 ---------------------------------------------------------------------------------
@@ -30,11 +39,21 @@ Internal
 
 - Migrated to Gradle 6.8
 
+Tickets
+~~~~~~~
 
-Planned Features
-~~~~~~~~~~~~~~~~
+**Implemented enhancements:**
+-  String enums as alternative to Numeric enums
+   `#56 <https://github.com/dzuvic/jtsgen/issues/56>`__
+-  Emit Java documentation
+   `#4 <https://github.com/dzuvic/jtsgen/issues/4>`__
 
-- support for converting the documentation
+**Fixed bugs:**
+
+-  java.lang.Boolean is not supported by default
+   `#52 <https://github.com/dzuvic/jtsgen/issues/52>`__
+-  Using JDK9 some tests fail
+   `#44 <https://github.com/dzuvic/jtsgen/issues/44>`__
 
 
 `jtsgen-0.4.0 <https://github.com/dzuvic/jtsgen/tree/jtsgen-0.4.0>`__ (2018-05-06)
