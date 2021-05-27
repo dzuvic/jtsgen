@@ -24,7 +24,9 @@ import dz.jtsgen.processor.model.*;
 
 import javax.lang.model.element.Element;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -55,9 +57,17 @@ final class DefaultNameSpaceModelMapper implements NameSpaceModelMapper {
         return tsTypes.stream()
                 .map( x -> {
                     String newNameSpace = mapper.mapNameSpace(x.getNamespace());
+
                     List<TSMember> mappedMembers = mapMembers(x.getMembers(), mapper);
                     LOG.finest( () -> "DNSM Mapping: " + x.getName() + " namespace: " +x.getNamespace() + " -> " + newNameSpace);
-                    return x.changedNamespace(newNameSpace, mappedMembers);
+
+                    List<TSMethod> mappedMethods = mapMethods(x.getMethods(), mapper);
+                    LOG.finest( () -> "DNSM Mapping: " + x.getName() + " namespace: " +x.getNamespace() + " -> " + newNameSpace);
+
+                    List<TSConstant> mappedConstants = mapConstants(x.getConstants(), mapper);
+                    LOG.finest( () -> "DNSM Mapping: " + x.getName() + " namespace: " +x.getNamespace() + " -> " + newNameSpace);
+
+                    return x.changedNamespace(newNameSpace, mappedMembers, mappedMethods, mappedConstants);
                 })
                 .collect(Collectors.toList());
     }
@@ -68,6 +78,33 @@ final class DefaultNameSpaceModelMapper implements NameSpaceModelMapper {
             LOG.finest(() -> "DNSM mapping member " + x.getName() + ": " + x.getType() + " -> " + newTSTarget);
             return x.changedTSTarget(newTSTarget);
         }).collect(Collectors.toList());
+    }
+
+    private List<TSConstant> mapConstants(List<TSConstant> members, NameSpaceMapper mapper) {
+        return members.stream().map (x -> {
+            TSTargetType newTSTarget = x.getType().mapNameSpace(mapper);
+            LOG.finest(() -> "DNSM mapping member " + x.getName() + ": " + x.getType() + " -> " + newTSTarget);
+            return x.changedTSTarget(newTSTarget);
+        }).collect(Collectors.toList());
+    }
+
+    private List<TSMethod> mapMethods(List<TSMethod> members, NameSpaceMapper mapper) {
+        return members.stream().map (x -> {
+            TSTargetType newTSTarget = x.getType().mapNameSpace(mapper);
+            LOG.finest(() -> "DNSM mapping method " + x.getName() + ": " + x.getType() + " -> " + newTSTarget);
+            Map<String, TSTargetType> newTSArgs = mapArgs(x.getArguments(), mapper);
+            return x.changedTSTarget(newTSTarget, newTSArgs);
+        }).collect(Collectors.toList());
+    }
+
+    private Map<String, TSTargetType> mapArgs(Map<String, TSTargetType> arguments, NameSpaceMapper mapper) {
+        Map<String, TSTargetType> newTSArgs = new LinkedHashMap<>();
+        arguments.forEach( (name, type) -> {
+            TSTargetType newTSTarget = type.mapNameSpace(mapper);
+            LOG.finest(() -> "DNSM mapping argument " + name+ ": " + type.getJavaType() + " -> " + newTSTarget);
+            newTSArgs.put(name, newTSTarget);
+        });
+        return newTSArgs;
     }
 
     private List<NameSpaceMapping> calculateMapping(TypeScriptModel model) {

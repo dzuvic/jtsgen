@@ -26,7 +26,7 @@ import org.junit.Assert;
 import javax.tools.JavaFileObject;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Helper for creating the reference streams and / or files
@@ -37,8 +37,8 @@ public class ReferenceHelper {
     }
 
     public static void assertEquals(JavaFileObject testeeFile, String referenceFile) throws IOException {
-        String testee  = IOUtils.toString(testeeFile.openReader(true));
-        String reference = IOUtils.toString( createReferenceStreamFor(referenceFile), Charset.forName("UTF-8"));
+        String testee  = IOUtils.toString(testeeFile.openReader(true)).replace("\r\n", "\n");
+        String reference = IOUtils.toString( createReferenceStreamFor(referenceFile), StandardCharsets.UTF_8).replace("\r\n", "\n");
         Assert.assertEquals(reference, testee);
     }
 }

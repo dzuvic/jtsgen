@@ -77,5 +77,17 @@ public interface TSTargetType {
     default TSTargetType withTypeParams(Map<String,TSTargetType> typeParams) {
         return this;
     }
+
+    default TSTargetType withNullable(boolean isNullable) {
+        return this;
+    }
+
+    boolean isNullable();
+
+    default TSTargetType withOptional(boolean isOptional) {
+        return this;
+    }
+
+    boolean isOptional();
 }
 

@@ -25,6 +25,7 @@ import dz.jtsgen.processor.model.ConversionCoverage;
 import dz.jtsgen.processor.model.NameSpaceMapper;
 import dz.jtsgen.processor.model.TSTargetType;
 import dz.jtsgen.processor.util.StringUtils;
+import org.immutables.value.Value;
 
 import java.util.HashMap;
 import java.util.List;
@@ -46,17 +47,21 @@ class TSTargetDeclType implements TSTargetType {
 
     private final TypeMappingExpression mappingExpression;
     private final Map<String, TSTargetType> typeParametersTypes;
+    private final boolean isNullable;
+    private final boolean isOptional;
 
-    TSTargetDeclType(TypeMappingExpression mappingExpression, Map<String, TSTargetType> typeParametersTypes, Supplier<String> javaType, Supplier<String> namespace) {
+    TSTargetDeclType(TypeMappingExpression mappingExpression, Map<String, TSTargetType> typeParametersTypes, Supplier<String> javaType, Supplier<String> namespace, boolean isNullable, boolean isOptional) {
         if (mappingExpression == null) throw new IllegalArgumentException("mappingExpression must not be null");
         this.javaType = javaType == null ? lazy(() -> mappingExpression.names().stream().collect(Collectors.joining("."))) : javaType;
         this.mappingExpression = mappingExpression;
         this.typeParametersTypes = typeParametersTypes == null ? new HashMap<>() : typeParametersTypes;
         this.nameSpace = namespace == null ? lazy(() -> StringUtils.untill(javaType())) : namespace;
+        this.isNullable = isNullable;
+        this.isOptional = isOptional;
     }
 
     TSTargetDeclType(TypeMappingExpression mappingExpression, Map<String, TSTargetType> typeParametersTypes, boolean ignoreSelfNamespace) {
-        this(mappingExpression, typeParametersTypes, null, ignoreSelfNamespace ? lazy(() -> "") : null);
+        this(mappingExpression, typeParametersTypes, null, ignoreSelfNamespace ? lazy(() -> "") : null, false, false);
     }
 
 
@@ -110,14 +115,35 @@ class TSTargetDeclType implements TSTargetType {
         final String newNameSpace = nsm.mapNameSpace(this.nameSpace.get());
         return new TSTargetDeclType(
                 this.mappingExpression
-                , mapNamespaces(this.typeParametersTypes, nsm), this.javaType, () -> newNameSpace);
+                , mapNamespaces(this.typeParametersTypes, nsm), this.javaType, () -> newNameSpace, isNullable, isOptional);
     }
 
     @Override
     public TSTargetType withTypeParams(Map<String, TSTargetType> typeParams) {
-        return new TSTargetDeclType(this.mappingExpression, typeParams, this.javaType, this.nameSpace);
+        return new TSTargetDeclType(this.mappingExpression, typeParams, this.javaType, this.nameSpace, isNullable, isOptional);
     }
 
+    @Override
+    public TSTargetType withNullable(boolean isNullable) {
+        return new TSTargetDeclType(this.mappingExpression, this.typeParametersTypes, this.javaType, this.nameSpace, isNullable, isOptional);
+    }
+
+    @Override
+    public TSTargetType withOptional(boolean isOptional) {
+        return new TSTargetDeclType(this.mappingExpression, this.typeParametersTypes, this.javaType, this.nameSpace, isNullable, isOptional);
+    }
+
+    @Value.Default
+    @Override
+    public boolean isNullable() {
+        return isNullable;
+    }
+
+    @Value.Default
+    @Override
+    public boolean isOptional() {
+        return isOptional;
+    }
 }
 
 class TSExpressionVisitorToStringConverter<T> implements TSExpressionVisitor<String> {

@@ -19,7 +19,6 @@
  */
 
 package dz.jtsgen.processor.model;
-
 import dz.jtsgen.processor.model.rendering.TSTypeElement;
 import org.immutables.value.Value;
 
@@ -48,6 +47,8 @@ public abstract class TSType implements TSTypeElement {
 
     public abstract List<TSMember> getMembers();
 
+    public abstract List<TSConstant> getConstants();
+
     public abstract Optional<String> getDocumentString();
 
     public abstract List<TSType> getSuperTypes();
@@ -59,5 +60,7 @@ public abstract class TSType implements TSTypeElement {
 
     public abstract String getKeyword();
 
-    public abstract TSType changedNamespace(String namespace, List<TSMember> members);
+    public abstract TSType changedNamespace(String namespace, List<TSMember> members, List<TSMethod> methods, List<TSConstant> mappedConstants);
+
+    public abstract List<TSMethod> getMethods();
 }

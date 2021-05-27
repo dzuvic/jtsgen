@@ -20,14 +20,14 @@
 
 package dz.jtsgen.processor.jtp.conv;
 
-import dz.jtsgen.annotations.TSIgnore;
-import dz.jtsgen.annotations.TSReadOnly;
+import dz.jtsgen.annotations.*;
 import dz.jtsgen.processor.jtp.conv.visitors.JavaTypeConverter;
 import dz.jtsgen.processor.jtp.info.TSProcessingInfo;
-import dz.jtsgen.processor.model.TSMember;
-import dz.jtsgen.processor.model.TSRegularMemberBuilder;
-import dz.jtsgen.processor.model.TSTargetType;
+import dz.jtsgen.processor.model.TSConstant;
+import dz.jtsgen.processor.model.TSMethod;
+import dz.jtsgen.processor.model.*;
 
+import javax.lang.model.AnnotatedConstruct;
 import javax.lang.model.element.*;
 import javax.lang.model.util.SimpleElementVisitor8;
 import java.util.*;
@@ -47,6 +47,9 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
 
 
     private final Map<String, TSMember> members = new HashMap<>();
+    private final Map<String, TSConstant> constants = new HashMap<>();
+
+    private final List<TSMethod> methods = new ArrayList<>();
 
     // list of members to sort out setters only
     private final Set<String> extractableMembers = new HashSet<>();
@@ -57,7 +60,7 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
     // the environment
     private TSProcessingInfo tsProcessingInfo;
 
-    // the converter for unkown types
+    // the converter for unknown types
     private JavaTypeConverter javaTypeConverter;
 
 
@@ -80,11 +83,22 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
     @Override
     public Void visitVariable(VariableElement e, Void notcalled) {
         final boolean isPublic = e.getModifiers().contains(Modifier.PUBLIC);
-        final String name = e.getSimpleName().toString();
+        final String name = nameOfConstant(e);
         final boolean isIgnored = isIgnored(e);
-        final boolean  isReadOnlyAnnotation = readOnlyAnnotation(e) || readOnlyAnnotation(this.typeElementToConvert);
+        final boolean isReadOnlyAnnotation = readOnlyAnnotation(e) || readOnlyAnnotation(this.typeElementToConvert);
         LOG.log(Level.FINEST, () -> String.format("JTExV visiting variable %s%s", name, isIgnored?" (ignored)":""));
-        if (isPublic && !members.containsKey(name)) {
+
+
+        if(!isIgnored && e.getConstantValue() != null && e.getAnnotation(dz.jtsgen.annotations.TSConstant.class) != null) {
+            final TSTargetType tsTypeOfExecutable = convertTypeMirrorOfMemberToTsType(e, tsProcessingInfo);
+            final Optional<String> comment = Optional.ofNullable(this.tsProcessingInfo.getpEnv().getElementUtils().getDocComment(e));
+            TSConstantBuilder constant = TSConstantBuilder
+                    .of(name, tsTypeOfExecutable, e.getConstantValue())
+                    .withComment(comment);
+
+            constants.put(name, constant);
+        }
+        else if (isPublic && !members.containsKey(name)) {
             final TSTargetType tsTypeOfExecutable = convertTypeMirrorOfMemberToTsType(e, tsProcessingInfo);
             final Optional<String> comment = Optional.ofNullable(this.tsProcessingInfo.getpEnv().getElementUtils().getDocComment(e));
             members.put(name,
@@ -93,7 +107,7 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
                                     name,
                                     tsTypeOfExecutable,
                                     isReadOnlyAnnotation)
-                            .withComment(comment));
+                            .withComment(comment).withOptional(isOptional(e)));
             if (! isIgnored) extractableMembers.add(name);
         }
         return null;
@@ -103,12 +117,47 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
     @Override
     public Void visitExecutable(ExecutableElement e, Void notcalled) {
         LOG.fine(() -> String.format("JTExV visiting executable %s", e.toString()));
-        if (isGetterOrSetter(e)) {
+
+        if(e.getKind() == ElementKind.CONSTRUCTOR) {
+            handleConstructor(e);
+            return null;
+        }
+
+        dz.jtsgen.annotations.TSMethod tsMethodAnnotation = e.getAnnotation(dz.jtsgen.annotations.TSMethod.class);
+
+        if(tsMethodAnnotation != null) {
+            final Optional<String> comment = Optional.ofNullable(this.tsProcessingInfo.getpEnv().getElementUtils().getDocComment(e));
+            final TSTargetType tsTypeOfExecutable = convertTypeMirrorToTsType(e, tsProcessingInfo).withNullable(isNullable(e)).withOptional(isOptional(e));
+            Map<String, TSTargetType> params = new LinkedHashMap<>();
+            e.getParameters().forEach(variableElement ->
+                    {
+                        TSTargetType tsTargetType = convertTypeMirrorOfMemberToTsType(variableElement, tsProcessingInfo);
+                        tsTargetType = tsTargetType.withNullable(isNullable(variableElement));
+                        tsTargetType = tsTargetType.withOptional(isOptional(variableElement));
+                        params.put(variableElement.getSimpleName().toString(), tsTargetType);
+                    }
+            );
+
+            String name;
+            if(tsMethodAnnotation.name().isEmpty()) {
+                name = e.getSimpleName().toString();
+            }
+            else {
+                name = tsMethodAnnotation.name();
+            }
+
+            methods.add(TSMethodMemberBuilder
+                    .of(name, tsTypeOfExecutable, params)
+                    .withComment(comment));
+        }
+        else if (isGetterOrSetter(e)) {
             final String rawName = nameOfMethod(e).orElse("");
             final String name = mappedName(rawName);
             final boolean isPublic = e.getModifiers().contains(Modifier.PUBLIC);
             final boolean isIgnored = isIgnored(e);
             final boolean isReadOnly = readOnlyAnnotation(e) || readOnlyAnnotation(this.typeElementToConvert);
+            final boolean isNullable = isNullable(e) || isNullable(this.typeElementToConvert);
+            final boolean isOptional = isOptional(e) || isOptional(this.typeElementToConvert);
             if (isGetter(e) && ( !isPublic ||  isIgnored )) return null; // return early for not converting private types
             final TSTargetType tsTypeOfExecutable = convertTypeMirrorToTsType(e, tsProcessingInfo);
             LOG.fine(() -> "is getter or setter: " + (isPublic ? "public " : " ") + e.getSimpleName() + " -> " + name +"(" + rawName+ ")" + ":" + tsTypeOfExecutable + " " +(isIgnored?"(ignored)":""));
@@ -121,17 +170,45 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
                                 isGetter(e) ? tsTypeOfExecutable : members.get(name).getType(),
                                 isReadOnly)
                         .withComment(comment)
+                        .withNullable(isNullable || members.get(name).getNullable())
+                        .withOptional(isOptional)
                 );
             } else {
                 final Optional<String> comment = Optional.ofNullable(this.tsProcessingInfo.getpEnv().getElementUtils().getDocComment(e));
                 members.put(name, TSRegularMemberBuilder
                         .of(name, tsTypeOfExecutable, isReadOnly)
                         .withComment(comment)
+                        .withNullable(isNullable)
+                        .withOptional(isOptional)
                 );
             }
             if (isGetter(e)) extractableMembers.add(name);
         }
         return null;
+    }
+
+    private boolean isNullable(AnnotatedConstruct element) {
+        return element.getAnnotationMirrors().stream().anyMatch(annotation ->
+            annotation.getAnnotationType().asElement().getSimpleName().contentEquals("Nullable")
+        );
+    }
+
+    private void handleConstructor(ExecutableElement e) {
+        if(e.getAnnotation(TSConstructor.class) == null) {
+            return;
+        }
+        final Optional<String> comment = Optional.ofNullable(this.tsProcessingInfo.getpEnv().getElementUtils().getDocComment(e));
+        final TSTargetType tsTypeOfExecutable = new MirrorTypeToTSConverterVisitor(e, tsProcessingInfo, javaTypeConverter).visit(typeElementToConvert.asType());
+
+        TSInterfaceBuilder.of(e.getEnclosingElement());
+        Map<String, TSTargetType> params = new LinkedHashMap<>();
+        e.getParameters().forEach(variableElement ->
+                params.put(variableElement.getSimpleName().toString(), convertTypeMirrorOfMemberToTsType(variableElement, tsProcessingInfo))
+        );
+
+        methods.add(TSMethodMemberBuilder
+                .of("new", tsTypeOfExecutable, params)
+                .withComment(comment));
     }
 
     private String mappedName(String rawName) {
@@ -143,7 +220,27 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
     }
 
     private Optional<String> nameOfMethod(ExecutableElement e) {
-        return this.tsProcessingInfo.executableHelper().extractRawMemberName(e.getSimpleName().toString());
+        TSProperty property = e.getAnnotation(TSProperty.class);
+        String methodName;
+        if(property != null && !property.name().isEmpty()) {
+            methodName = property.name();
+        }
+        else {
+            methodName = e.getSimpleName().toString();
+        }
+        return this.tsProcessingInfo.executableHelper().extractRawMemberName(methodName);
+    }
+
+    private String nameOfConstant(VariableElement e) {
+        dz.jtsgen.annotations.TSConstant constant = e.getAnnotation(dz.jtsgen.annotations.TSConstant.class);
+        String methodName;
+        if(constant != null && !constant.name().isEmpty()) {
+            methodName = constant.name();
+        }
+        else {
+            methodName = e.getSimpleName().toString();
+        }
+        return methodName;
     }
 
     private boolean isGetterOrSetter(ExecutableElement e) {
@@ -152,6 +249,13 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
 
     private boolean readOnlyAnnotation(Element e) {
         final TypeElement annoTationElement = this.tsProcessingInfo.elementCache().typeElementByCanonicalName(TSReadOnly.class.getCanonicalName());
+        return e.getAnnotationMirrors().stream().anyMatch( (x) ->
+                x.getAnnotationType().asElement().equals(annoTationElement)
+        );
+    }
+
+    private boolean isOptional(AnnotatedConstruct e) {
+        final TypeElement annoTationElement = this.tsProcessingInfo.elementCache().typeElementByCanonicalName(TSOptional.class.getCanonicalName());
         return e.getAnnotationMirrors().stream().anyMatch( (x) ->
                 x.getAnnotationType().asElement().equals(annoTationElement)
         );
@@ -176,5 +280,13 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
         return members.values().stream().
                 filter((x) -> extractableMembers.contains(x.getName()))
                 .collect(Collectors.toList());
+    }
+
+    List<TSConstant> getConstants() {
+        return new ArrayList<>(constants.values());
+    }
+
+    List<TSMethod> getMethods() {
+        return methods;
     }
 }

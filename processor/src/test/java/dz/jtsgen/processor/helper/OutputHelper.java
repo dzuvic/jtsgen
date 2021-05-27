@@ -40,6 +40,10 @@ public class OutputHelper {
     public static List<String> findSourceLine(Compilation c, String packageName, String fileName, Pattern pattern) throws IOException {
         Assert.assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT,packageName, fileName).isPresent());
         JavaFileObject jfo = c.generatedFile(StandardLocation.SOURCE_OUTPUT,packageName, fileName).get();
+        return findSourceLine(jfo, pattern);
+    }
+
+    public static List<String> findSourceLine(JavaFileObject jfo, Pattern pattern) throws IOException {
         try (Reader r = jfo.openReader(false)) {
             return IOUtils.readLines(r).stream().filter( (x) -> pattern.matcher(x).find()).collect(Collectors.toList());
         }

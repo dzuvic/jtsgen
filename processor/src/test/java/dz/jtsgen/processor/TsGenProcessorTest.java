@@ -36,8 +36,11 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardLocation;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Reader;
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -51,7 +54,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TsGenProcessorTest {
 
-    private final boolean DUMP_FILES = false;
+    private final boolean DUMP_FILES = true;
 
     @Test
     void check_simple_interface_Full_Logging() {
@@ -254,7 +257,7 @@ class TsGenProcessorTest {
     @Test
     @DisplayName("Generate type parameters in return type")
     void test_simple_interface_with_generics() throws IOException {
-        Compilation c = CompileHelper.compileJtsDev(DUMP_FILES, 0, "InterFaceTestGenericsConsumer.java");
+        Compilation c = CompileHelper.compileJtsDev(DUMP_FILES, 1, "InterFaceTestGenericsConsumer.java");
         assertEquals(
                 1,
                 findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+Consumer<T>")).size(),
@@ -616,6 +619,44 @@ class TsGenProcessorTest {
                 findSourceLine(c, folderName, tdsFilename,
                         Pattern.compile("^\\s+C = 'C'\\s*$")).size(),
                 "must include enum value C"
+        );
+    }
+
+    @Test
+    void test_enum_string_override() throws IOException {
+        final String folderName = "enum_string_override_test";
+        final String tdsFilename = "enum_string_override_test.d.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/enum_string_override", folderName, tdsFilename, DUMP_FILES, 0, "package-info.java", "InterfaceWithEnum.java", "SomeEnum.java");
+
+        assertEquals(
+                1,
+                findSourceLine(c, folderName, tdsFilename,
+                        Pattern.compile("^\\s+A = 'A',\\s*$")).size(),
+                "must include enum value A"
+        );
+        assertEquals(
+                1,
+                findSourceLine(c, folderName, tdsFilename,
+                        Pattern.compile("^\\s+renamed_b = 'B',\\s*$")).size(),
+                "must include enum value B"
+        );
+        assertEquals(
+                1,
+                findSourceLine(c, folderName, tdsFilename,
+                        Pattern.compile("^\\s+C = 'value_c',\\s*$")).size(),
+                "must include enum value C"
+        );
+        assertEquals(
+                1,
+                findSourceLine(c, folderName, tdsFilename,
+                        Pattern.compile("^\\s+X = 'Y',\\s*$")).size(),
+                "must include enum value D"
+        );
+        assertEquals(
+                1,
+                findSourceLine(c, folderName, tdsFilename,
+                        Pattern.compile("^\\s+E = 'JavaConstant'\\s*$")).size(),
+                "must include enum value E"
         );
     }
 
@@ -1255,4 +1296,566 @@ class TsGenProcessorTest {
         );
     }
 
+    @Test
+    void test_output_module_import() throws IOException {
+        final String folderName = "external_module";
+        final String tdsFilename = "external_module.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/outputModuleWithImport", folderName, tdsFilename, DUMP_FILES, 0, "InterFaceTestImport.java", "package-info.java");
+
+        Optional<JavaFileObject> javaFileObject = c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, tdsFilename);
+        assertTrue(javaFileObject.isPresent());
+
+        assertEquals(
+                1,
+                findSourceLine(javaFileObject.get(),
+                        Pattern.compile("^import\\s+React,\\s+\\{\\s+Component\\s+}\\s+from\\s+'react';")).size(),
+                "must have module imports"
+        );
+        assertEquals(
+                1,
+                findSourceLine(javaFileObject.get(),
+                        Pattern.compile("import\\s+ReactDOM\\s+from\\s+'react-dom';")).size(),
+                "must have module imports"
+        );
+    }
+
+    @Test
+    void test_output_module_dependencies() throws IOException {
+        final String folderName = "external_module";
+        final String tdsFilename = "external_module.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/outputModuleWithDependencies", folderName, tdsFilename, DUMP_FILES, 0, "InterFaceTestImport.java", "package-info.java");
+
+        Optional<JavaFileObject> javaFileObject = c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, PACKAGE_JSON);
+        assertTrue(javaFileObject.isPresent());
+
+        JavaFileObject fileObject = javaFileObject.get();
+        String fileContent = "";
+        try (Reader r = fileObject.openReader(false)) {
+            fileContent = String.join("\n", new ArrayList<>(IOUtils.readLines(r)));
+        }
+
+        assertTrue(fileContent.contains("\"dependencies\": {\n" +
+                "\t\"@types/react-dom\": \"16.9.4\",\n" +
+                "\t\"react\": \"^16.12.0\",\n" +
+                "\t\"react-scripts\": \"3.2.0\"\n" +
+                "  },"), "Dependency list not found:\n" + fileContent);
+    }
+    @Test
+    void test_output_module_Scope() throws IOException {
+        final String folderName = "external_module";
+        final String tdsFilename = "external_module.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/outputModuleWithDependencies", folderName, tdsFilename, DUMP_FILES, 0, "InterFaceTestImport.java", "package-info.java");
+
+        Optional<JavaFileObject> javaFileObject = c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, PACKAGE_JSON);
+        assertTrue(javaFileObject.isPresent());
+
+        JavaFileObject fileObject = javaFileObject.get();
+        String fileContent = "";
+        try (Reader r = fileObject.openReader(false)) {
+            fileContent = String.join("\n", new ArrayList<>(IOUtils.readLines(r)));
+        }
+
+        assertTrue(fileContent.contains("\"name\": \"@external_scope/external_module\""), "Module scope not found!");
+    }
+
+    @Test
+    void test_output_readmeMd() throws IOException {
+        final String folderName = "external_module";
+        final String tdsFilename = "external_module.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/outputModuleWithDependencies", folderName, tdsFilename, DUMP_FILES, 0, "InterFaceTestImport.java", "package-info.java");
+
+        Optional<JavaFileObject> javaFileObject = c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, README_MD);
+        assertTrue(javaFileObject.isPresent());
+
+        JavaFileObject fileObject = javaFileObject.get();
+        String fileContent = "";
+        try (Reader r = fileObject.openReader(false)) {
+            fileContent = String.join("\n", new ArrayList<>(IOUtils.readLines(r)));
+        }
+
+        assertEquals(fileContent, "Test output type Module", "Contents of readme.md file are not correct.");
+    }
+
+    @Test
+    void test_methods_mix() throws IOException {
+        final String folderName = "jtsmodulesmethods";
+        final String tdsFilename = "jts-modules-methods.d.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/methods", folderName, tdsFilename, DUMP_FILES, 0,  "MethodsTestMix.java");
+
+        assertEquals(0, c.errors().size());
+
+        Optional<JavaFileObject> javaFileObject = c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, tdsFilename);
+        assertTrue(javaFileObject.isPresent());
+
+        JavaFileObject fileObject = javaFileObject.get();
+
+        assertEquals(
+                1,
+                findSourceLine(fileObject,
+                        Pattern.compile("calc\\(\\): number;")).size(),
+                "must have simple method"
+        );
+        assertEquals(
+                1,
+                findSourceLine(fileObject,
+                        Pattern.compile("aMethod\\(\\): void;")).size(),
+                "must have simple void method"
+        );
+        assertEquals(
+                1,
+                findSourceLine(c, folderName, tdsFilename,
+                        Pattern.compile("someInt:\\s+number;")).size(),
+                "must have a someInt: string"
+        );
+        assertEquals(
+                1,
+                findSourceLine(c, folderName, tdsFilename,
+                        Pattern.compile("getSomeString\\(\\):\\s+string;")).size(),
+                "must have a someString: string"
+        );
+
+    }
+    @Test
+    void test_methodOverload() throws IOException {
+        final String folderName = "jtsmodulesmethods";
+        final String tdsFilename = "jts-modules-methods.d.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/methods", folderName, tdsFilename, DUMP_FILES, 0,  "MethodsTestOverload.java");
+
+        assertEquals(0, c.errors().size());
+
+        Optional<JavaFileObject> javaFileObject = c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, tdsFilename);
+        assertTrue(javaFileObject.isPresent());
+
+        JavaFileObject fileObject = javaFileObject.get();
+
+        assertEquals(
+                2,
+                findSourceLine(fileObject,
+                        Pattern.compile("overloaded\\(")).size(),
+                "must have overloaded method"
+        );
+
+        assertEquals(
+                1,
+                findSourceLine(fileObject,
+                        Pattern.compile("overloaded\\(\\):\\s+number;")).size(),
+                "must have first method"
+        );
+        assertEquals(
+                1,
+                findSourceLine(fileObject,
+                        Pattern.compile("overloaded\\(isOverloaded:\\s+boolean\\):\\s+number;")).size(),
+                "must have second method"
+        );
+    }
+
+    @Test
+    void test_methods_params() throws IOException {
+        final String folderName = "jtsmodulesmethods";
+        final String tdsFilename = "jts-modules-methods.d.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/methods", folderName, tdsFilename, DUMP_FILES, 0,  "MethodsTestParams.java");
+
+        assertEquals(0, c.errors().size());
+
+        Optional<JavaFileObject> javaFileObject = c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, tdsFilename);
+        assertTrue(javaFileObject.isPresent());
+
+        JavaFileObject fileObject = javaFileObject.get();
+
+        assertEquals(
+                1,
+                findSourceLine(fileObject,
+                        Pattern.compile("first:\\s+string,\\s+second:\\s+string,\\s+third:\\s+string")).size(),
+                "must have correct argument order"
+        );
+    }
+
+    @Test
+    void test_method_simple() throws IOException {
+        final String folderName = "jtsmodulesmethods";
+        final String tdsFilename = "jts-modules-methods.d.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/methods", folderName, tdsFilename, DUMP_FILES, 0,  "MethodsTestSimple.java");
+
+        assertEquals(0, c.errors().size());
+
+        Optional<JavaFileObject> javaFileObject = c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, tdsFilename);
+        assertTrue(javaFileObject.isPresent());
+
+        JavaFileObject fileObject = javaFileObject.get();
+
+        assertEquals(
+                1,
+                findSourceLine(fileObject,
+                        Pattern.compile("calc\\(\\): number;")).size(),
+                "must contain calc(): number;"
+        );
+        assertEquals(
+                1,
+                findSourceLine(fileObject,
+                        Pattern.compile("aMethod\\(\\): void;")).size(),
+                "must contain aMethod(): void;"
+        );
+        assertEquals(
+                1,
+                findSourceLine(fileObject,
+                        Pattern.compile("getSomeString\\(\\): string;")).size(),
+                "must contain getSomeString(): void;"
+        );
+    }
+
+    @Test
+    void test_method_nullable() throws IOException {
+        final String folderName = "jtsmodulesmethods";
+        final String tdsFilename = "jts-modules-methods.d.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/methods", folderName, tdsFilename, DUMP_FILES, 0,  "MethodsTestNullable.java");
+
+        assertEquals(0, c.errors().size());
+
+        Optional<JavaFileObject> javaFileObject = c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, tdsFilename);
+        assertTrue(javaFileObject.isPresent());
+
+        JavaFileObject fileObject = javaFileObject.get();
+
+        assertEquals(
+                1,
+                findSourceLine(fileObject,
+                        Pattern.compile("calc\\(arg1:\\s+string,\\s+arg2:\\s+string\\s+\\|\\s+null\\):\\s+Object\\s+\\|\\s+null;")).size(),
+                "must contain nullable types;"
+        );
+    }
+
+    @Test
+    void test_dataClass() throws IOException {
+        final String folderName = "jtsmodulesdto";
+        final String tdsFilename = "jts-modules-dto.d.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/dto", folderName, tdsFilename, DUMP_FILES, 0,  "DataClazz.java");
+
+        assertEquals(0, c.errors().size());
+
+        Optional<JavaFileObject> javaFileObject = c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, tdsFilename);
+        assertTrue(javaFileObject.isPresent());
+
+        JavaFileObject fileObject = javaFileObject.get();
+
+        assertEquals(
+                1,
+                findSourceLine(fileObject,
+                        Pattern.compile("value:\\s+string\\s+|\\s+null;")).size(),
+                "must contain nullable types;"
+        );
+    }
+
+
+    @Test
+    void test_method_MethodsTestTransitiveType() throws IOException {
+        final String folderName = "jtsmodulesmethods";
+        final String tdsFilename = "jts-modules-methods.d.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/methods", folderName, tdsFilename, DUMP_FILES, 0, "DataItem.java", "ResultItem.java", "MethodsTestTransitiveType.java");
+
+        assertEquals(0, c.errors().size());
+
+        Optional<JavaFileObject> javaFileObject = c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, tdsFilename);
+        assertTrue(javaFileObject.isPresent());
+
+        JavaFileObject fileObject = javaFileObject.get();
+
+        assertEquals(
+                1,
+                findSourceLine(fileObject,
+                        Pattern.compile("calcItem\\(param:\\s+DataItem\\):\\s+ResultItem;")).size(),
+                "renaming failed"
+        );
+    }
+
+    @Test
+    void test_typeRename() throws IOException {
+        final String folderName = "jtsmodulesrename";
+        final String tdsFilename = "jts-modules-rename.d.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/rename", folderName, tdsFilename, DUMP_FILES, 0,  "InterfaceRenamed.java");
+
+        assertEquals(0, c.errors().size());
+
+        Optional<JavaFileObject> javaFileObject = c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, tdsFilename);
+        assertTrue(javaFileObject.isPresent());
+
+        JavaFileObject fileObject = javaFileObject.get();
+
+        assertEquals(
+                0,
+                findSourceLine(fileObject,
+                        Pattern.compile("^\\s*export\\s+interface\\s+InterfaceRenamed\\s+\\{")).size(),
+                "must not contain original interface name"
+        );
+
+        assertEquals(
+                1,
+                findSourceLine(fileObject,
+                        Pattern.compile("^\\s*export\\s+interface\\s+ExportedInterfaceName\\s+\\{")).size(),
+                "must contain changed name"
+        );
+    }
+
+    @Test
+    void test_MethodRename() throws IOException {
+        final String folderName = "jtsmodulesrename";
+        final String tdsFilename = "jts-modules-rename.d.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/rename", folderName, tdsFilename, DUMP_FILES, 0,  "MethodRenamed.java");
+
+        assertEquals(0, c.errors().size());
+
+        Optional<JavaFileObject> javaFileObject = c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, tdsFilename);
+        assertTrue(javaFileObject.isPresent());
+
+        JavaFileObject fileObject = javaFileObject.get();
+
+        assertEquals(
+                0,
+                findSourceLine(fileObject,
+                        Pattern.compile("foo\\(\\):\\s+void;")).size(),
+                "renaming failed"
+        );
+        assertEquals(
+                1,
+                findSourceLine(fileObject,
+                        Pattern.compile("bar\\(\\):\\s+void;")).size(),
+                "must contain new method"
+        );
+    }
+
+    @Test
+    void test_PropertyRename() throws IOException {
+        final String folderName = "jtsmodulesrename";
+        final String tdsFilename = "jts-modules-rename.d.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/rename", folderName, tdsFilename, DUMP_FILES, 0,  "PropertyRenamed.java");
+
+        assertEquals(0, c.errors().size());
+
+        Optional<JavaFileObject> javaFileObject = c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, tdsFilename);
+        assertTrue(javaFileObject.isPresent());
+
+        JavaFileObject fileObject = javaFileObject.get();
+
+        assertEquals(
+                0,
+                findSourceLine(fileObject,
+                        Pattern.compile("text:\\s+string;")).size(),
+                "renaming failed"
+        );
+        assertEquals(
+                1,
+                findSourceLine(fileObject,
+                        Pattern.compile("textMessage:\\s+string;")).size(),
+                "must contain new method"
+        );
+    }
+
+
+    @Test
+    void test_method_Constructor() throws IOException {
+        final String folderName = "jtsmodulesmethods";
+        final String tdsFilename = "jts-modules-methods.d.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/methods", folderName, tdsFilename, DUMP_FILES, 0, "DataItem.java", "ResultItem.java", "ConstructorTest.java");
+
+        assertEquals(0, c.errors().size());
+
+        Optional<JavaFileObject> javaFileObject = c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, tdsFilename);
+        assertTrue(javaFileObject.isPresent());
+
+        JavaFileObject fileObject = javaFileObject.get();
+
+        assertEquals(
+                1,
+                findSourceLine(fileObject,
+                        Pattern.compile("new\\(\\):\\s+ConstructorTest")).size(),
+                "constructor is missing"
+        );
+    }
+
+    @Test
+    void test_method_ConstructorWithArgs() throws IOException {
+        final String folderName = "jtsmodulesmethods";
+        final String tdsFilename = "jts-modules-methods.d.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/methods", folderName, tdsFilename, DUMP_FILES, 0, "DataItem.java", "ResultItem.java", "ConstructorTestWithArgs.java");
+
+        assertEquals(0, c.errors().size());
+
+        Optional<JavaFileObject> javaFileObject = c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, tdsFilename);
+        assertTrue(javaFileObject.isPresent());
+
+        JavaFileObject fileObject = javaFileObject.get();
+
+        assertEquals(
+                1,
+                findSourceLine(fileObject,
+                        Pattern.compile("new\\(item:\\s+DataItem\\):\\s+ConstructorTestWithArgs")).size(),
+                "constructor is missing"
+        );
+    }
+
+    @Test
+    void test_functionType() throws IOException {
+        final String folderName = "jtsmodulesfunction";
+        final String tdsFilename = "jts-modules-function.d.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/function", folderName, tdsFilename, DUMP_FILES, 0, "MyFunctionType.java");
+
+        assertEquals(0, c.errors().size());
+
+        Optional<JavaFileObject> javaFileObject = c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, tdsFilename);
+        assertTrue(javaFileObject.isPresent());
+
+        JavaFileObject fileObject = javaFileObject.get();
+
+        assertEquals(
+                1,
+                findSourceLine(fileObject,
+                        Pattern.compile("export\\s+type\\s+MyFunctionType\\s+=\\s+\\(a:\\s+number,\\s+b:\\s+number\\)\\s+=>\\s+number;")).size(),
+                "function is missing"
+        );
+    }
+
+    @Test
+    void test_functionType_realUseCase() throws IOException {
+        final String folderName = "jtsmodulesfunction";
+        final String tdsFilename = "jts-modules-function.d.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/function", folderName, tdsFilename, DUMP_FILES, 0, "MyFunctionType2.java");
+
+        assertEquals(0, c.errors().size());
+
+        Optional<JavaFileObject> javaFileObject = c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, tdsFilename);
+        assertTrue(javaFileObject.isPresent());
+
+        JavaFileObject fileObject = javaFileObject.get();
+
+        assertEquals(
+                1,
+                findSourceLine(fileObject,
+                        Pattern.compile("export\\s+type\\s+FooFunction\\s+=\\s+\\(a:\\s+Object\\s+|\\s+null,\\s+b:\\s+Object\\)\\s+=>\\s+any\\s+|\\s+Object;")).size(),
+                "function is missing"
+        );
+
+        assertEquals(
+                1,
+                findSourceLine(fileObject,
+                        Pattern.compile("method\\s+doc")).size(),
+                "method doc is missing"
+        );
+
+        assertEquals(
+                1,
+                findSourceLine(fileObject,
+                        Pattern.compile("Interface\\s+doc")).size(),
+                "Interface doc is missing"
+        );
+    }
+
+    @Test
+    void test_Constants() throws IOException {
+        final String folderName = "jtsmodulesconstants";
+        final String tdsFilename = "jts-modules-constants.d.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/constants", folderName, tdsFilename, DUMP_FILES, 1,  "ConstantsTest.java");
+
+        assertEquals(0, c.errors().size());
+
+        Optional<JavaFileObject> javaFileObject = c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, tdsFilename);
+        assertTrue(javaFileObject.isPresent());
+
+        JavaFileObject fileObject = javaFileObject.get();
+
+        assertEquals(
+                1,
+                findSourceLine(fileObject,
+                        Pattern.compile("export\\s+const\\s+BOOL_TEST:boolean\\s+=\\s+true;")).size(),
+                "boolean constant is missing"
+        );
+        assertEquals(
+                1,
+                findSourceLine(fileObject,
+                        Pattern.compile("export\\s+const\\s+INT_TEST:number\\s+=\\s+47;")).size(),
+                "integer constant is missing"
+        );
+        assertEquals(
+                1,
+                findSourceLine(fileObject,
+                        Pattern.compile("export\\s+const\\s+longTest:number\\s+=\\s+13;")).size(),
+                "long constant is missing"
+        );
+        assertEquals(
+                1,
+                findSourceLine(fileObject,
+                        Pattern.compile("export\\s+const\\s+stringTest:string\\s+=\\s+\"asdf\";")).size(),
+                "string constant is missing"
+        );
+        assertEquals(
+                1,
+                findSourceLine(fileObject,
+                        Pattern.compile("My\\s+string\\s+comment")).size(),
+                "documentation is missing"
+        );
+        assertEquals(
+                4,
+                findSourceLine(fileObject,
+                        Pattern.compile("export\\s+const")).size(),
+                "Wrong constant count"
+        );
+    }
+
+    @Test
+    void testRealLifeScenarioBugFixes() throws IOException {
+        final String folderName = "methodrealscenariotest";
+        final String tdsFilename = "method-real-scenario-test.ts";
+        Compilation c = CompileHelper.compileForNoModule("jts/modules/bugfix", folderName, tdsFilename, DUMP_FILES, 0,
+                "DataItem.java",
+                "package-info.java",
+                "MethodsTestBugfixClass.java",
+                "MethodsTestBugfixFunctionalInterface.java",
+                "MethodsTestBugfixInterface.java"
+        );
+
+        assertEquals(0, c.errors().size());
+
+        Optional<JavaFileObject> javaFileObject = c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, tdsFilename);
+        assertTrue(javaFileObject.isPresent());
+
+        String fileContent;
+        try (Reader r = javaFileObject.get().openReader(false)) {
+            fileContent = String.join("\n", new ArrayList<>(IOUtils.readLines(r)));
+        }
+
+        System.out.println(fileContent);
+
+        assertFalse(fileContent.contains("any"));
+
+        assertTrue(fileContent.contains("/**\n" +
+                "   * @see jts.modules.bugfix.DataItem <i>Original file</i>\n" +
+                "   */"), "Original name comment is missing!");
+    }
+
+    @Test
+    void testOptional() throws IOException {
+        final String folderName = "optionaltest";
+        final String tdsFilename = "optional-test.ts";
+        Compilation c = CompileHelper.compileForNoModule("jts/modules/optional", folderName, tdsFilename, DUMP_FILES, 0,
+                "OptionalTest.java",
+                "package-info.java"
+        );
+
+        assertEquals(0, c.errors().size());
+
+        Optional<JavaFileObject> javaFileObject = c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, tdsFilename);
+        assertTrue(javaFileObject.isPresent());
+
+        String fileContent;
+        try (Reader r = javaFileObject.get().openReader(false)) {
+            fileContent = String.join("\n", new ArrayList<>(IOUtils.readLines(r)));
+        }
+
+        assertTrue(fileContent.contains("b_optionalField?: Object;"), "b_optionalField" + " is missing");
+        assertTrue(fileContent.contains("c_optionalNullableField?: Object;"), "c_optionalNullableField" + " is missing");
+
+        assertTrue(fileContent.contains("readonly e_OptionalMethodProperty?: Object;"), "e_OptionalMethodProperty" + " is missing");
+        assertTrue(fileContent.contains("readonly f_OptionalNullableMethodProperty?: Object | null;"), "f_OptionalNullableMethodProperty" + " is missing");
+
+        assertTrue(fileContent.contains("h_calcStuffOptional(optionalParam?: Object): Object | null;"), "h_calcStuffOptional" + " is missing");
+        assertTrue(fileContent.contains("i_calcStuffOptionalNullable(optionalParam?: Object | null): Object | null;"), "i_calcStuffOptionalNullable" + " is missing");
+    }
 }

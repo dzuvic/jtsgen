@@ -32,6 +32,14 @@ New Features
 - new options for generating enum
 - enum values are rendered each in a new line
 - documentation strings are rendered, but currently without any transformation to tsdoc
+- add export of java methods to typescript methods using @TSMethod annotation
+- add export of java constructors to typescript constructor functions using @TSConstructor annotation
+- add export of functional interfaces as function types
+- allow to rename exported methods/properties/types using the ``name`` property in annotations
+- new option to add a timestamp to the module comment
+- sort all kinds of outputs to simplify comparison of different versions
+- add support for nullable values: Property members will can be undefined, methods can return null
+- allow to add static imports in modules
 
 
 Internal

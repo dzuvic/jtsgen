@@ -22,6 +22,7 @@ package dz.jtsgen.processor.model.tstarget;
 
 import dz.jtsgen.processor.model.ConversionCoverage;
 import dz.jtsgen.processor.model.TSTargetType;
+import org.immutables.value.Value;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,6 +56,16 @@ public class TSTargetEnumValueType implements TSTargetType {
     @Override
     public Map<String, TSTargetType> typeParameterTypes() {
         return new HashMap<>();
+    }
+
+    @Value.Default
+    public boolean isNullable() {
+        return false;
+    }
+
+    @Override
+    public boolean isOptional() {
+        return false;
     }
 
     @Override

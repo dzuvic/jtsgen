@@ -40,14 +40,15 @@ class TSModuleInfoTest {
     void test_TSModuleINfo_withModuleData() {
         TSModuleInfo original=TSModuleInfoBuilder.builder().build();
 
-        assertEquals(original, original.withModuleData(null,null,null,null,null,null,null, null));
-        assertEquals(original, original.withModuleData(original.getModuleVersion(),null,null,null,null,null,null,null));
-        assertEquals(original, original.withModuleData(null,original.getModuleDescription(),null,null,null,null,null,null));
-        assertEquals(original, original.withModuleData(null,null,original.getModuleAuthor(),null,null,null,null,null));
-        assertEquals(original, original.withModuleData(null,null,null,original.getModuleLicense(),null,null,null,null));
-        assertEquals(original, original.withModuleData(null,null,null,null,original.getModuleAuthorUrl(),null,null,null));
-        assertEquals(original, original.withModuleData(null,null,null,null,null,original.getModuleName(),null,null));
-        assertEquals(original, original.withModuleData(null,null,null,null,null,null,original.getOutputType(),null));
-        assertEquals(original, original.withModuleData(null,null,null,null,null,null,null,original.enumExportStrategy()));
+        assertEquals(original, original.withModuleData(null,null,null,null,null,null,null, null, null));
+        assertEquals(original, original.withModuleData(original.getModuleVersion(),null,null,null,null,null,null,null, null));
+        assertEquals(original, original.withModuleData(null,original.getModuleDescription(),null,null,null,null,null,null, null));
+        assertEquals(original, original.withModuleData(null,null,original.getModuleAuthor(),null,null,null,null,null, null));
+        assertEquals(original, original.withModuleData(null,null,null,original.getModuleLicense(),null,null,null,null, null));
+        assertEquals(original, original.withModuleData(null,null,null,null,original.getModuleAuthorUrl(),null,null,null, null));
+        assertEquals(original, original.withModuleData(null,null,null,null,null,original.getModuleName(),null,null, null));
+        assertEquals(original, original.withModuleData(null,null,null,null,null,null,original.getOutputType(),null, null));
+        assertEquals(original, original.withModuleData(null,null,null,null,null,null,null,original.enumExportStrategy(), null));
+        assertEquals(original, original.withModuleData(null,null,null,null,null,null,null,null, original.getDependencies()));
     }
 }

@@ -21,6 +21,7 @@
 package dz.jtsgen.processor.jtp.info;
 
 import dz.jtsgen.annotations.TSModule;
+import dz.jtsgen.annotations.TSProperty;
 import org.immutables.value.Value;
 
 import javax.lang.model.element.Element;
@@ -92,8 +93,22 @@ abstract class ExecutableElementHelperImpl implements ExecutableElementHelper {
     }
 
     @Override
-    public  boolean isGetter(ExecutableElement x) {
-        final String simpleName = x != null && x.getSimpleName() != null ? x.getSimpleName().toString() : null;
+    public boolean isGetter(ExecutableElement x) {
+        final String simpleName;
+
+        if(x == null) {
+            simpleName = null;
+        }
+        else {
+            TSProperty property = x.getAnnotation(TSProperty.class);
+            if(property != null && !property.name().isEmpty()) {
+                simpleName = property.name();
+            }
+            else {
+                simpleName = x.getSimpleName() != null ? x.getSimpleName().toString() : null;
+            }
+        }
+
         return isGetter(simpleName);
     }
 

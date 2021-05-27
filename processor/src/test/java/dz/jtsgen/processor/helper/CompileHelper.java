@@ -27,6 +27,7 @@ import dz.jtsgen.processor.TsGenProcessor;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardLocation;
+import java.io.IOException;
 import java.util.Arrays;
 
 import static com.google.testing.compile.Compiler.javac;
@@ -80,6 +81,17 @@ public class CompileHelper {
 
         if (! c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName , PACKAGE_JSON).isPresent() || ! c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, tdsFilename).isPresent()) {
             c.generatedFiles().forEach(System.out::println);
+        }
+        else if(debugLog) {
+            c.generatedFiles()
+                    .stream()
+                    .filter(file -> file.getKind() == JavaFileObject.Kind.OTHER)
+                    .forEach( file -> {
+                try {
+                    System.out.println(file.getName());
+                    System.out.println(file.getCharContent(true));
+                } catch (IOException ignore) {}
+            });
         }
 
         assertTrue(c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName , PACKAGE_JSON).isPresent());

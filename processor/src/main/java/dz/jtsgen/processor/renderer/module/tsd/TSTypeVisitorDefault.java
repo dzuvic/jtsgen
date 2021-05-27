@@ -22,11 +22,15 @@ package dz.jtsgen.processor.renderer.module.tsd;
 
 import dz.jtsgen.processor.helper.IdentHelper;
 import dz.jtsgen.processor.model.*;
+import dz.jtsgen.processor.model.rendering.TSConstantVisitor;
 import dz.jtsgen.processor.model.rendering.TSMemberVisitor;
+import dz.jtsgen.processor.model.rendering.TSMethodVisitor;
 import dz.jtsgen.processor.model.rendering.TSTypeVisitor;
-import dz.jtsgen.processor.renderer.model.TypeScriptRenderModel;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -35,29 +39,45 @@ import java.util.stream.Collectors;
 class TSTypeVisitorDefault extends OutputVisitor implements TSTypeVisitor {
 
     private final TSMemberVisitor tsMemberVisitor;
+    private final TSMethodVisitor tsMethodVisitor;
+    private final TSConstantVisitor tsConstantVisitor;
 
-    TSTypeVisitorDefault(PrintWriter out, TSMemberVisitor visitor){
-        super(out);
+    TSTypeVisitorDefault(PrintWriter out, TSMemberVisitor visitor, TSMethodVisitor visitor2, TSConstantVisitor visitor3, boolean printFullName){
+        super(out, printFullName);
         this.tsMemberVisitor = visitor;
+        this.tsMethodVisitor = visitor2;
+        this.tsConstantVisitor = visitor3;
     }
 
-    TSTypeVisitorDefault(PrintWriter out) {
-        this(out,new DefaultTSMemberVisitor(out));
+    TSTypeVisitorDefault(PrintWriter out, boolean printFullName) {
+        this(out, new DefaultTSMemberVisitor(out, printFullName), new DefaultTSMemberVisitor(out, printFullName), new DefaultTSConstantVisitor(out, printFullName), printFullName);
     }
 
 
 
     @Override
     public void visit(TSInterface x, int ident) {
-        x.getDocumentString().ifPresent( comment -> tsComment(comment, ident));
+        List<TSConstant> constants = new ArrayList<>(x.getConstants());
+        constants.sort(Comparator.comparing(TSConstant::getName));
+        constants.forEach(y -> y.accept(getTsConstantVisitor(), ident));
+
+        tsComment(x.getDocumentString().orElse(null), ident, x.getElement());
         typePrefix(x, ident);
-        x.getMembers().forEach(y -> y.accept(getTsMemberVisitor(), ident + 1));
+
+        List<TSMember> members = new ArrayList<>(x.getMembers());
+        members.sort(Comparator.comparing(TSMember::getName));
+        members.forEach(y -> y.accept(getTsMemberVisitor(), ident + 1));
+
+        List<TSMethod> methods = new ArrayList<>(x.getMethods());
+        methods.sort(Comparator.comparing(TSMethod::getName));
+        methods.forEach(y -> y.accept(getTsMethodVisitor(), ident + 1));
+
         typePostFix(ident);
     }
 
     @Override
     public void visit(TSEnum x, int ident) {
-        x.getDocumentString().ifPresent( comment -> tsComment(comment, ident));
+        tsComment(x.getDocumentString().orElse(null), ident, x.getElement());
         typePrefix(x, ident);
         final boolean[] isFirst = {true};
         x.getMembers().forEach(y -> {
@@ -71,6 +91,63 @@ class TSTypeVisitorDefault extends OutputVisitor implements TSTypeVisitor {
         getOut().println("");
         typePostFix(ident);
 
+    }
+
+    @Override
+    public void visit(TSFunction x, int ident) {
+        TSMethod method = x.getMethods().get(0);
+        String comment = "";
+
+        if(x.getDocumentString().isPresent()) { // get the docu of the functional interface
+            comment += x.getDocumentString().get();
+        }
+        if(method.getComment().isPresent()) { // get the docu of the only method of the functional interface.
+            comment += "\n";
+            comment += method.getComment().get();
+        }
+
+        tsComment(comment, ident, x.getElement());
+
+        getOut().print(IdentHelper.identPrefix(ident));
+        getOut().print("export ");
+        getOut().print(x.getKeyword());
+        getOut().print(" ");
+        getOut().print(x.getName());
+        if (!x.getTypeParams().isEmpty()) {
+            getOut().print("<");
+            getOut().print(x.getTypeParams().stream().map(this::nameWithBounds).collect(Collectors.joining(", ")));
+            getOut().print("> ");
+        }
+        getOut().print(extendsSuperTypes(x));
+
+        getOut().print(" = (");
+        String args = method.getArguments()
+                .entrySet()
+                .stream()
+                .map((entry) -> {
+                    String result;
+
+                    if(entry.getValue().isOptional()) {
+                        result = entry.getKey() + "?: " + entry.getValue().toString();
+                    }
+                    else {
+                        result = entry.getKey() + ": " + entry.getValue().toString();
+                    }
+
+                    if(entry.getValue().isNullable()) {
+                        result += " | null";
+                    }
+                    return result;
+                })
+                .collect(Collectors.joining(", "));
+        getOut().print(args);
+        getOut().print(") => ");
+        getOut().print(method.getType());
+        if(method.getType().isNullable()) {
+            getOut().append(" | null");
+        }
+
+        getOut().println(";");
     }
 
 
@@ -116,5 +193,13 @@ class TSTypeVisitorDefault extends OutputVisitor implements TSTypeVisitor {
 
     private TSMemberVisitor getTsMemberVisitor() {
         return tsMemberVisitor;
+    }
+
+    private TSMethodVisitor getTsMethodVisitor() {
+        return tsMethodVisitor;
+    }
+
+    private TSConstantVisitor getTsConstantVisitor() {
+        return tsConstantVisitor;
     }
 }

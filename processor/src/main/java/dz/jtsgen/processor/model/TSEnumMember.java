@@ -58,6 +58,14 @@ public abstract class TSEnumMember implements TSMember {
         return false;
     }
 
+    @Value.Default
+    public boolean getNullable() {
+        return false;
+    }
+    @Value.Default
+    public boolean getOptional() {
+        return false;
+    }
 
     @Override
     public void accept(TSMemberVisitor visitor, int ident) {

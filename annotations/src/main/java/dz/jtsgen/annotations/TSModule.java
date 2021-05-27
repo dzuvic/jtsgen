@@ -37,9 +37,30 @@ public @interface TSModule {
     String SETTER_EXPRESSION = "set([_a-zA-Z0-9].*)";
 
     /**
+     * The module name of the JavaScript/TypeScript Module. This must be a java package friendly name.
      * @return The module name of the JavaScript/TypeScript Module. This must be a java package friendly name.
      */
     String moduleName();
+
+    /**
+     * The scope name of the module.
+     * For example:
+     *     <p><code>
+     *         &#64;TSModule(<br>
+     *         moduleName = "myModule",<br>
+     *         moduleScope = "myScope"<br>
+     *          )<br>
+     *     </code></p>
+     *     will result in your package.json:
+
+     *     <p><code>
+     *         {<br>
+     *             "name" : "&#64;myScope/myModule"<br>
+     *         }<br>
+     *     </code></p>
+     * @return If not null or empty: The scope name of the JavaScript/TypeScript Module. This must be a java package friendly name.
+     */
+    String moduleScope() default "";
 
     /**
      * @return The author number for the package.json file
@@ -161,4 +182,62 @@ public @interface TSModule {
      * @return the enum export type
      */
     EnumExportStrategy enumExportStrategy() default EnumExportStrategy.NUMERIC;
+
+    /**
+     * Add a list of imports to your module. In combination with {@link #customTypeMappings()}, you can
+     * use external types in your module.
+     * <b>Please not that the &quot;import&quot; string will be prepended</b>
+     *     <p>Example:<br>
+     *         <code>
+     *             imports = &quot;{FooClazz} from &#39;../foo/barModule&#39;&quot;
+     *         </code><br>
+     *             Will result in :<br>
+     *         <code>
+     *             import {FooClazz} from &#39;../foo/barModule&#39;;
+     *         </code>
+     *     </p>
+     *
+     * @return a list of imports, empty array by default.
+     */
+    String[] imports() default {};
+
+    /**
+     * This allows you to declare node module dependencies in your package json file.
+     * Each entry in this list represents one dependency, including module name and version. <br>
+     *     For example:
+     *     <p><code>
+     *         &#64;TSModule(<br>
+     *         outputType = OutputType.MODULE,<br>
+     *         moduleDependencies = {<br>
+     *                 "\"@types/react-dom\": \"16.9.4\"",<br>
+     *                 "\"react\": \"^16.12.0\"",<br>
+     *                 "\"react-scripts\": \"3.2.0\""<br>
+     *              }<br>
+     *          )<br>
+     *     </code></p>
+     * @return list of dependencies as json-key-value pairs
+     */
+    String[] moduleDependencies() default {};
+
+    /**
+     * If not null or empty, the value if this proiperty wil be added as default export to your file.
+     *
+     * @return the default export
+     */
+    String defaultExport() default "";
+
+    /**
+     * If this is set to true, the generator will add an timestamp as comment to the generated code
+     *
+     * @return false by default
+     */
+    boolean printDate() default false;
+
+    /**
+     * If you set this to true, the generator will add the name of the original java class/interface as a comment to the
+     * documentation of your element.
+     *
+     * @return false by default
+     */
+    boolean appendOriginalNamesToJavaDoc() default false;
 }
