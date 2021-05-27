@@ -48,7 +48,7 @@ class TypeElementCacheImpl implements TypeElementCache {
         if (this.cache.containsKey(canonicalName)) return this.cache.get(canonicalName);
         else {
             TypeElement element = this.processingEnvironment.getElementUtils().getTypeElement(canonicalName);
-            this.cache.put(canonicalName,element);
+            this.cache.putIfAbsent(canonicalName,element);
             return element;
         }
     }

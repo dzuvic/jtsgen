@@ -9,7 +9,7 @@ types that are defined in the JVM backend project.  These backend
 types are usually written in Java (or Kotlin).
 
 For example: the following class defines data type person, that
-represents the interface between the TypeScipt based browser front
+represents the interface between the TypeScript based browser front
 end, e.g. angular or react, and a JAX-RS endpoint:
 
 .. code-block:: java
@@ -39,7 +39,7 @@ end, e.g. angular or react, and a JAX-RS endpoint:
 The data might be transmitted and accessed using JSON, or whatever
 marshalling technology you like, but in TypeScript you have to write
 something like the following code for being able using code completion
-on that type. Either you write something like the follwing or just use
+on that type. Either you write something like the following or just use
 this project, which generates the following data type:
 
 .. code-block:: typescript
@@ -60,7 +60,7 @@ It is important to know, how the marshalling maps type like BigDecimal to JSON. 
 types could be easily configured by a DSL. And because this information how the Java types are mapped
 to JSON are configured somewhere in the backend, *tsgen* can also be configured at compile time, so the
 configuration of *tsgen* (package annotation) can be kept near the source the code that configured the
-Java to JSON mapper, e.g. Jackons's ``ObjectMapper``.
+Java to JSON mapper, e.g. Jackson's ``ObjectMapper``.
 
 
 Features

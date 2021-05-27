@@ -28,10 +28,10 @@ elif [ "${TRAVIS_BRANCH}" != "${BRANCH}" ]; then
   exit 1
 else
  if [[ "${GRADLE_PROJECT_VERSION}" != *"SNAPSHOT"* ]] ; then
-    echo "skipping snapshot deployment: Not a snapshot version. Version is '${GRADLE_PROJECT_VERSION}'"
+    echo "skipping deployment: Not a snapshot version. Version is '${GRADLE_PROJECT_VERSION}'"
     ./gradlew build
  else
     echo "Start deploying snapshot version ${GRADLE_PROJECT_VERSION}"
-    ./gradlew uploadArchives && echo "Snapshot deployed!"
+    ./gradlew build && ./gradlew publish && echo "Snapshot deployed!"
   fi
 fi

@@ -172,7 +172,7 @@ public interface Either<L, R> extends Iterable<R> {
     }
 
     /**
-     * @return return optional od right value if set or optional.empty
+     * @return return optional or right value if set or optional.empty
      */
     default Optional<R> toOptional() {
         return Optional.ofNullable(rightOrNull());
