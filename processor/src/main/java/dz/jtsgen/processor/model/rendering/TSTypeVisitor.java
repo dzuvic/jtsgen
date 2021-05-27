@@ -22,9 +22,11 @@ package dz.jtsgen.processor.model.rendering;
 
 
 import dz.jtsgen.processor.model.TSEnum;
+import dz.jtsgen.processor.model.TSFunction;
 import dz.jtsgen.processor.model.TSInterface;
 
 public interface TSTypeVisitor {
     void visit(TSInterface x, int ident);
     void visit(TSEnum x, int ident);
+    void visit(TSFunction x, int ident);
 }

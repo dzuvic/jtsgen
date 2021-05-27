@@ -71,6 +71,7 @@ public final class TSModuleHandler {
                                     final AnnotationValue value =  entry.getValue();
                                     if (isNameAndNotNull("version", entry)) tsBuilder.moduleVersion(asString(value));
                                     else if (isNameAndNotNull("moduleName",entry)) tsBuilder.moduleName(processModuleName(x, value)) ;
+                                    else if (isNameAndNotNull("moduleScope",entry)) tsBuilder.moduleScope(processModuleName(x, value)) ;
                                     else if (isNameAndNotNull("author",entry)) tsBuilder.moduleAuthor(asString(value));
                                     else if (isNameAndNotNull("description",entry)) tsBuilder.moduleDescription(asString(value));
                                     else if (isNameAndNotNull("authorUrl",entry)) tsBuilder.moduleAuthorUrl(asString(value));
@@ -86,8 +87,15 @@ public final class TSModuleHandler {
                                     else if (isNameAndNotNull("setterPrefixes",entry)) tsBuilder.setterPrefixes(convertToListOfString(entry.getValue()));
                                     else if (isNameAndNotNull("nameMappingStrategy",entry)) tsBuilder.nameMappingStrategy(convertNameMappingStrategy(entry.getValue()));
                                     else if (isNameAndNotNull("enumExportStrategy",entry)) tsBuilder.enumExportStrategy(convertEnumExportStrategy(entry.getValue()));
+                                    else if (isNameAndNotNull("imports",entry)) tsBuilder.imports(convertToListOfString(entry.getValue()));
+                                    else if (isNameAndNotNull("moduleDependencies",entry)) tsBuilder.dependencies(convertToListOfString(entry.getValue()));
+                                    else if (isNameAndNotNull("printDate",entry)) tsBuilder.printDate(asBoolean(value));
+                                    else if (isNameAndNotNull("appendOriginalNamesToJavaDoc",entry)) tsBuilder.appendOriginalNamesToJavaDoc(asBoolean(value));
+                                    else if (isNameAndNotNull("defaultExport",entry)) tsBuilder.defaultExport(asString(value));
                                     else LOG.warning("unknown param on annotation TSModule " + entry.getKey());
                                 }
+                                String docComment = env.getElementUtils().getDocComment(x);
+                                if(docComment != null) tsBuilder.javadoc(docComment);
                                 return Optional.of( tsBuilder.build());
                             }
                     );

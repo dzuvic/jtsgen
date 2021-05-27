@@ -35,7 +35,7 @@ public final class TSTargets {
     public static final TSTargetType NONE = new TSTargetPrimitiveType("", "Never");
     public static final TSTargetType NULL = new TSTargetPrimitiveType("null","null");
     public static final TSTargetType ANY = createTSTargetByDSL(" any -> any").orElse(NONE);
-    public static final TSTargetType VOID = createTSTargetByDSL("java.lang.Void -> Void").orElse(NONE);
+    public static final TSTargetType VOID = createTSTargetByDSL("java.lang.Void -> void").orElse(NONE);
 
     //TODO check if this is correct
     public static final TSTargetType OBJECT = createTSTargetByDSL(" java.lang.Object -> Object").orElse(NONE);

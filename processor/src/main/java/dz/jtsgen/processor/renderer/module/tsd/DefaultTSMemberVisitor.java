@@ -20,31 +20,40 @@
 
 package dz.jtsgen.processor.renderer.module.tsd;
 
-import dz.jtsgen.annotations.EnumExportStrategy;
 import dz.jtsgen.processor.helper.IdentHelper;
 import dz.jtsgen.processor.model.TSEnumMember;
 import dz.jtsgen.processor.model.TSMember;
+import dz.jtsgen.processor.model.TSMethodMember;
 import dz.jtsgen.processor.model.rendering.TSMemberVisitor;
-import dz.jtsgen.processor.renderer.model.TypeScriptRenderModel;
+import dz.jtsgen.processor.model.rendering.TSMethodVisitor;
 
 import java.io.PrintWriter;
+import java.util.stream.Collectors;
 
 
-public class DefaultTSMemberVisitor extends OutputVisitor implements TSMemberVisitor {
+public class DefaultTSMemberVisitor extends OutputVisitor implements TSMemberVisitor, TSMethodVisitor {
 
 
-    DefaultTSMemberVisitor(PrintWriter out) {
-        super(out);
+    DefaultTSMemberVisitor(PrintWriter out, boolean printFullName) {
+        super(out, printFullName);
     }
 
     @Override
     public void visit(TSMember x, int ident) {
         x.getComment().ifPresent( comment -> tsComment(comment,ident));
         getOut().print(IdentHelper.identPrefix(ident));
-        if (x.getReadOnly()) getOut().print("readonly ");
+        if (x.getReadOnly()) {
+            getOut().print("readonly ");
+        }
         getOut().print(x.getName());
+        if(x.getOptional()) {
+            getOut().print("?");
+        }
         getOut().print(": ");
         getOut().print(x.getType());
+        if(x.getNullable()) {
+            getOut().print(" | null");
+        }
         getOut().println(";");
     }
 
@@ -59,7 +68,39 @@ public class DefaultTSMemberVisitor extends OutputVisitor implements TSMemberVis
             getOut().print("'");
         } else {
             getOut().print(x.getName());
-
         }
+    }
+
+    @Override
+    public void visit(TSMethodMember x, int ident) {
+        x.getComment().ifPresent( comment -> tsComment(comment,ident));
+        getOut().print(IdentHelper.identPrefix(ident));
+        getOut().print(x.getName());
+        getOut().print("(");
+        String args = x.getArguments()
+                .entrySet()
+                .stream()
+                .map((entry) -> {
+                    String arg;
+
+                    if(entry.getValue().isOptional()) {
+                        arg = entry.getKey() + "?: " + entry.getValue().toString();
+                    }
+                    else {
+                        arg = entry.getKey() + ": " + entry.getValue().toString();
+                    }
+                    if(entry.getValue().isNullable()) {
+                        arg += " | null";
+                    }
+                    return arg;
+                })
+                .collect(Collectors.joining(", "));
+        getOut().print(args);
+        getOut().print("): ");
+        getOut().print(x.getType());
+        if(x.getType().isNullable()) {
+            getOut().print(" | null");
+        }
+        getOut().println(";");
     }
 }

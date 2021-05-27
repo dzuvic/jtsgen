@@ -22,6 +22,8 @@ package dz.jtsgen.processor.renderer.module.tsd;
 
 import dz.jtsgen.processor.helper.IdentHelper;
 
+import javax.lang.model.element.Element;
+import javax.lang.model.element.QualifiedNameable;
 import java.io.PrintWriter;
 import java.util.stream.Stream;
 
@@ -32,14 +34,29 @@ import java.util.stream.Stream;
  */
 public abstract class OutputVisitor {
     private final PrintWriter out;
+    private final boolean printFullName;
 
-    OutputVisitor(PrintWriter out) {
+    OutputVisitor(PrintWriter out, boolean printFullName) {
         this.out = out;
+        this.printFullName = printFullName;
     }
 
     void tsComment(String comment, int ident) {
-        if (comment == null) return;
+        tsComment(comment, ident, null);
+    }
 
+    void tsComment(String comment, int ident, Element element) {
+        if (comment == null && !printFullName) return;
+
+        if(comment == null) {
+            comment = "";
+        }
+
+        if(printFullName && element instanceof QualifiedNameable) {
+
+            comment += "\n@see " + ((QualifiedNameable)element).getQualifiedName().toString() + " <i>Original file</i>";
+            comment = comment.trim();
+        }
 
         getOut().print(IdentHelper.identPrefix(ident));
         getOut().println("/**");

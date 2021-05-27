@@ -34,6 +34,6 @@ import static dz.jtsgen.processor.util.LilltleLazy.lazy;
 final class TSTargetArrayType extends TSTargetDeclType {
     
     TSTargetArrayType(TypeMappingExpression mappingExpression, Map<String, TSTargetType> typeParametersTypes) {
-        super(mappingExpression, typeParametersTypes, lazy( () -> ""), lazy( () -> ""));
+        super(mappingExpression, typeParametersTypes, lazy( () -> ""), lazy( () -> ""),false,false);
     }
 }

@@ -34,6 +34,10 @@ public interface TSMember extends TSMemberElement {
 
     boolean getInvalid();
 
+    boolean getNullable();
+
+    boolean getOptional();
+
     Optional<String> getComment();
 
     TSMember changedTSTarget(TSTargetType newTargetType);

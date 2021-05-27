@@ -27,8 +27,7 @@ import dz.jtsgen.processor.util.Tuple;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Element;
 import javax.tools.Diagnostic;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -48,6 +47,7 @@ public class TSModuleInfoEnforcer {
     private static final String JTSGEN_OUTPUT_OPTION_MODULEAUTHOR =  "jtsgenModuleAuthor";
     private static final String JTSGEN_OUTPUT_OPTION_MODULELICENSE =  "jtsgenModuleLicense";
     private static final String JTSGEN_OUTPUT_OPTION_MODULEAUTHORURL =  "jtsgenModuleAuthorUrl";
+    private static final String JTSGEN_OUTPUT_OPTION_DEPENDENCIES =  "jtsgenModuleDependencies";
 
     private static Logger LOG = Logger.getLogger(TSModuleInfoEnforcer.class.getName());
 
@@ -71,8 +71,11 @@ public class TSModuleInfoEnforcer {
         String moduleAuthor = env.getOptions().get(JTSGEN_OUTPUT_OPTION_MODULEAUTHOR);
         String moduleLicense = env.getOptions().get(JTSGEN_OUTPUT_OPTION_MODULELICENSE);
         String moduleAuthorUrl = env.getOptions().get(JTSGEN_OUTPUT_OPTION_MODULEAUTHORURL);
+        String moduleDependenciesString = env.getOptions().get(JTSGEN_OUTPUT_OPTION_DEPENDENCIES);
+        Collection<String> moduleDependencies = moduleDependenciesString == null || moduleDependenciesString.isEmpty() ?
+                                                    Collections.emptyList() : Arrays.asList(moduleDependenciesString.split(","));
         return this.model.getModuleInfo()
-                .withModuleData(moduleVersion, moduleDescription, moduleAuthor, moduleLicense, moduleAuthorUrl, moduleName, this.model.getModuleInfo().getOutputType(), this.model.getModuleInfo().enumExportStrategy()) ;
+                .withModuleData(moduleVersion, moduleDescription, moduleAuthor, moduleLicense, moduleAuthorUrl, moduleName, this.model.getModuleInfo().getOutputType(), this.model.getModuleInfo().enumExportStrategy(), moduleDependencies) ;
     }
 
     /**

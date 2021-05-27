@@ -24,6 +24,7 @@ package dz.jtsgen.processor.helper;
 public class StringConstForTest {
     public static final String JTSGEN_MYMODULE = "mymodule";
     public static final String PACKAGE_JSON = "package.json";
+    public static final String README_MD = "readme.md";
     public static final String JTSGEN_UNKNOWN = "unknown";
     public static final String MY_MODULE_D_TS = "my-module.d.ts";
     public static final String JTS_DEV = "jtsdev";

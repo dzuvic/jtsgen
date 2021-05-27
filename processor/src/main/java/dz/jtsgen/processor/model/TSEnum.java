@@ -40,7 +40,7 @@ public abstract class TSEnum extends TSType {
     }
 
     @Override
-    public TSType changedNamespace(String namespace, List<TSMember> members) {
-        return TSEnumBuilder.copyOf(this).withNamespace(namespace).withMembers(members);
+    public TSType changedNamespace(String namespace, List<TSMember> members, List<TSMethod> methods, List<TSConstant> mappedConstants) {
+        return TSEnumBuilder.copyOf(this).withNamespace(namespace).withMembers(members).withMethods(methods).withConstants(mappedConstants);
     }
 }

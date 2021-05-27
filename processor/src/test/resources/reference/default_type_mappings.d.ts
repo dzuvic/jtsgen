@@ -4,21 +4,21 @@
 
 declare namespace JtsDev {
   export interface MemberDefaultMappingTest {
-    member_short: number;
     member_Boolean: boolean;
-    member_float: number;
-    member_char: string;
+    member_Integer: number;
+    member_Object: Object;
     member_boolean: boolean;
+    member_char: string;
+    member_double: number;
+    member_float: number;
+    member_int: number;
+    member_long: number;
     member_o_Long: number;
-    member_o_short: number;
+    member_o_character: string;
     member_o_double: number;
     member_o_float: number;
-    member_Integer: number;
-    member_long: number;
-    member_double: number;
-    member_Object: Object;
-    member_o_character: string;
-    member_int: number;
+    member_o_short: number;
+    member_short: number;
   }
 
  }

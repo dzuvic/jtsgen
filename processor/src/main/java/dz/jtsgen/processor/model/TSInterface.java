@@ -41,7 +41,7 @@ public abstract class TSInterface extends TSType {
     }
 
     @Override
-    public TSType changedNamespace(String namespace, List<TSMember> members) {
-        return TSInterfaceBuilder.copyOf(this).withNamespace(namespace).withMembers(members);
+    public TSType changedNamespace(String namespace, List<TSMember> members, List<TSMethod> methods, List<TSConstant> mappedConstants) {
+        return TSInterfaceBuilder.copyOf(this).withNamespace(namespace).withMembers(members).withMethods(methods).withConstants(mappedConstants);
     }
 }

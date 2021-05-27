@@ -59,7 +59,10 @@ public final class ModuleGenerator {
 
     public void writeModule() {
         try {
-            if (model.getOutputType() == NAMESPACE_AMBIENT_TYPE || model.getOutputType() == MODULE) writePackageJson();
+            if (model.getOutputType() == NAMESPACE_AMBIENT_TYPE || model.getOutputType() == MODULE) {
+                writePackageJson();
+                writeReadmeMd();
+            }
             tsdGenerator.writeTypes();
         } catch (IOException e) {
             LOG.log(Level.SEVERE, "Caught Exception", e);
@@ -76,6 +79,26 @@ public final class ModuleGenerator {
 
         try (PrintWriter out = new PrintWriterWithLogging(package_json_file_object.openWriter(), "package.json")) {
             out.println(packageJson);
+        }
+    }
+
+    private void writeReadmeMd() throws IOException {
+        String readmeMd = model.getModuleInfo().getJavadoc();
+
+        if(readmeMd == null || readmeMd.trim().isEmpty()) {
+            return;
+        }
+
+        readmeMd = readmeMd.trim();
+
+        if(readmeMd.isEmpty()) {
+            return;
+        }
+
+        FileObject readme_md_file_object = ModuleResourceHelper.createResource(env, model.getModuleInfo(), "readme.md");
+
+        try (PrintWriter out = new PrintWriterWithLogging(readme_md_file_object.openWriter(), "readme.md")) {
+            out.println(readmeMd);
         }
     }
 

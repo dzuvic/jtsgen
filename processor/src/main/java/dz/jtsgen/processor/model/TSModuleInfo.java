@@ -50,6 +50,7 @@ public abstract class TSModuleInfo {
      * @param moduleName if null use current
      * @param outputType if null use the current
      * @param enumExportStrategy if null use the current
+     * @param dependencies if null use the current
      * @return return a copy with params changed
      */
     public TSModuleInfo withModuleData(
@@ -61,6 +62,7 @@ public abstract class TSModuleInfo {
             , String moduleName
             , OutputType outputType
             , EnumExportStrategy enumExportStrategy
+            , Collection<String> dependencies
     ) {
         return TSModuleInfoBuilder.copyOf(this)
                 .withModuleName(moduleName == null ? this.getModuleName() : moduleName)
@@ -70,6 +72,7 @@ public abstract class TSModuleInfo {
                 .withModuleLicense(moduleLicense== null ? this.getModuleLicense(): moduleLicense )
                 .withModuleAuthorUrl(moduleAuthorUrl== null ? this.getModuleAuthorUrl(): moduleAuthorUrl )
                 .withOutputType( outputType == null ? this.getOutputType() : outputType)
+                .withDependencies( dependencies == null || dependencies.isEmpty() ? this.getDependencies() : dependencies)
                 .withEnumExportStrategy(enumExportStrategy == null ? this.enumExportStrategy() : enumExportStrategy);
     }
     
@@ -136,6 +139,11 @@ public abstract class TSModuleInfo {
     }
 
     @Value.Default
+    public String getReadmePath() {
+        return "";
+    }
+
+    @Value.Default
     public Map<String,TSTargetType> getCustomMappings() {
         return Collections.unmodifiableMap(new LinkedHashMap<String,TSTargetType>());
     }
@@ -192,4 +200,38 @@ public abstract class TSModuleInfo {
         return EnumExportStrategy.NUMERIC;
     }
 
+    @Value.Default
+    public List<String> getImports() {
+        return Collections.emptyList();
+    }
+
+    @Value.Default
+    public String getDefaultExport() {
+        return "";
+    }
+
+    @Value.Default
+    public List<String> getDependencies() {
+        return Collections.emptyList();
+    }
+
+    @Value.Default
+    public String getJavadoc() {
+        return "";
+    }
+
+    @Value.Default
+    public String getModuleScope() {
+        return "";
+    }
+
+    @Value.Default
+    public boolean getPrintDate() {
+        return false;
+    }
+
+    @Value.Default
+    public boolean getAppendOriginalNamesToJavaDoc() {
+        return false;
+    }
 }

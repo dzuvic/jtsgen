@@ -89,5 +89,15 @@ final class TSTargetPrimitiveType implements TSTargetType, TSTargetInternal{
     public String tsNameSpace() {
         return "";
     }
+
+    @Override
+    public boolean isNullable() {
+        return false;
+    }
+
+    @Override
+    public boolean isOptional() {
+        return false;
+    }
 }
 

@@ -28,6 +28,14 @@ import java.lang.annotation.Target;
  * classes and interfaces used by this annotation will be included to the exported type script module
  */
 @Retention(RetentionPolicy.SOURCE)
-@Target(value = {ElementType.TYPE}) // FUTURE: ElementType.METHOD, ElementType.FIELD
+@Target(value = {ElementType.TYPE}) // FUTURE: ElementType.FIELD
 public @interface TypeScript {
+
+    /**
+     * Change this if the name of your class/interface in java is not the same like the final name in javascript.
+     *
+     * @return the custom class name, or empty sting if the actual class name should be used
+     */
+    String name() default "";
+
 }

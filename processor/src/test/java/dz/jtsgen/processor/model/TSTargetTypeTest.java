@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 class TSTargetTypeTest {
 
@@ -61,5 +61,15 @@ class TSTargetTypeTestee  implements TSTargetType {
     @Override
     public Map<String, TSTargetType> typeParameterTypes() {
         return null;
+    }
+
+    @Override
+    public boolean isNullable() {
+        return false;
+    }
+
+    @Override
+    public boolean isOptional() {
+        return false;
     }
 }

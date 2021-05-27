@@ -4,8 +4,8 @@
 
 declare namespace MyModule {
   export interface InterFaceTest {
-    readonly someString: string;
     readonly someInt: number;
+    readonly someString: string;
   }
 
  }

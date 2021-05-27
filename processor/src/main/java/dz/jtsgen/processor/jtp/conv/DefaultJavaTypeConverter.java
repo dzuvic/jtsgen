@@ -20,7 +20,9 @@
 
 package dz.jtsgen.processor.jtp.conv;
 
-import dz.jtsgen.annotations.EnumExportStrategy;
+import dz.jtsgen.annotations.TSConstant;
+import dz.jtsgen.annotations.TSMethod;
+import dz.jtsgen.annotations.*;
 import dz.jtsgen.processor.helper.DeclTypeHelper;
 import dz.jtsgen.processor.jtp.conv.visitors.JavaTypeConverter;
 import dz.jtsgen.processor.jtp.info.TSProcessingInfo;
@@ -32,7 +34,11 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.type.TypeMirror;
-import java.util.*;
+import javax.tools.Diagnostic;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -89,14 +95,34 @@ public class DefaultJavaTypeConverter implements JavaTypeConverter {
                 .collect(Collectors.toList());
         LOG.fine(() -> "DJTC Element has type params: " + typeParams);
 
+        TypeScript annotation = element.getAnnotation(TypeScript.class);
+
         switch (element.getKind()) {
             case CLASS:
             case INTERFACE: {
-                result = TSInterfaceBuilder.of(element)
-                        .withMembers(findMembers(element))
-                        .withSuperTypes(supertypes)
-                        .withTypeParams(typeParams)
-                        .withDocumentString(commentFrom(element));
+                JavaTypeElementExtractingVisitor visitor = new JavaTypeElementExtractingVisitor(element, processingInfo, this);
+                collectMembers(element, visitor);
+
+                if(isValidInterfaceType(element, visitor.getMethods().size())) {
+                    result = TSFunctionBuilder.of(element)
+                            .withName(getName(element, annotation))
+                            .withMethods(visitor.getMethods())
+                            .withConstants(visitor.getConstants())
+                            .withSuperTypes(supertypes)
+                            .withTypeParams(typeParams)
+                            .withDocumentString(commentFrom(element));
+                }
+                else {
+                    result = TSInterfaceBuilder.of(element)
+                            .withName(getName(element, annotation))
+                            .withMembers(visitor.getMembers())
+                            .withConstants(visitor.getConstants())
+                            .withMethods(visitor.getMethods())
+                            .withSuperTypes(supertypes)
+                            .withTypeParams(typeParams)
+                            .withDocumentString(commentFrom(element));
+                }
+
                 break;
             }
             case ENUM: {
@@ -110,6 +136,37 @@ public class DefaultJavaTypeConverter implements JavaTypeConverter {
                 break;
         }
         return Optional.ofNullable(result);
+    }
+
+    private boolean isValidInterfaceType(TypeElement element, int methodCount) {
+        boolean valid = element.getAnnotation(FunctionalInterface.class) != null;
+
+        if(!valid) {
+            return false;
+        }
+
+        if(methodCount <= 0) {
+            processingInfo.getpEnv().getMessager().printMessage(Diagnostic.Kind.WARNING, "Invalid function type! Did you forget the " + TSMethod.class.getSimpleName() + " annotation? Generating type instead.", element);
+            valid = false;
+        }
+        else if(methodCount > 1) {
+            processingInfo.getpEnv().getMessager().printMessage(Diagnostic.Kind.WARNING, "Invalid function type! More than one function was found. Generating type instead.", element);
+            valid = false;
+        }
+
+        return valid;
+    }
+
+    private String getName(TypeElement element, TypeScript annotation) {
+        String name;
+
+        if(annotation != null && !annotation.name().isEmpty()) {
+            name = annotation.name();
+        }
+        else {
+            name = element.getSimpleName().toString();
+        }
+        return name;
     }
 
 
@@ -211,7 +268,27 @@ public class DefaultJavaTypeConverter implements JavaTypeConverter {
      * @return the TSEnumMember model
      */
     private TSEnumMember convertEnumMemberByStrategy(Element x) {
-        final String enumName = x.getSimpleName().toString();
+        final String enumName;
+        TSConstant constant = x.getAnnotation(TSConstant.class);
+
+        if (constant == null || constant.name().isEmpty()) {
+            enumName = x.getSimpleName().toString();
+        }
+        else {
+            enumName = constant.name();
+        }
+
+        TSEnumConstant enumConstant = x.getAnnotation(TSEnumConstant.class);
+        final String value;
+
+        if(enumConstant == null || enumConstant.value().isEmpty()) {
+            value = x.getSimpleName().toString();
+        }
+        else {
+            value = enumConstant.value();
+        }
+
+
         final Optional<String> comment = Optional.ofNullable(
                 this.processingInfo.getpEnv().getElementUtils().getDocComment(x)
         );
@@ -219,7 +296,7 @@ public class DefaultJavaTypeConverter implements JavaTypeConverter {
         final TSEnumMember result;
         if (enumExportStrategy == EnumExportStrategy.STRING) {
             result = TSEnumMemberBuilder.of(enumName)
-                    .withExportStrategyStringRepresentation(enumName)
+                    .withExportStrategyStringRepresentation(value)
                     .withComment(comment);
         } else {
             assert enumExportStrategy == EnumExportStrategy.NUMERIC;
@@ -229,13 +306,11 @@ public class DefaultJavaTypeConverter implements JavaTypeConverter {
         return result;
     }
 
-    private Collection<? extends TSMember> findMembers(TypeElement e) {
-        LOG.fine(() -> "DJTC find members in  in java type " + e);
-        JavaTypeElementExtractingVisitor visitor = new JavaTypeElementExtractingVisitor(e, processingInfo, this);
+    private void collectMembers(TypeElement e, JavaTypeElementExtractingVisitor visitor) {
+        LOG.fine(() -> "DJTC find members and methods in java type " + e);
         e.getEnclosedElements().stream()
-                .filter(x -> x.getKind() == ElementKind.FIELD || x.getKind() == ElementKind.METHOD)
+                .filter(x -> x.getKind() == ElementKind.FIELD || x.getKind() == ElementKind.METHOD || x.getKind() == ElementKind.CONSTRUCTOR)
                 .forEach(visitor::visit);
-        return visitor.getMembers();
     }
 
     /**

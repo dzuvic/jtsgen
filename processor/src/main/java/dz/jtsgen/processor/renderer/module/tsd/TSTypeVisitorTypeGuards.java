@@ -22,7 +22,6 @@ package dz.jtsgen.processor.renderer.module.tsd;
 
 import dz.jtsgen.processor.helper.IdentHelper;
 import dz.jtsgen.processor.model.TSInterface;
-import dz.jtsgen.processor.renderer.model.TypeScriptRenderModel;
 
 import java.io.PrintWriter;
 import java.util.stream.Collectors;
@@ -33,8 +32,8 @@ import java.util.stream.Stream;
  */
 class TSTypeVisitorTypeGuards extends TSTypeVisitorDefault {
 
-    TSTypeVisitorTypeGuards(PrintWriter out) {
-        super(out, new DefaultTSMemberVisitor(out));
+    TSTypeVisitorTypeGuards(PrintWriter out, boolean printFullName) {
+        super(out, new DefaultTSMemberVisitor(out, printFullName), new DefaultTSMemberVisitor(out, printFullName),new DefaultTSConstantVisitor(out, printFullName), printFullName);
     }
 
 

@@ -23,14 +23,23 @@ package dz.jtsgen.processor.renderer.module;
 import dz.jtsgen.processor.model.TSModuleInfo;
 import dz.jtsgen.processor.renderer.model.TypeScriptRenderModel;
 
+import java.util.List;
+
 import static dz.jtsgen.processor.helper.IdentHelper.identPrefix;
 
 final class PackageJsonGenerator {
 
     static String packageJsonFor(TSModuleInfo module, TypeScriptRenderModel model) {
         StringBuilder builder = new StringBuilder(200);
+        String moduleName;
+        if(module.getModuleScope() != null && !module.getModuleScope().isEmpty()) {
+            moduleName = "@" + module.getModuleScope() + "/" + module.getModuleName();
+        }
+        else {
+            moduleName = module.getModuleName();
+        }
         builder.append("{").append(System.lineSeparator());
-        addline(builder,"name",module.getModuleName());
+        addline(builder,"name", moduleName);
         addline(builder,"version",module.getModuleVersion());
         addline(builder,"description",module.getModuleDescription());
         addline(builder,"main", model.externalModuleNameByOutputType());
@@ -38,10 +47,17 @@ final class PackageJsonGenerator {
         addline(builder,"authorUrl",module.getModuleAuthorUrl());
         addline(builder,"license",module.getModuleLicense());
         addline(builder,"typings", model.ambientFileNameByOutputType());
-        addObject(builder,"dependencies", "", true);
+        addObject(builder,"dependencies", printDependencies(module.getDependencies()), true);
         addObject(builder,"scripts", "", false);
         
         return builder.append("}").toString();
+    }
+
+    private static String printDependencies(List<String> dependencies) {
+        if(dependencies == null || dependencies.isEmpty()) {
+            return "";
+        }
+        return "\n\t" + String.join(",\n\t", dependencies.toArray(new String[0])) + "\n  ";
     }
 
     private static void addObject(StringBuilder builder, String name, String value, boolean komma) {
