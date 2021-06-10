@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Dragan Zuvic
+ * Copyright (c) 2021 Dominik Scholl
  *
  * This file is part of jtsgen.
  *
@@ -17,6 +17,7 @@
  * along with jtsgen.  If not, see http://www.gnu.org/licenses/
  *
  */
+
 package jts.modules.constants;
 
 import dz.jtsgen.annotations.*;
