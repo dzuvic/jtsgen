@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Dragan Zuvic
+ * Copyright 2021 Dominik Scholl
  *
  * This file is part of jtsgen.
  *
@@ -16,7 +16,7 @@
  * limitations under the License.
  *
  */
- 
+
 package dz.jtsgen.annotations;
 
 import java.lang.annotation.ElementType;
