@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 20179 Markus Mangei
+ * Copyright (c) 2021 Dominik Scholl
  *
  * This file is part of jtsgen.
  *

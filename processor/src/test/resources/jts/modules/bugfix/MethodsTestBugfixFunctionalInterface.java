@@ -1,5 +1,5 @@
-package jts.modules.bugfix;/*
- * Copyright (c) 2017 Dragan Zuvic
+/*
+ * Copyright (c) 2021 Dominik Scholl
  *
  * This file is part of jtsgen.
  *
@@ -17,6 +17,8 @@ package jts.modules.bugfix;/*
  * along with jtsgen.  If not, see http://www.gnu.org/licenses/
  *
  */
+
+package jts.modules.bugfix;
 
 import dz.jtsgen.annotations.TSMethod;
 import dz.jtsgen.annotations.TypeScript;
