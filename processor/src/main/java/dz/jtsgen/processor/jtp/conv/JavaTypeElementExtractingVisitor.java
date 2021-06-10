@@ -146,8 +146,18 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
                 name = tsMethodAnnotation.name();
             }
 
+
+            List<TSTypeVariable> typeParams = e.getTypeParameters().stream()
+                    .map(x -> TSTypeVariableBuilder.builder()
+                            .name(x.getSimpleName().toString())
+                            .addAllBounds(javaTypeConverter.convertBounds(x))
+                            .build())
+                    .collect(Collectors.toList());
+            LOG.fine(() -> "DJTC Method Element has type params: " + typeParams);
+
             methods.add(TSMethodMemberBuilder
                     .of(name, tsTypeOfExecutable, params)
+                    .withTypeParams(typeParams)
                     .withComment(comment));
         }
         else if (isGetterOrSetter(e)) {

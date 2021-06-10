@@ -1858,4 +1858,23 @@ class TsGenProcessorTest {
         assertTrue(fileContent.contains("h_calcStuffOptional(optionalParam?: Object): Object | null;"), "h_calcStuffOptional" + " is missing");
         assertTrue(fileContent.contains("i_calcStuffOptionalNullable(optionalParam?: Object | null): Object | null;"), "i_calcStuffOptionalNullable" + " is missing");
     }
+
+    @Test
+    void test_method_WithTypeArgs() throws IOException {
+        final String folderName = "jtsmodulesmethods";
+        final String tdsFilename = "jts-modules-methods.d.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/methods", folderName, tdsFilename, DUMP_FILES, 2, "DataItem.java", "ResultItem.java", "MethodsTypeParams.java");
+
+        assertEquals(0, c.errors().size());
+
+        Optional<JavaFileObject> javaFileObject = c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, tdsFilename);
+        assertTrue(javaFileObject.isPresent());
+
+        String fileContent;
+        try (Reader r = javaFileObject.get().openReader(false)) {
+            fileContent = String.join("\n", new ArrayList<>(IOUtils.readLines(r)));
+        }
+
+        assertTrue(fileContent.contains("withParams<T extends DataItem>(param: T): T;"), "Type params are missing");
+    }
 }
