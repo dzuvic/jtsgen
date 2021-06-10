@@ -1,4 +1,4 @@
-/*
+package jts.modules.methods;/*
  * Copyright (c) 2017 Dragan Zuvic
  *
  * This file is part of jtsgen.
@@ -18,21 +18,13 @@
  *
  */
 
-package dz.jtsgen.processor.jtp.conv.visitors;
+import dz.jtsgen.annotations.TSMethod;
+import dz.jtsgen.annotations.TypeScript;
 
-import dz.jtsgen.processor.model.TSTargetType;
-import dz.jtsgen.processor.model.TSType;
-import dz.jtsgen.processor.util.Either;
+@TypeScript
+public interface MethodsTypeParams {
 
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.TypeParameterElement;
-import java.util.Optional;
+    @TSMethod
+    <T extends DataItem> T withParams(T param);
 
-/**
- * Converts a java type to TS Type
- */
-public interface JavaTypeConverter {
-    Optional<TSType> convertJavaType(TypeElement e);
-
-    Iterable<? extends Either<TSTargetType, TSType>> convertBounds(TypeParameterElement typeParameterElement);
 }

@@ -199,7 +199,8 @@ public class DefaultJavaTypeConverter implements JavaTypeConverter {
     }
 
 
-    private List<Either<TSTargetType, TSType>> convertBounds(TypeParameterElement element) {
+    @Override
+    public List<Either<TSTargetType, TSType>> convertBounds(TypeParameterElement element) {
         if (element.getBounds().isEmpty()) return new ArrayList<>();
 
         List<Either<TSTargetType, TSType>> result = element.getBounds().stream()

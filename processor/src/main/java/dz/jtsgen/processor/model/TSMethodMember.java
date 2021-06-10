@@ -23,6 +23,8 @@ import dz.jtsgen.processor.model.rendering.TSMethodElement;
 import dz.jtsgen.processor.model.rendering.TSMethodVisitor;
 import org.immutables.value.Value;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -30,7 +32,7 @@ import java.util.Optional;
 public abstract class TSMethodMember implements TSMethod {
 
     @Value.Parameter
-    public abstract String getName() ;
+    public abstract String getName();
 
     @Value.Parameter
     public abstract TSTargetType getType();
@@ -50,6 +52,11 @@ public abstract class TSMethodMember implements TSMethod {
     @Override
     @Value.Parameter
     public abstract Map<String, TSTargetType> getArguments();
+
+    @Value.Default
+    public List<TSTypeVariable> getTypeParams() {
+        return Collections.emptyList();
+    }
 
     @Override
     public void accept(TSMethodElement visitor, int ident) {

@@ -76,6 +76,11 @@ public class DefaultTSMemberVisitor extends OutputVisitor implements TSMemberVis
         x.getComment().ifPresent( comment -> tsComment(comment,ident));
         getOut().print(IdentHelper.identPrefix(ident));
         getOut().print(x.getName());
+        if (!x.getTypeParams().isEmpty()) {
+            getOut().print("<");
+            getOut().print(x.getTypeParams().stream().map(TSTypeVisitorDefault::nameWithBounds).collect(Collectors.joining(", ")));
+            getOut().print(">");
+        }
         getOut().print("(");
         String args = x.getArguments()
                 .entrySet()
