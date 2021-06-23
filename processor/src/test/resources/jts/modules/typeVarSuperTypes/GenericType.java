@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Dragan Zuvic
+ * Copyright (c) 2021 Dominik Scholl
  *
  * This file is part of jtsgen.
  *
@@ -18,19 +18,14 @@
  *
  */
 
-package dz.jtsgen.processor.model;
+package jts.modules.typeVarSuperTypes;
 
-import dz.jtsgen.processor.util.Either;
-import org.immutables.value.Value;
+import dz.jtsgen.annotations.TSProperty;
+import dz.jtsgen.annotations.TypeScript;
 
-import java.util.List;
+@TypeScript
+public interface GenericType<S extends SuperType> extends SuperType {
 
-@Value.Immutable
-public abstract class TSTypeVariable {
-
-    public abstract String getName();
-
-    public abstract List<Either<TSTargetType,TSType>> getBounds();
-
-    public abstract List<TSType> getSuperTypes();
+    @TSProperty
+    S[] getParts();
 }

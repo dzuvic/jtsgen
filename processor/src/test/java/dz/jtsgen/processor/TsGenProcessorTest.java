@@ -27,6 +27,7 @@ import dz.jtsgen.processor.helper.ReferenceHelper;
 import dz.jtsgen.processor.helper.StringConstForTest;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnJre;
 import org.junit.jupiter.api.condition.JRE;
@@ -1876,5 +1877,27 @@ class TsGenProcessorTest {
         }
 
         assertTrue(fileContent.contains("withParams<T extends DataItem>(param: T): T;"), "Type params are missing");
+    }
+
+    @RepeatedTest(value = 10) // In case we mess up, this may become none-deterministic :(
+    @DisplayName("Issue 55: Handle complex type variable hierarchies")
+    void test_typeArgsInSuperTypes() throws IOException {
+        final String folderName = "jtsmodulestypevarsupertypes";
+        final String tdsFilename = "jts-modules-typevarsupertypes.d.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/typeVarSuperTypes", folderName, tdsFilename, DUMP_FILES, 1, "GenericType.java", "MyType.java", "MyTypeChild.java", "SuperType.java");
+
+        assertEquals(0, c.errors().size());
+
+        Optional<JavaFileObject> javaFileObject = c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, tdsFilename);
+        assertTrue(javaFileObject.isPresent());
+
+        String fileContent;
+        try (Reader r = javaFileObject.get().openReader(false)) {
+            fileContent = String.join("\n", new ArrayList<>(IOUtils.readLines(r)));
+        }
+
+        assertTrue(fileContent.contains("export interface GenericType<S extends SuperType>"), "Super type in type variable is missing");
+        assertTrue(fileContent.contains("export interface GenericType<S extends SuperType> extends SuperType"), "Super class is missing");
+        assertTrue(fileContent.contains("export interface MyType extends GenericType<MyTypeChild>"), "Type variable of super type is missing");
     }
 }

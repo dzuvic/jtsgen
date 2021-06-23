@@ -33,12 +33,11 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.TypeParameterElement;
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -91,6 +90,7 @@ public class DefaultJavaTypeConverter implements JavaTypeConverter {
                 .map(x -> TSTypeVariableBuilder.builder()
                         .name(x.getSimpleName().toString())
                         .addAllBounds(convertBounds(x))
+                        .addAllSuperTypes(convertSuperTypes(x))
                         .build())
                 .collect(Collectors.toList());
         LOG.fine(() -> "DJTC Element has type params: " + typeParams);
@@ -174,28 +174,69 @@ public class DefaultJavaTypeConverter implements JavaTypeConverter {
         return Optional.ofNullable(this.processingInfo.getpEnv().getElementUtils().getDocComment(element));
     }
 
-    private List<TSType> convertSuperTypes(TypeElement element) {
+    private List<TSType> convertSuperTypes(Element element) {
         final List<? extends TypeMirror> superTypes = this.processingInfo.getpEnv().getTypeUtils().directSupertypes(element.asType());
         LOG.finest(() -> "DJTC direct supertypes of " + element + " are " + superTypes);
-        List<TypeElement> filteredSuperTypes = superTypes
-                .stream().map(DeclTypeHelper::declaredTypeToTypeElement)
-                .filter(Optional::isPresent).map(Optional::get)
+
+        List<TypeToTypeParams> filteredSuperTypes = superTypes
+                .stream().map( x -> {
+                    Optional<TypeElement> type = DeclTypeHelper.declaredTypeToTypeElement(x);
+                    return type.map(typeElement -> new TypeToTypeParams(typeElement, ((DeclaredType) x).getTypeArguments())).orElse(null);
+                })
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
+        boolean hasConcreteTypes = filteredSuperTypes.stream().map(x -> x.arguments).anyMatch(x -> !x.isEmpty());
         List<TSType> result = filteredSuperTypes.stream()
-                .filter(x -> !isMarkerInterface(x))
-                .filter(x -> !isTopType(x))
-                .filter(x -> !checkExclusion(x))
+                .filter(x -> !isMarkerInterface(x.type) || isAnnotated(x.type))
+                .filter(x -> !isTopType(x.type))
+                .filter(x -> !checkExclusion(x.type))
                 .map(x -> {
                     LOG.info("DJTC converting supertype " + x);
-                    return handleJavaType(x);
+                    Optional<TSType> tsType;
+                    if(element.getKind() != ElementKind.TYPE_PARAMETER && x.arguments.isEmpty()) {
+                        tsType = handleJavaType(x.type);
+                    }
+                    else {
+                        tsType = Optional.of(TSInterfaceBuilder.of(x.type).withName(x.type.getSimpleName().toString()));
+                    }
+
+                    if(!tsType.isPresent() || x.arguments.isEmpty()) {
+                        return tsType;
+                    }
+
+                    List<TSTypeVariable> realTypeParams = x.arguments.stream().map(v -> {
+                        Optional<TypeElement> typeElement = DeclTypeHelper.declaredTypeToTypeElement(v);
+                        if(typeElement.isPresent()) {
+                            String name = typeElement.get().getSimpleName().toString();
+                            return TSTypeVariableBuilder.builder().name(name).build();
+                        }
+                        else {
+                            return null;
+                        }
+                    }).filter(Objects::nonNull).collect(Collectors.toList());
+
+                    TSInterfaceBuilder value = TSInterfaceBuilder.copyOf((TSInterface) tsType.get()).withTypeParams(realTypeParams);
+                    return Optional.of(value);
                 })
                 .filter(Optional::isPresent).map(Optional::get)
                 .collect(Collectors.toList());
 
-        this.processingInfo.getTsModel().addTSTypes(result);
+        if(element.getKind() != ElementKind.TYPE_PARAMETER && !hasConcreteTypes) {
+            this.processingInfo.getTsModel().addTSTypes(result);
+        }
 
         return result;
+    }
+
+    private static final class TypeToTypeParams {
+        TypeElement type;
+        List<? extends TypeMirror> arguments;
+
+        public TypeToTypeParams(TypeElement type, List<? extends TypeMirror> arguments) {
+            this.type = type;
+            this.arguments = arguments;
+        }
     }
 
 
@@ -207,7 +248,7 @@ public class DefaultJavaTypeConverter implements JavaTypeConverter {
                 .map(this.processingInfo.getpEnv().getTypeUtils()::asElement)
                 .filter(x -> x instanceof TypeElement)
                 .map(x -> (TypeElement) x)
-                .filter(x -> !isMarkerInterface(x))
+                .filter(x -> !isMarkerInterface(x) || isAnnotated(x))
                 .filter(x -> !isTopType(x))
                 .filter(x -> !checkExclusion(x))
                 .map(this::typeElementEitherToTargetOrTSType)
@@ -251,6 +292,10 @@ public class DefaultJavaTypeConverter implements JavaTypeConverter {
                 && typeElement.getEnclosedElements().size() == 0;
         if (isMarker) LOG.fine(() -> "DJTC " + typeElement + " is marker interface");
         return isMarker;
+    }
+
+    private boolean isAnnotated(TypeElement typeElement) {
+        return typeElement.getAnnotation(TypeScript.class) != null;
     }
 
     private boolean checkExclusion(TypeElement element) {
