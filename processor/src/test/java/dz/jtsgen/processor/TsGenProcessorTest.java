@@ -659,6 +659,12 @@ class TsGenProcessorTest {
                         Pattern.compile("^\\s+E = 'JavaConstant'\\s*$")).size(),
                 "must include enum value E"
         );
+        assertEquals(
+                0,
+                findSourceLine(c, folderName, tdsFilename,
+                        Pattern.compile("^\\s+F = ")).size(),
+                "must NOT include enum value F"
+        );
     }
 
     @Test

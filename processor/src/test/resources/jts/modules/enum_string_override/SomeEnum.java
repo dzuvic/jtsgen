@@ -22,6 +22,7 @@ package jts.modules.enum_string_override;
 
 import dz.jtsgen.annotations.TSConstant;
 import dz.jtsgen.annotations.TSEnumConstant;
+import dz.jtsgen.annotations.TSIgnore;
 
 public enum SomeEnum {
     A,
@@ -37,6 +38,9 @@ public enum SomeEnum {
     D,
 
     @TSEnumConstant(value = InterfaceWithEnum.MY_CONSTANT)
-    E
+    E,
+
+    @TSIgnore
+    F
 }
 

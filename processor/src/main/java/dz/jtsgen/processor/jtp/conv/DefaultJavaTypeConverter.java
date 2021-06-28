@@ -310,12 +310,13 @@ public class DefaultJavaTypeConverter implements JavaTypeConverter {
     private Collection<? extends TSMember> findEnumMembers(TypeElement element) {
         return element.getEnclosedElements().stream()
                 .filter(x -> x.getKind() == ENUM_CONSTANT)
-                .map(this::convertEnumMemberByStrategy
-                ).collect(Collectors.toList());
+                .filter(x -> x.getAnnotationsByType(TSIgnore.class).length == 0)
+                .map(this::convertEnumMemberByStrategy)
+                .collect(Collectors.toList());
     }
 
     /**
-     * convert  the enum mamber by conversion strategy
+     * convert  the enum member by conversion strategy
      * @param x the element
      * @return the TSEnumMember model
      */
