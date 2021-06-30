@@ -37,7 +37,6 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -205,16 +204,12 @@ public class DefaultJavaTypeConverter implements JavaTypeConverter {
                         return tsType;
                     }
 
-                    List<TSTypeVariable> realTypeParams = x.arguments.stream().map(v -> {
-                        Optional<TypeElement> typeElement = DeclTypeHelper.declaredTypeToTypeElement(v);
-                        if(typeElement.isPresent()) {
-                            String name = typeElement.get().getSimpleName().toString();
-                            return TSTypeVariableBuilder.builder().name(name).build();
-                        }
-                        else {
-                            return null;
-                        }
-                    }).filter(Objects::nonNull).collect(Collectors.toList());
+                    MirrorTypeToTSConverterVisitor converter = new MirrorTypeToTSConverterVisitor(element, processingInfo, this);
+
+                    List<TSTypeVariable> realTypeParams = x.arguments.stream()
+                            .map(converter::visit)
+                            .map(converted -> TSTypeVariableBuilder.builder().name(converted.mapNameSpace(ns -> "").toString()).build())
+                            .collect(Collectors.toList());
 
                     TSInterfaceBuilder value = TSInterfaceBuilder.copyOf((TSInterface) tsType.get()).withTypeParams(realTypeParams);
                     return Optional.of(value);
