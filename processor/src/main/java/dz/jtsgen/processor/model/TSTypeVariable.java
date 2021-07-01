@@ -31,4 +31,6 @@ public abstract class TSTypeVariable {
     public abstract String getName();
 
     public abstract List<Either<TSTargetType,TSType>> getBounds();
+
+    public abstract List<TSType> getSuperTypes();
 }

@@ -27,6 +27,7 @@ import dz.jtsgen.processor.helper.ReferenceHelper;
 import dz.jtsgen.processor.helper.StringConstForTest;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnJre;
 import org.junit.jupiter.api.condition.JRE;
@@ -208,7 +209,7 @@ class TsGenProcessorTest {
     @Test
     @DisplayName("Check issue 46 - generating too much for <T extends Number>")
     void test_Issue_46_Wrong_Java_Types() throws IOException {
-        Compilation c = CompileHelper.compileJtsDev(DUMP_FILES, 1, "Issue_46_Wrong_Java_Types.java");
+        Compilation c = CompileHelper.compileJtsDev(DUMP_FILES, 0, "Issue_46_Wrong_Java_Types.java");
         assertEquals(
                 1,
                 findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\sinterface\\sIssue_46_Wrong_Java_Types\\s*<T\\s+extends\\s+number>")).size(),
@@ -224,7 +225,7 @@ class TsGenProcessorTest {
     @Test
     @DisplayName("Check issue 46 - ignore bound <T extends Serilizable>")
     void test_Issue_46_MarkerInterface() throws IOException {
-        Compilation c = CompileHelper.compileJtsDev(DUMP_FILES, 1, "Issue_46_Marker.java");
+        Compilation c = CompileHelper.compileJtsDev(DUMP_FILES, 0, "Issue_46_Marker.java");
         assertEquals(
                 1,
                 findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\sinterface\\sIssue_46_Marker\\s*<T>")).size(),
@@ -240,7 +241,7 @@ class TsGenProcessorTest {
     @Test
     @DisplayName("Check issue 46 - ignore bound <T extends Comparable>")
     void test_Issue_46_Exclusion() throws IOException {
-        Compilation c = CompileHelper.compileJtsDev(DUMP_FILES, 1, "Issue_46_Exclusion.java");
+        Compilation c = CompileHelper.compileJtsDev(DUMP_FILES, 0, "Issue_46_Exclusion.java");
         assertEquals(
                 1,
                 findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\sinterface\\sIssue_46_Exclusion\\s*<T>")).size(),
@@ -278,7 +279,7 @@ class TsGenProcessorTest {
     @Test
     @DisplayName("Generate type parameters for generic classes")
     void test_own_interface_with_generics() throws IOException {
-        Compilation c = CompileHelper.compileJtsDev(DUMP_FILES, 3, "InterFaceTestGenerics.java");
+        Compilation c = CompileHelper.compileJtsDev(DUMP_FILES, 0, "InterFaceTestGenerics.java");
         assertEquals(
                 1,
                 findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+MyPair<U,\\s*V>")).size(),
@@ -317,7 +318,7 @@ class TsGenProcessorTest {
     @Test
     @DisplayName("Generate type parameters for generic classes with one bound")
     void test_simple_interface_with_upperBound() throws IOException {
-        Compilation c = CompileHelper.compileJtsDev(DUMP_FILES, 1, "InterFaceTestGenericsOneBound.java");
+        Compilation c = CompileHelper.compileJtsDev(DUMP_FILES, 0, "InterFaceTestGenericsOneBound.java");
         assertEquals(
                 1,
                 findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+Upper\\s+")).size(),
@@ -342,7 +343,7 @@ class TsGenProcessorTest {
     @Test
     @DisplayName("Generate type parameters for generic classes with two bound")
     void test_simple_interface_with_multiple_upperBound() throws IOException {
-        Compilation c = CompileHelper.compileJtsDev(DUMP_FILES, 1, "InterFaceTestGenericsMultipleBound.java");
+        Compilation c = CompileHelper.compileJtsDev(DUMP_FILES, 0, "InterFaceTestGenericsMultipleBound.java");
         assertEquals(
                 2,
                 findSourceLine(c, JTS_DEV, JTS_DEV_D_TS, Pattern.compile("^\\s+export\\s+interface\\s+Upper(One|Two)\\s+")).size(),
@@ -657,6 +658,12 @@ class TsGenProcessorTest {
                 findSourceLine(c, folderName, tdsFilename,
                         Pattern.compile("^\\s+E = 'JavaConstant'\\s*$")).size(),
                 "must include enum value E"
+        );
+        assertEquals(
+                0,
+                findSourceLine(c, folderName, tdsFilename,
+                        Pattern.compile("^\\s+F = ")).size(),
+                "must NOT include enum value F"
         );
     }
 
@@ -1863,7 +1870,7 @@ class TsGenProcessorTest {
     void test_method_WithTypeArgs() throws IOException {
         final String folderName = "jtsmodulesmethods";
         final String tdsFilename = "jts-modules-methods.d.ts";
-        Compilation c = CompileHelper.compileForModule("jts/modules/methods", folderName, tdsFilename, DUMP_FILES, 2, "DataItem.java", "ResultItem.java", "MethodsTypeParams.java");
+        Compilation c = CompileHelper.compileForModule("jts/modules/methods", folderName, tdsFilename, DUMP_FILES, 0, "DataItem.java", "ResultItem.java", "MethodsTypeParams.java");
 
         assertEquals(0, c.errors().size());
 
@@ -1876,5 +1883,71 @@ class TsGenProcessorTest {
         }
 
         assertTrue(fileContent.contains("withParams<T extends DataItem>(param: T): T;"), "Type params are missing");
+    }
+
+    @Test
+    @DisplayName("Issue 55: Handle type variable of super type")
+    void test_typeArgsTypeHierarchy_simple() throws IOException {
+        final String folderName = "jtsmodulestypevars";
+        final String tdsFilename = "jts-modules-typevars.d.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/typeVars", folderName, tdsFilename, DUMP_FILES, 0,"MiddleType.java", "TopType.java");
+
+        assertEquals(0, c.errors().size());
+
+        Optional<JavaFileObject> javaFileObject = c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, tdsFilename);
+        assertTrue(javaFileObject.isPresent());
+
+        String fileContent;
+        try (Reader r = javaFileObject.get().openReader(false)) {
+            fileContent = String.join("\n", new ArrayList<>(IOUtils.readLines(r)));
+        }
+
+        assertTrue(fileContent.contains("interface TopType<T>"), "Super type in type variable is missing");
+        assertTrue(fileContent.contains("MiddleType<M> extends TopType<M>"), "Super class is missing");
+    }
+
+    @Test
+    @DisplayName("Handle type variable hierarchies")
+    void test_typeArgsTypeHierarchy() throws IOException {
+        final String folderName = "jtsmodulestypevars";
+        final String tdsFilename = "jts-modules-typevars.d.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/typeVars", folderName, tdsFilename, DUMP_FILES, 0, "LeafType.java", "BottomType.java", "MiddleType.java", "TopType.java");
+
+        assertEquals(0, c.errors().size());
+
+        Optional<JavaFileObject> javaFileObject = c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, tdsFilename);
+        assertTrue(javaFileObject.isPresent());
+
+        String fileContent;
+        try (Reader r = javaFileObject.get().openReader(false)) {
+            fileContent = String.join("\n", new ArrayList<>(IOUtils.readLines(r)));
+        }
+
+        assertTrue(fileContent.contains("interface TopType<T>"), "Super type in type variable is missing");
+        assertTrue(fileContent.contains("MiddleType<M> extends TopType<M>"), "Super class is missing");
+        assertTrue(fileContent.contains("BottomType<B extends number> extends MiddleType<B>"), "Super class is missing");
+        assertTrue(fileContent.contains("LeafType extends BottomType<number>"), "Type variable of super type is missing");
+    }
+
+    @RepeatedTest(value = 10) // In case we mess up, this may become none-deterministic :(
+    @DisplayName("Handle complex type variable hierarchies")
+    void test_typeArgsInSuperTypes() throws IOException {
+        final String folderName = "jtsmodulestypevarsupertypes";
+        final String tdsFilename = "jts-modules-typevarsupertypes.d.ts";
+        Compilation c = CompileHelper.compileForModule("jts/modules/typeVarSuperTypes", folderName, tdsFilename, DUMP_FILES, 0, "GenericType.java", "MyType.java", "MyTypeChild.java", "SuperType.java");
+
+        assertEquals(0, c.errors().size());
+
+        Optional<JavaFileObject> javaFileObject = c.generatedFile(StandardLocation.SOURCE_OUTPUT, folderName, tdsFilename);
+        assertTrue(javaFileObject.isPresent());
+
+        String fileContent;
+        try (Reader r = javaFileObject.get().openReader(false)) {
+            fileContent = String.join("\n", new ArrayList<>(IOUtils.readLines(r)));
+        }
+
+        assertTrue(fileContent.contains("export interface GenericType<S extends SuperType>"), "Super type in type variable is missing");
+        assertTrue(fileContent.contains("export interface GenericType<S extends SuperType> extends SuperType"), "Super class is missing");
+        assertTrue(fileContent.contains("export interface MyType extends GenericType<MyTypeChild>"), "Type variable of super type is missing");
     }
 }

@@ -18,29 +18,13 @@
  *
  */
 
-package jts.modules.enum_string_override;
+package jts.modules.typeVars;
 
-import dz.jtsgen.annotations.TSConstant;
-import dz.jtsgen.annotations.TSEnumConstant;
-import dz.jtsgen.annotations.TSIgnore;
+import dz.jtsgen.annotations.TypeScript;
 
-public enum SomeEnum {
-    A,
+@TypeScript
+public interface BottomType<B extends Number> extends MiddleType<B> {
 
-    @TSConstant(name = "renamed_b")
-    B,
+    B getButtom();
 
-    @TSEnumConstant(value = "value_c")
-    C,
-
-    @TSConstant(name = "X")
-    @TSEnumConstant(value = "Y")
-    D,
-
-    @TSEnumConstant(value = InterfaceWithEnum.MY_CONSTANT)
-    E,
-
-    @TSIgnore
-    F
 }
-

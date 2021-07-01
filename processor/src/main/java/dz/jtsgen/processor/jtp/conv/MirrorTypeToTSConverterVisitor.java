@@ -57,7 +57,7 @@ import static javax.tools.Diagnostic.Kind.WARNING;
  * This Visitor is used to convert a Java Type to an TS type
  * Created by zuvic on 04.04.17.
  */
-class MirrorTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTargetType, Void> {
+public class MirrorTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTargetType, Void> {
 
     private static Logger LOG = Logger.getLogger(MirrorTypeToTSConverterVisitor.class.getName());
 
@@ -186,7 +186,7 @@ class MirrorTypeToTSConverterVisitor extends AbstractTypeVisitor8<TSTargetType, 
     @Override
     public TSTargetType visitTypeVariable(TypeVariable t, Void x) {
         LOG.fine(() -> "TSCV: visitTypeVariable " + t);
-        this.env().getMessager().printMessage(WARNING, "arrays partially supported", currentElement);
+//        this.env().getMessager().printMessage(WARNING, "arrays partially supported", currentElement);
         final String varName = extractTypeVariablename(t);
         return TSTargetFactory.createTSTargetByDSL(format("%s->%s", varName, varName)).orElse(TSTargets.ANY);
     }

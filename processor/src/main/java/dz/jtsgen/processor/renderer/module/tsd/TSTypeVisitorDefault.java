@@ -166,7 +166,7 @@ class TSTypeVisitorDefault extends OutputVisitor implements TSTypeVisitor {
         if (!x.getTypeParams().isEmpty()) {
             getOut().print("<");
             getOut().print(x.getTypeParams().stream().map(TSTypeVisitorDefault::nameWithBounds).collect(Collectors.joining(", ")));
-            getOut().print("> ");
+            getOut().print(">");
         }
         getOut().print(extendsSuperTypes(x));
         getOut().println(" {");
@@ -185,8 +185,15 @@ class TSTypeVisitorDefault extends OutputVisitor implements TSTypeVisitor {
 
     private String extendsSuperTypes(TSType x) {
         if (x.getSuperTypes().size() == 0) return "";
-        StringBuilder s = new StringBuilder();
-        return s.append(" extends ").append( x.getSuperTypes().stream().map(TSType::getName).collect(Collectors.joining(",")))
+        return new StringBuilder().append(" extends ").append( x.getSuperTypes().stream().map(superType -> {
+            String name = superType.getName();
+            if(!superType.getTypeParams().isEmpty()) {
+                name += "<";
+                name += superType.getTypeParams().stream().map(TSTypeVisitorDefault::nameWithBounds).collect(Collectors.joining(", "));
+                name += ">";
+            }
+            return name;
+        }).collect(Collectors.joining(",")))
                 .toString();
 
     }
