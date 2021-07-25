@@ -22,13 +22,16 @@ package dz.jtsgen.processor;
 
 import dz.jtsgen.annotations.TSModule;
 import dz.jtsgen.annotations.TypeScript;
+import dz.jtsgen.annotations.TypeScriptExecutable;
 import dz.jtsgen.processor.helper.ElementHelper;
 import dz.jtsgen.processor.jtp.TSModuleHandler;
 import dz.jtsgen.processor.jtp.TSModuleInfoEnforcer;
 import dz.jtsgen.processor.jtp.conv.JavaTypeProcessor;
+import dz.jtsgen.processor.jtp.conv.PreserveExecutablesTypeScriptAnnotationProcessor;
 import dz.jtsgen.processor.jtp.info.TSProcessingInfo;
 import dz.jtsgen.processor.jtp.conv.TypeScriptAnnotationProcessor;
 import dz.jtsgen.processor.jtp.info.TSProcessingInfoBuilder;
+import dz.jtsgen.processor.model.TSModuleInfo;
 import dz.jtsgen.processor.model.TypeScriptModel;
 import dz.jtsgen.processor.renderer.TSRenderer;
 
@@ -69,7 +72,7 @@ import static java.util.logging.Level.INFO;
 public class TsGenProcessor extends AbstractProcessorWithLogging {
 
     // Order of annotations to process
-    private static final List<Class<?>> PROCESSING_ORDER = Arrays.asList(TSModule.class, TypeScript.class);
+    private static final List<Class<?>> PROCESSING_ORDER = Arrays.asList(TSModule.class, TypeScript.class, TypeScriptExecutable.class);
 
     private static Logger LOG = Logger.getLogger(TsGenProcessor.class.getName());
 
@@ -135,6 +138,8 @@ public class TsGenProcessor extends AbstractProcessorWithLogging {
         LOG.info(() -> String.format("P: Processing Annotation %s", annotation.getSimpleName()));
         if (typeOf(annotation, TypeScript.class)) {
             processTypeScriptAnnotation(annotation, roundEnv);
+        } else  if (typeOf(annotation, TypeScriptExecutable.class)) {
+            processTypeScriptExecutableAnnotation(annotation, roundEnv);
         } else if (typeOf(annotation, TSModule.class)) {
             Set<? extends Element> annotatedElements = roundEnv.getElementsAnnotatedWith(TSModule.class);
             if (annotatedElements.size() > 1) annotatedElements.forEach(
@@ -163,6 +168,22 @@ public class TsGenProcessor extends AbstractProcessorWithLogging {
         });
     }
 
+    private void processTypeScriptExecutableAnnotation(TypeElement annotation, RoundEnvironment roundEnv) {
+
+        // ignore classes with TSIgnore
+        Set<Element> annotatedElements = filteredTypeSriptElements(roundEnv);
+
+        // this is needed for updating data from CLI and calculating a name space mapping, if needed
+        TSModuleInfoEnforcer enforcer = new TSModuleInfoEnforcer(this.processingEnv, this.typeScriptModel);
+        Optional<TSModuleInfo> optInfo = enforcer.createUpdatedTSModuleInfo(annotatedElements);
+        if(optInfo.isPresent()) {
+            TSModuleInfo info = optInfo.get();
+            typeScriptModel.addModuleInfo(info);
+            final TSProcessingInfo processingInfo = TSProcessingInfoBuilder.of(this.processingEnv, typeScriptModel);
+            final JavaTypeProcessor handler = new PreserveExecutablesTypeScriptAnnotationProcessor(processingInfo);
+            handler.processAnnotations(roundEnv);
+        }
+    }
 
     public SourceVersion getSupportedSourceVersion() {
         return SourceVersion.latestSupported();

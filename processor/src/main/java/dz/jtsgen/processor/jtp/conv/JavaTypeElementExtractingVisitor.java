@@ -46,22 +46,22 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
     private static Logger LOG = Logger.getLogger(JavaTypeElementExtractingVisitor.class.getName());
 
 
-    private final Map<String, TSMember> members = new HashMap<>();
+    protected final Map<String, TSMember> members = new HashMap<>();
     private final Map<String, TSConstant> constants = new HashMap<>();
 
     private final List<TSMethod> methods = new ArrayList<>();
 
     // list of members to sort out setters only
-    private final Set<String> extractableMembers = new HashSet<>();
+    protected final Set<String> extractableMembers = new HashSet<>();
 
     // the current Java Type
-    private final TypeElement typeElementToConvert;
+    protected final TypeElement typeElementToConvert;
 
     // the environment
-    private TSProcessingInfo tsProcessingInfo;
+    protected TSProcessingInfo tsProcessingInfo;
 
     // the converter for unknown types
-    private JavaTypeConverter javaTypeConverter;
+    protected JavaTypeConverter javaTypeConverter;
 
 
 
@@ -85,7 +85,7 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
         final boolean isPublic = e.getModifiers().contains(Modifier.PUBLIC);
         final String name = nameOfConstant(e);
         final boolean isIgnored = isIgnored(e);
-        final boolean isReadOnlyAnnotation = readOnlyAnnotation(e) || readOnlyAnnotation(this.typeElementToConvert);
+        final boolean  isReadOnlyAnnotation = readOnlyAnnotation(e) || readOnlyAnnotation(this.typeElementToConvert);
         LOG.log(Level.FINEST, () -> String.format("JTExV visiting variable %s%s", name, isIgnored?" (ignored)":""));
 
 
@@ -221,11 +221,11 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
                 .withComment(comment));
     }
 
-    private String mappedName(String rawName) {
+    protected String mappedName(String rawName) {
         return this.tsProcessingInfo.nameMapper().mapMemberName(rawName);
     }
 
-    private boolean isGetter(ExecutableElement e) {
+    protected boolean isGetter(ExecutableElement e) {
         return this.tsProcessingInfo.executableHelper().isGetter(e);
     }
 
@@ -257,7 +257,7 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
         return this.tsProcessingInfo.executableHelper().isGetterOrSetter(e);
     }
 
-    private boolean readOnlyAnnotation(Element e) {
+    protected boolean readOnlyAnnotation(Element e) {
         final TypeElement annoTationElement = this.tsProcessingInfo.elementCache().typeElementByCanonicalName(TSReadOnly.class.getCanonicalName());
         return e.getAnnotationMirrors().stream().anyMatch( (x) ->
                 x.getAnnotationType().asElement().equals(annoTationElement)
@@ -271,7 +271,7 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
         );
     }
 
-    private boolean isIgnored(Element e) {
+    protected boolean isIgnored(Element e) {
         final TypeElement annoTationElement = this.tsProcessingInfo.elementCache().typeElementByCanonicalName(TSIgnore.class.getCanonicalName());
         return e.getAnnotationMirrors().stream().anyMatch( (x) ->
                 x.getAnnotationType().asElement().equals(annoTationElement));
@@ -282,7 +282,7 @@ class JavaTypeElementExtractingVisitor extends SimpleElementVisitor8<Void, Void>
         return new MirrorTypeToTSConverterVisitor(theElement, tsProcessingInfo, javaTypeConverter).visit(theElement.getReturnType());
     }
 
-    private TSTargetType convertTypeMirrorOfMemberToTsType(VariableElement theElement, TSProcessingInfo TSProcessingInfo) {
+    protected TSTargetType convertTypeMirrorOfMemberToTsType(VariableElement theElement, TSProcessingInfo TSProcessingInfo) {
         return new MirrorTypeToTSConverterVisitor(theElement, TSProcessingInfo, javaTypeConverter).visit(theElement.asType());
     }
 
