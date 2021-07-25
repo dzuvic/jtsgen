@@ -54,10 +54,10 @@ public class DefaultJavaTypeConverter implements JavaTypeConverter {
 
     private final TypeElement javaLangObjectElement;
     private final TypeElement javaLangEnumElement;
-    private final TSProcessingInfo processingInfo;
+    protected final TSProcessingInfo processingInfo;
 
 
-    private static final Logger LOG = Logger.getLogger(TypeScriptAnnotationProcessor.class.getName());
+    protected static final Logger LOG = Logger.getLogger(TypeScriptAnnotationProcessor.class.getName());
 
     DefaultJavaTypeConverter(TSProcessingInfo processingInfo) {
         this.processingInfo = processingInfo;
@@ -113,14 +113,14 @@ public class DefaultJavaTypeConverter implements JavaTypeConverter {
                             .withDocumentString(commentFrom(element));
                 }
                 else {
-                    result = TSInterfaceBuilder.of(element)
+                result = TSInterfaceBuilder.of(element)
                             .withName(getName(element, annotation))
                             .withMembers(visitor.getMembers())
                             .withConstants(visitor.getConstants())
                             .withMethods(visitor.getMethods())
-                            .withSuperTypes(supertypes)
-                            .withTypeParams(typeParams)
-                            .withDocumentString(commentFrom(element));
+                        .withSuperTypes(supertypes)
+                        .withTypeParams(typeParams)
+                        .withDocumentString(commentFrom(element));
                 }
 
                 break;

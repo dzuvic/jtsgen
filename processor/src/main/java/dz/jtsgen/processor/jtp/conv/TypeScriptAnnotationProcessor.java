@@ -55,6 +55,11 @@ public class TypeScriptAnnotationProcessor implements JavaTypeProcessor {
         javaConverter = new DefaultJavaTypeConverter(processingInfo);
     }
 
+   protected TypeScriptAnnotationProcessor(TSProcessingInfo processingInfo, JavaTypeConverter javaConverter) {
+     this.processingInfo = processingInfo;
+     this.javaConverter = javaConverter;
+   }
+
     @Override
     public void processAnnotations(RoundEnvironment roundEnv) {
           this.processElements(

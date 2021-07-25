@@ -22,9 +22,11 @@ package dz.jtsgen.processor.model.rendering;
 
 
 import dz.jtsgen.processor.model.TSEnumMember;
+import dz.jtsgen.processor.model.TSExecutableMember;
 import dz.jtsgen.processor.model.TSMember;
 
 public interface TSMemberVisitor {
     void visit(TSMember x, int ident);
     void visit(TSEnumMember x, int ident);
+    void visit(TSExecutableMember x, int ident);
 }
